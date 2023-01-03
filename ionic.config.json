@@ -1,0 +1,7 @@
+{
+  "name": "refleacciona_mobile",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
