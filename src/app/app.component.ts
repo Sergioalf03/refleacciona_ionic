@@ -26,7 +26,7 @@ export class AppComponent implements OnInit {
               next: res => {
                 console.log(res)
                 this.sessionService
-                  .getUser(res.data.token.plainTextToken.split('|')[1])
+                  .getUser(res.data.token.plainTextToken)
                   .subscribe({
                     next: () => {
                       // if (actualUrl.includes('login') || actualUrl.includes('check-session')) {
@@ -46,7 +46,7 @@ export class AppComponent implements OnInit {
               },
               error: err => console.log(err),
             })
-        // }
+      //   }
       // });
 
 

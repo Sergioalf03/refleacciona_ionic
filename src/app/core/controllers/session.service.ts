@@ -18,7 +18,7 @@ export class SessionService {
 
   intializeProtection() {
     return this.httpService
-      .get('/sanctum/csrf-cookie');
+      .customGet('http://127.0.0.1:8000/sanctum/csrf-cookie');
   }
 
   login() {
@@ -28,7 +28,9 @@ export class SessionService {
 
   getUser(token: string) {
     return this.httpClient
-      .post('http://127.0.0.1:8000/api/1', { headers: new HttpHeaders({ Authorization: 'Bearer ' + token }) })
+      .post('http://127.0.0.1:8000/api/1', {}, { headers: new HttpHeaders({
+        Authorization: 'Bearer ' + token,
+      }) })
       .pipe(
         tap(res => {
           console.log(res);
