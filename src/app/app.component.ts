@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { SessionService } from './core/controllers/session.service';
+import { HttpResponseService } from './core/controllers/http-response.service';
+import { RandomStringService } from './core/controllers/random-string.service';
+import { StorageService } from './core/controllers/storage.service';
+import { Storage } from '@ionic/storage-angular';
 
 @Component({
   selector: 'app-root',
@@ -11,67 +14,61 @@ export class AppComponent implements OnInit {
 
   constructor(
     private sessionService: SessionService,
-    private router: Router,
+    private responseService: HttpResponseService,
+    private randomStringService: RandomStringService,
+    private storageService: StorageService,
+    private storage: Storage
   ) {}
 
-  ngOnInit(): void {
-    // const actualUrl = window.location.href.split('#')[1] ? window.location.href.split('#')[1] : '/na/login';
-    // this.sessionService
-    //   .intializeProtection()
-    //   .subscribe({
-    //     next: () => {
-          this.sessionService
-            .login()
-            .subscribe({
-              next: res => {
-                console.log(res)
-                this.sessionService
-                  .getUser(res.data.token.plainTextToken)
-                  .subscribe({
-                    next: () => {
-                      // if (actualUrl.includes('login') || actualUrl.includes('check-session')) {
-                      //   this.router.navigateByUrl('/app/home');
-                      // } else {
-                      //   this.router.navigateByUrl(actualUrl);
-                      // }
-                    },
-                    error: err => {
-                      // if (actualUrl.includes('app') || actualUrl.includes('check-session')) {
-                      //   this.router.navigateByUrl('/login');
-                      // } else {
-                      //   this.router.navigateByUrl(actualUrl);
-                      // }
-                    },
-                  });
-              },
-              error: err => console.log(err),
-            })
-      //   }
-      // });
+  async ngOnInit() {
+    this.storage.create()
+    .then(async storage => {
+      const res = await this.storageService.init(storage);
+      console.log(res)
 
+      const logged = await this.sessionService.isLoggedIn();
+      console.log(logged)
+      if (logged) {
+        console.log('logged');
+        await this.sessionService.setValuesFromStorage();
+        this.sessionService
+          .validToken()
+          .subscribe({
+            next: res => {
+              console.log(res);
 
-  //   if (!actualUrl || !actualUrl.includes('user-confirm')) {
-  //     this.router.navigateByUrl('/na/check-session');
-
-  //     this.sessionService
-  //       .getUser()
-  //       .subscribe({
-  //         next: () => {
-  //           if (actualUrl.includes('login') || actualUrl.includes('check-session')) {
-  //             this.router.navigateByUrl('/app/home');
-  //           } else {
-  //             this.router.navigateByUrl(actualUrl);
-  //           }
-  //         },
-  //         error: err => {
-  //           if (actualUrl.includes('app') || actualUrl.includes('check-session')) {
-  //             this.router.navigateByUrl('/login');
-  //           } else {
-  //             this.router.navigateByUrl(actualUrl);
-  //           }
-  //         },
-  //       });
-  //   }
+              this.sessionService
+                .getUserData()
+                .subscribe({
+                  next: res => console.log(res),
+                  error: err => this.responseService.onError(err, 'No se pudieron recuperar los datos')
+                })
+            },
+            error: err => this.responseService.onError(err, 'No se pudo verificar'),
+          })
+      } else {
+        console.log('not logged');
+        this.submit();
+      }
+    });
   }
+
+  private submit() {
+    const randomString = this.randomStringService.generate(128);
+    this.loginWithId(randomString);
+  }
+
+  private loginWithId(deviceId: string) {
+    this.sessionService
+      .login('sergio@dev.com', '12345678', deviceId)
+      .subscribe({
+        next: res => {
+          console.log(res)
+
+        },
+        error: err => this.responseService.onError(err, 'No se pudo iniciar sesión'),
+      });
+  }
+
 
 }

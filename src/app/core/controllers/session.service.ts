@@ -1,58 +1,117 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { tap } from 'rxjs';
+import { map, catchError, of } from 'rxjs';
+import { STORAGE_KEY_TOKEN, STORAGE_KEY_UNIQUE_DEVICE_ID, STORAGE_KEY_USER_EMAIL, STORAGE_KEY_USER_NAME } from '../constants/strings';
 import { HttpRequestService } from './http-request.service';
+import { StorageService } from './storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SessionService {
 
+  token = '';
   userEmail = '';
   userName = '';
 
   constructor(
     private httpService: HttpRequestService,
-    private httpClient: HttpClient,
+    private storageService: StorageService,
   ) { }
 
-  intializeProtection() {
-    return this.httpService
-      .customGet('http://127.0.0.1:8000/sanctum/csrf-cookie');
+  async isLoggedIn() {
+    const token = await this.storageService.get(STORAGE_KEY_TOKEN);
+    return !!token;
   }
 
-  login() {
+  login(email: string, password: string, deviceId: string) {
     return this.httpService
-      .post('/sanctum/token', { email: 'sergio@dev.com', password: '12345678', device_name: 'sergio PC' });
-  }
-
-  getUser(token: string) {
-    return this.httpClient
-      .post('http://127.0.0.1:8000/api/1', {}, { headers: new HttpHeaders({
-        Authorization: 'Bearer ' + token,
-      }) })
+      .post('/login', { email, password, device_name: deviceId })
       .pipe(
-        tap(res => {
-          console.log(res);
-          // const data = res.data;
-          // console.log(data)
-          // this.setUserData(data.email, data.name);
+        map(res => {
+          const data = res.data;
+
+          this.token = data.token;
+          this.userEmail = data.userEmail;
+          this.userName = data.userName;
+
+          this.storageService.set(STORAGE_KEY_UNIQUE_DEVICE_ID, deviceId);
+          this.storageService.set(STORAGE_KEY_TOKEN, data.token);
+          this.storageService.set(STORAGE_KEY_USER_EMAIL, data.userEmail);
+          this.storageService.set(STORAGE_KEY_USER_NAME, data.userName);
+
+          return true;
         })
       );
   }
 
-
-
-  setUserData(email: string, name: string) {
-    this.userEmail = email;
-    this.userName = name;
+  async setValuesFromStorage() {
+    this.token = await this.storageService.get(STORAGE_KEY_TOKEN);
+    this.userEmail = await this.storageService.get(STORAGE_KEY_USER_EMAIL);
+    this.userName = await this.storageService.get(STORAGE_KEY_USER_NAME);
   }
 
-  autehticated() {
-    return this.userEmail !== '' && this.userName !== '';
+  validToken() {
+    return this.httpService
+      .get('/valid-token')
+      .pipe(
+        catchError(error => {
+
+          this.clearStorage();
+          this.clearVariables();
+
+          console.log(error);
+
+          return of(false);
+        })
+      );
   }
 
-  cleanSession() {
+  getUserData() {
+    return this.httpService
+      .get('/user-data')
+      .pipe(
+        map(res => {
+          const data = res.data;
+
+          this.userEmail = data.userEmail;
+          this.userName = data.userName;
+
+          this.storageService.set(STORAGE_KEY_USER_EMAIL, data.userEmail);
+          this.storageService.set(STORAGE_KEY_USER_NAME, data.userName);
+
+          return true;
+        })
+      );
+  }
+
+  logout() {
+    return this.httpService
+      .get('/logout')
+      .pipe(
+        map(() => {
+          this.clearStorage();
+          this.clearVariables();
+          return true;
+        }),
+        catchError(error => {
+          this.clearStorage();
+          this.clearVariables();
+
+          console.log(error);
+
+          return of(false);
+        })
+      )
+  }
+
+  clearStorage() {
+    this.storageService.remove(STORAGE_KEY_TOKEN);
+    this.storageService.remove(STORAGE_KEY_USER_EMAIL);
+    this.storageService.remove(STORAGE_KEY_USER_NAME);
+  }
+
+  clearVariables() {
+    this.token = '';
     this.userEmail = '';
     this.userName = '';
   }
