@@ -1,0 +1,20 @@
+
+img {
+    align-items: center;
+    align-content: center;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
+.principal {
+    margin-top: 8%;
+}
+
+.txt-pwd:hover {
+    cursor: pointer;
+    text-decoration-line: underline;
+}
+.txt-pwd:active {
+    color: chocolate;
+}

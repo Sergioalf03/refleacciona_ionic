@@ -1,5 +1,52 @@
 
+<ion-content class="center">
+  <div class="principal col-md-6 col-xl-12 mr-auto mb-4">
+    <!--Header-->
+    <div class="pt-3 grey lighten-2">
+      <div align="center">
+          <img src="https://dglibre.com/wp-content/subidas/2008/09/abiword.svg" style="max-width: 100px; max-height: 64px;">
+      </div>
+    </div>
+    <!--Header-->
+  <form (ngSubmit)="btnLogin(formLogin)" #formLogin="ngForm">
+    <div class="card-body mx-2 mt-2">
+        <h1>Iniciar Sesión</h1>
+          <ion-item class="mt-4 txtInput">
+            <ion-label position="floating">Correo Electrónico</ion-label>
+            <ion-input [clearInput]="true"
+                        name="email"
+                        type="email"
+                        #email="ngModel"
+                        [(ngModel)]="user.email"
+                        placeholder="email@domain.com" 
+                        required
+                        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+            </ion-input>
+          </ion-item>
 
-<ion-content>
-  <h1>Iniciar Sesión</h1>
+          <ion-item  class="mt-2 txtInput">
+            <ion-label position="floating">Contraseña</ion-label>
+            <ion-input [clearInput]="true"
+                        type="password"
+                        name="password"
+                        #pwd="ngModel"
+                        [(ngModel)]="user.pwd"
+                        required>
+            </ion-input>
+          </ion-item>
+          <div class="d-flex flex-row-reverse mt-3" (click)="onRecuperar()">
+            <ion-label color="tertiary txt-pwd">¿Has olvidado tu contraseña? </ion-label>
+          </div>
+    </div>
+    <ion-row class="mt-3">
+      <ion-col>
+        <ion-button expand="full"(click)="onRegistrar()">REGISTRARME</ion-button>
+      </ion-col>
+
+      <ion-col>
+        <ion-button expand="full"type="submit">INGRESAR</ion-button>
+      </ion-col>
+    </ion-row>
+    </form>
+  </div>
 </ion-content>
