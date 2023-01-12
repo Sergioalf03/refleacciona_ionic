@@ -27,6 +27,7 @@
     "@capacitor/status-bar": "4.1.1",
     "@ionic-native/unique-device-id": "^4.20.0",
     "@ionic/angular": "^6.1.9",
+    "bootstrap": "^5.2.3",
     "@ionic/storage-angular": "^3.0.6",
     "ionicons": "^6.0.3",
     "randomstring": "^1.2.3",
