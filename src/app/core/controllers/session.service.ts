@@ -99,7 +99,8 @@ export class SessionService {
     return this.httpService
       .get('/logout')
       .pipe(
-        map(() => {
+        map((data) => {
+          console.log(data);
           this.clearStorage();
           this.clearVariables();
           this.router.navigateByUrl('/login');

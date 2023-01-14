@@ -27,16 +27,13 @@ export class AppComponent implements OnInit {
       // console.log(res)
 
       const logged = await this.sessionService.isLoggedIn();
-      // console.log(logged)
       if (logged) {
-        // console.log('logged');
         await this.sessionService.setValuesFromStorage();
         this.sessionService
           .validToken()
           .subscribe({
             next: res => {
-              this.responseService.onSuccessAndRedirect('/home','');
-              // console.log(res);
+              this.responseService.onSuccessAndRedirect('/home','/NA');
 
               this.sessionService
                 .getUserData()
