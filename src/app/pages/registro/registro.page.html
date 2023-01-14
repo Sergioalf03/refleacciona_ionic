@@ -33,7 +33,11 @@
         </ion-item>
         <ion-item class="mt-2 txtInput">
           <ion-label position="stacked">Número de teléfono</ion-label>
-          <ion-input  type="tel" 
+          <ion-input  name="phone_number"
+                      type="tel" 
+                      #phone_number="ngModel"
+                      [(ngModel)]="user.phone_number"
+                      required
                       placeholder="888-888-8888">
           </ion-input>
         </ion-item>
@@ -55,8 +59,8 @@
             <ion-input [clearInput]="true"
                         type="password"
                         name="password"
-                        #pwd="ngModel"
-                        [(ngModel)]="user.pwd"
+                        #password="ngModel"
+                        [(ngModel)]="user.password"
                         required>
             </ion-input>
           </ion-item>
@@ -65,7 +69,10 @@
       <ion-col>
       </ion-col>
       <ion-col>
-        <ion-button expand="full"type="submit">GUARDAR</ion-button>
+        <ion-button expand="full"type="submit">
+          {{txtButtonEnter}}
+          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" [hidden]="!btnLoading"></span>
+        </ion-button>
       </ion-col>
     </ion-row>
     </form>

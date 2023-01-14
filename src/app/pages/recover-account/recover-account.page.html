@@ -9,9 +9,9 @@
 
 <ion-content class="center">
   <div class="principal col-md-6 col-xl-12 mr-auto mb-4">
-  <form (ngSubmit)="onRecuperar(formRecuperar)" #formRecuperar="ngForm">
+  <form (ngSubmit)="onRecuperar()" #formRecuperar="ngForm">
     <div class="card-body mx-2 mt-2">
-        <h1>Confirmación de código</h1>
+        <h1>Generar código</h1>
 
         <ion-label>Para obtener un código de verificación, introduce tu dirección de correo eléctronico</ion-label>
           <ion-item class="mt-4 txtInput">
@@ -19,13 +19,14 @@
             <ion-input [clearInput]="true"
                         name="email"
                         type="email"
-                        #email="ngModel"
-                        [(ngModel)]="user.email"
-                        placeholder="email@domain.com" 
+                        #emailModel="ngModel"
+                        [(ngModel)]="email"
+                        placeholder="email@domain.com"
                         required
                         pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
             </ion-input>
           </ion-item>
+
           <div class="d-flex flex-row-reverse mt-3" >
             <ion-button expand="full"type="submit">CONTINUAR</ion-button>
             <!-- <ion-label color="tertiary txt-pwd">¿Has olvidado tu contraseña? </ion-label> -->

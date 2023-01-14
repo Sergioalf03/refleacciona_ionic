@@ -8,9 +8,9 @@
 
 <ion-content class="center">
   <div class="principal col-md-6 col-xl-12 mr-auto mb-4">
-  <form (ngSubmit)="onSendCode(formSendCode)" #formSendCode="ngForm">
+  <form (ngSubmit)="onSendCode()" #formSendCode="ngForm">
     <div class="card-body mx-2 mt-2">
-        <h1>Recuperación de la cuenta</h1>
+        <h1>Cambio de contraseña</h1>
 
         <ion-label>Introduce el código que se te envio a tu correo electrónico</ion-label>
           <ion-item class="mt-4 txtInput txt-code">
@@ -19,10 +19,23 @@
                         name="code"
                         type="text"
                         #emcodeail="ngModel"
-                        [(ngModel)]="user.code"
+                        [(ngModel)]="code"
                         required>
             </ion-input>
           </ion-item>
+
+          <ion-item class="mt-4 txtInput">
+            <ion-label position="floating">Nueva Contraseña</ion-label>
+            <ion-input [clearInput]="true"
+                        type="password"
+                        name="newpwd"
+                        #newpwd="ngModel"
+                        [(ngModel)]="password"
+                        placeholder="email@domain.com"
+                        required>
+            </ion-input>
+          </ion-item>
+
           <div class="d-flex flex-row-reverse mt-3" >
             <ion-button expand="full"type="submit">CONTINUAR</ion-button>
             <!-- <ion-label color="tertiary txt-pwd">¿Has olvidado tu contraseña? </ion-label> -->

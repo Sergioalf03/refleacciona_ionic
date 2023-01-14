@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Route, Router } from '@angular/router';
+import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
+import { RandomStringService } from 'src/app/core/controllers/random-string.service';
+import { SessionService } from 'src/app/core/controllers/session.service';
 
 @Component({
   selector: 'app-login',
@@ -10,7 +13,15 @@ import { Route, Router } from '@angular/router';
 export class LoginPage implements OnInit {
 
   user: any = {};
-  constructor( private router:Router) { }
+  txtButtonEnter = 'INGRESAR';
+  btnLoading: boolean = false;
+  constructor( private router:Router,
+              private sessionService: SessionService,
+              private randomService: RandomStringService,
+              private httpResponseService: HttpResponseService) { 
+
+                this.btnLoading = false;
+              }
 
   ngOnInit() {
   }
@@ -20,15 +31,25 @@ export class LoginPage implements OnInit {
   }
 
 
-  btnLogin( formLogin: NgForm ) {
-    console.log(formLogin.value);
-
+  onLogin( formLogin: NgForm ) {
     if (formLogin.invalid) { return; }
-    
-    formLogin.reset();
-    this.router.navigateByUrl('/home');
-   
+    this.txtButtonEnter = 'Cargando...';
+    this.btnLoading = true;
 
+    this.user['deviceId'] = this.randomService.generate(128);
+    this.sessionService.login(this.user.email,this.user.password,this.user['deviceId'])
+    .subscribe({
+      next: (res:any) => {
+        this.httpResponseService.onSuccessAndRedirect('/home','Inicio de sesión correcto');
+      },
+      error: err => {
+        this.httpResponseService.onError(err, '');
+        this.txtButtonEnter = 'INGRESAR';
+        this.btnLoading = false;
+      },
+    });
+    // formLogin.reset();
+    // this.router.navigateByUrl('/home');
   }
 
   onRegistrar() {

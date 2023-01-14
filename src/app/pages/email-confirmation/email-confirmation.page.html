@@ -1,0 +1,34 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text="" ></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="principal col-md-6 col-xl-12 mr-auto mb-4">
+    <form (ngSubmit)="onSendCode()" #formSendCode="ngForm">
+      <div class="card-body mx-2 mt-2">
+          <h1>Confirmación de correo</h1>
+
+          <ion-label>Introduce el código que se te envio a tu correo electrónico</ion-label>
+
+            <ion-item class="mt-4 txtInput txt-code">
+              <ion-label position="floating">Código de verificación</ion-label>
+              <ion-input [clearInput]="true"
+                          name="code"
+                          type="tel"
+                          #emcodeail="ngModel"
+                          [(ngModel)]="code"
+                          required>
+              </ion-input>
+            </ion-item>
+
+            <div class="d-flex flex-row-reverse mt-3" >
+              <ion-button expand="full"type="submit">ACEPTAR</ion-button>
+            </div>
+      </div>
+    </form>
+  </div>
+</ion-content>

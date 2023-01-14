@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { map, catchError, of } from 'rxjs';
 import { STORAGE_KEY_TOKEN, STORAGE_KEY_UNIQUE_DEVICE_ID, STORAGE_KEY_USER_EMAIL, STORAGE_KEY_USER_NAME } from '../constants/strings';
 import { HttpRequestService } from './http-request.service';
@@ -16,10 +17,11 @@ export class SessionService {
   constructor(
     private httpService: HttpRequestService,
     private storageService: StorageService,
+    private router: Router
   ) { }
 
-  async isLoggedIn() {
-    const token = await this.storageService.get(STORAGE_KEY_TOKEN);
+   async isLoggedIn() {
+    const token =  await this.storageService.get(STORAGE_KEY_TOKEN);
     return !!token;
   }
 
@@ -42,6 +44,10 @@ export class SessionService {
           return true;
         })
       );
+  }
+  register(body: any) {
+    return this.httpService
+    .post('/register', {name:body.name, email:body.email,phone_number: body.phone_number, password:body.password, key: body.key})
   }
 
   async setValuesFromStorage() {
@@ -91,6 +97,7 @@ export class SessionService {
         map(() => {
           this.clearStorage();
           this.clearVariables();
+          this.router.navigateByUrl('/login');
           return true;
         }),
         catchError(error => {

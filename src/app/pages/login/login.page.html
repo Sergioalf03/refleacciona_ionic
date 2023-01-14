@@ -8,7 +8,7 @@
       </div>
     </div>
     <!--Header-->
-  <form (ngSubmit)="btnLogin(formLogin)" #formLogin="ngForm">
+  <form (ngSubmit)="onLogin(formLogin)" #formLogin="ngForm">
     <div class="card-body mx-2 mt-2">
         <h1>Iniciar Sesión</h1>
           <ion-item class="mt-4 txtInput">
@@ -29,8 +29,8 @@
             <ion-input [clearInput]="true"
                         type="password"
                         name="password"
-                        #pwd="ngModel"
-                        [(ngModel)]="user.pwd"
+                        #password="ngModel"
+                        [(ngModel)]="user.password"
                         required>
             </ion-input>
           </ion-item>
@@ -44,7 +44,10 @@
       </ion-col>
 
       <ion-col>
-        <ion-button expand="full"type="submit">INGRESAR</ion-button>
+        <ion-button expand="full"type="submit">
+          {{txtButtonEnter}}
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" [hidden]="!btnLoading"></span>
+        </ion-button>
       </ion-col>
     </ion-row>
     </form>
