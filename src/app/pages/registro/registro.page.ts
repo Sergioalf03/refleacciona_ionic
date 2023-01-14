@@ -29,10 +29,9 @@ export class RegistroPage implements OnInit {
   }
 
   onRegister( formRegister: NgForm ) {
+    if (formRegister.invalid) { return; }
     this.txtButtonEnter = 'REGISTRANDO...';
     this.btnLoading = true;
-
-    if (formRegister.invalid) { return; }
 
     this.user['key'] = this.randomService.generate(128);
     this.sessionService
@@ -51,6 +50,7 @@ export class RegistroPage implements OnInit {
       });
   }
 
+  
   resetForm(form?: NgForm) {
     if(form){form.reset();}
 

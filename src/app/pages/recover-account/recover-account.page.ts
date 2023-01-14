@@ -20,7 +20,9 @@ export class RecoverAccountPage implements OnInit {
   ngOnInit() {
   }
 
-  onRecuperar() {
+  onRecuperar(formRegister: NgForm) {
+    if (formRegister.invalid) { return; }
+
     this.authService
       .resetPassword(this.email)
       .subscribe({
