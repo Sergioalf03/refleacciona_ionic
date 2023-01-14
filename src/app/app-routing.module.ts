@@ -18,7 +18,7 @@ const routes: Routes = [
   {
     path: 'register',
     loadChildren: () => import('./pages/registro/registro.module').then( m => m.RegistroPageModule),
-    canActivate: [AutoLoginGuard]
+    // canActivate: [AutoLoginGuard]
   },
   {
     path: 'home',
@@ -28,22 +28,22 @@ const routes: Routes = [
   {
     path: 'recover',
     loadChildren: () => import('./pages/recover-account/recover-account.module').then( m => m.RecoverAccountPageModule),
-    canActivate: [AutoLoginGuard]
+    // canActivate: [AutoLoginGuard]
   },
   {
     path: 'code',
     loadChildren: () => import('./pages/send-code-recover/send-code-recover.module').then( m => m.SendCodeRecoverPageModule),
-    canActivate: [AutoLoginGuard]
+    // canActivate: [AutoLoginGuard]
   },
   {
     path: 'change-password',
     loadChildren: () => import('./pages/change-password/change-password.module').then( m => m.ChangePasswordPageModule),
-    canActivate: [AutoLoginGuard]
+    // canActivate: [AutoLoginGuard]
   },
   {
     path: 'email-confirmation',
     loadChildren: () => import('./pages/email-confirmation/email-confirmation.module').then( m => m.EmailConfirmationPageModule),
-    canActivate: [AutoLoginGuard]
+    // canActivate: [AutoLoginGuard]
   }
 
 

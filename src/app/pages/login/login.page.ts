@@ -41,11 +41,12 @@ export class LoginPage implements OnInit {
     .subscribe({
       next: (res:any) => {
         this.httpResponseService.onSuccessAndRedirect('/home','Inicio de sesión correcto');
+        this.resetForm(formLogin);
       },
       error: err => {
         this.httpResponseService.onError(err, '');
-        this.txtButtonEnter = 'INGRESAR';
-        this.btnLoading = false;
+        
+        this.resetForm();
       },
     });
     // formLogin.reset();
@@ -54,6 +55,13 @@ export class LoginPage implements OnInit {
 
   onRegistrar() {
     this.router.navigateByUrl('/register');
+  }
+
+  resetForm(form?: NgForm) {
+    if(form){form.reset();}
+
+    this.txtButtonEnter = 'INGRESAR';
+    this.btnLoading = false;
   }
 
 }
