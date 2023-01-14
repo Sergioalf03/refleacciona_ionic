@@ -19,9 +19,11 @@ export class HttpResponseService {
   }
 
   onSuccessAndRedirect(redirectTo: string, message: string) {
-    if(message === '/NA'){return;}
-    this.toastService.showSuccessToast(message);
     this.router.navigateByUrl(redirectTo);
+    if(message === '/NA' ){
+      return;
+    } 
+      this.toastService.showSuccessToast(message);
   }
 
   onError(error: any, message: string) {
