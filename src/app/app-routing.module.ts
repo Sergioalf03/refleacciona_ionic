@@ -4,7 +4,7 @@ import { AuthGuard } from './core/guards/auth.guard';
 import { AutoLoginGuard } from './core/guards/auto-login.guard';
 
 const routes: Routes = [
- 
+
   {
     path: '',
     redirectTo: 'login',
@@ -44,9 +44,15 @@ const routes: Routes = [
     path: 'email-confirmation',
     loadChildren: () => import('./pages/email-confirmation/email-confirmation.module').then( m => m.EmailConfirmationPageModule),
     // canActivate: [AutoLoginGuard]
-  }
-
-
+  },
+  {
+    path: 'auditory-form/:id',
+    loadChildren: () => import('./pages/auditory-form/auditory.module').then( m => m.AuditoryFormPageModule)
+  },
+  {
+    path: 'auditory-list',
+    loadChildren: () => import('./pages/auditory-list/auditory-list.module').then( m => m.AuditoryListPageModule)
+  },
 ];
 
 @NgModule({
