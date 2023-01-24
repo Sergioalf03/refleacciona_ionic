@@ -17,7 +17,7 @@ const routes: Routes = [
   },
   {
     path: 'register',
-    loadChildren: () => import('./pages/registro/registro.module').then( m => m.RegistroPageModule),
+    loadChildren: () => import('./pages/register/register.module').then( m => m.RegisterPageModule),
     // canActivate: [AutoLoginGuard]
   },
   {
