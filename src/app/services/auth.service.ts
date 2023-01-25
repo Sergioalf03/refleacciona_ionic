@@ -6,7 +6,7 @@ import { HttpRequestService } from '../core/controllers/http-request.service';
 })
 export class AuthService {
 
-  userId = '';
+  email = '';
 
   constructor(
     private httpService: HttpRequestService
@@ -25,12 +25,8 @@ export class AuthService {
     });
   }
 
-  changePassword(id: string, code: string, password: string) {
-    return this.httpService.post('/change-password', {
-      id,
-      token: code,
-      password,
-    });
+  changePassword(data: any) {
+    return this.httpService.post('/change-password', data);
   }
 
 }

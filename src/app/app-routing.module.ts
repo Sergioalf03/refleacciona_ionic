@@ -31,7 +31,7 @@ const routes: Routes = [
     // canActivate: [AutoLoginGuard]
   },
   {
-    path: 'code',
+    path: 'code/:withMail',
     loadChildren: () => import('./pages/send-code-recover/send-code-recover.module').then( m => m.SendCodeRecoverPageModule),
     // canActivate: [AutoLoginGuard]
   },

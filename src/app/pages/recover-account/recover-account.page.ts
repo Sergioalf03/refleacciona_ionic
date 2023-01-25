@@ -46,14 +46,16 @@ export class RecoverAccountPage implements OnInit {
     if (this.validFormService.isValid(this.form, [])) {
       this.submitLoading = true;
 
+      const email = this.form.controls['email'].value;
+
       this.authService
-        .resetPassword(this.email)
+        .resetPassword(email)
         .subscribe({
           next: res => {
             console.log(res.data.token);
             this.submitLoading = false;
-            this.authService.userId = res.data.id;
-            this.responseService.onSuccessAndRedirect('/code', 'Solicitud recibida');
+            this.authService.email = email;
+            this.responseService.onSuccessAndRedirect('/code/0', 'Solicitud recibida');
           },
           error: err => {
             this.responseService.onError(err, 'No se pudo procesar la solicitud');
@@ -61,6 +63,10 @@ export class RecoverAccountPage implements OnInit {
           }
         });
     }
+  }
+
+  alreadyHadCode() {
+    this.router.navigateByUrl('/code/1');
   }
 
   onGoingHome() {

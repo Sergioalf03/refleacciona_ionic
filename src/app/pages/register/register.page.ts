@@ -72,7 +72,7 @@ export class RegisterPage implements OnInit {
         .subscribe({
           next: (res:any) => {
             console.log(res.data.token);
-            this.authService.userId = res.data.id;
+            // this.authService.userId = res.data.id;
             this.httpResponseService.onSuccessAndRedirect('/email-confirmation','Usuario registrado correctamente.');
             this.resetForm();
           },
@@ -83,7 +83,7 @@ export class RegisterPage implements OnInit {
         });
     }
   }
-  
+
   resetForm() {
     this.form.reset();
     this.btnLoading = false;
