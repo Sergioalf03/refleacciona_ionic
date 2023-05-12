@@ -7,13 +7,15 @@ import { IonicModule } from '@ionic/angular';
 import { ChangePasswordPageRoutingModule } from './change-password-routing.module';
 
 import { ChangePasswordPage } from './change-password.page';
+import { HeaderButtonsModule } from 'src/app/components/header-buttons/header-buttons.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    ChangePasswordPageRoutingModule
+    ChangePasswordPageRoutingModule,
+    HeaderButtonsModule,
   ],
   declarations: [ChangePasswordPage]
 })

@@ -1,0 +1,83 @@
+<ion-content >
+  <div class="d-flex flex-row-reverse mt-3 me-3" >
+    <ion-button size="small" (click)="onGoingHome()">
+      <ion-icon slot="icon-only" name="home-sharp"></ion-icon>
+    </ion-button>
+  </div>
+
+  <form *ngIf="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+
+    <div class="mx-2 mt-2">
+      <h1>{{formActionText}} Auditoría</h1>
+
+
+
+      <ion-item class="mt-2 txtInput">
+        <ion-label position="floating">*Calle (Entre qué calles)</ion-label>
+        <ion-input
+          [clearInput]="true"
+          formControlName="street"
+          type="text"
+          placeholder="Escriba la calle"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item class="mt-2 txtInput">
+        <ion-label position="floating">Tipo funcional de calle</ion-label>
+        <ion-input
+          [clearInput]="true"
+          formControlName="type"
+          type="text"
+          placeholder="Escriba el tipo"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item class="mt-2 txtInput">
+        <ion-label position="floating">Sentidos (Carriles por sentido)</ion-label>
+        <ion-input
+          [clearInput]="true"
+          formControlName="way"
+          type="text"
+          placeholder="Escriba el sentido"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item class="mt-2 txtInput">
+        <ion-label position="floating">Fecha de realización</ion-label>
+        <ion-input
+          [clearInput]="true"
+          formControlName="date"
+          type="date"
+          placeholder="Seleccione la fecha"
+        ></ion-input>
+      </ion-item>
+
+      <ion-input
+        formControlName="lat"
+        type="hidden"
+      ></ion-input>
+
+      <ion-input
+        formControlName="lng"
+        type="hidden"
+      ></ion-input>
+
+      <ion-button expand="full" color="light" class="mt-2" (click)="onAddLocation()">UBICACIÓN</ion-button>
+
+      <div class="row mt-5">
+        <div class="col">
+          <ion-button color="danger" expand="full" (click)="onGoingHome()">
+            CANCELAR
+          </ion-button>
+        </div>
+        <div class="col">
+          <ion-button [disabled]="submitLoading" expand="full"type="submit">
+            {{SubmitButtonText}}
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" [hidden]="!submitLoading"></span>
+          </ion-button>
+        </div>
+      </div>
+
+    </div>
+  </form>
+</ion-content>

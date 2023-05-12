@@ -24,31 +24,29 @@ export class AppComponent implements OnInit {
     this.storage.create()
     .then(async storage => {
       const res = await this.storageService.init(storage);
-      console.log(res)
+      // console.log(res)
 
       const logged = await this.sessionService.isLoggedIn();
-      console.log(logged)
       if (logged) {
-        console.log('logged');
         await this.sessionService.setValuesFromStorage();
         this.sessionService
           .validToken()
           .subscribe({
             next: res => {
-              console.log(res);
+              this.responseService.onSuccessAndRedirect('/home','/NA');
 
               this.sessionService
                 .getUserData()
                 .subscribe({
-                  next: res => console.log(res),
+                  next: res => this.responseService.onSuccess('/NA'),
                   error: err => this.responseService.onError(err, 'No se pudieron recuperar los datos')
                 })
             },
             error: err => this.responseService.onError(err, 'No se pudo verificar'),
           })
       } else {
-        console.log('not logged');
-        this.submit();
+        // console.log('not logged');
+        // this.submit();
       }
     });
   }
@@ -63,7 +61,7 @@ export class AppComponent implements OnInit {
       .login('sergio@dev.com', '12345678', deviceId)
       .subscribe({
         next: res => {
-          console.log(res)
+          // console.log(res)
 
         },
         error: err => this.responseService.onError(err, 'No se pudo iniciar sesión'),

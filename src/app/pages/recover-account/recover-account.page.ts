@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { NgForm } from '@angular/forms';
+import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
+import { ValidFormService } from 'src/app/core/controllers/valid-form.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-recover-account',
@@ -9,15 +12,65 @@ import { Router } from '@angular/router';
 })
 export class RecoverAccountPage implements OnInit {
 
-  user:any = {};
-  constructor( private router: Router) { }
+  email = '';
+  submitLoading = false;
+
+  form!: FormGroup;
+
+  constructor(
+    private authService: AuthService,
+    private validFormService: ValidFormService,
+    private responseService: HttpResponseService,
+    private router: Router,
+  ) { }
+
+  private initForm() {
+    this.form = new FormGroup({
+      email: new FormControl('', {
+        validators: [
+          Validators.required,
+          Validators.email,
+        ],
+      })
+    })
+  }
 
   ngOnInit() {
   }
 
-  onRecuperar(formRecuperar: NgForm) {
+  ionViewWillEnter() {
+    this.initForm();
+  }
 
-    this.router.navigateByUrl('/code');
+  onSubmit() {
+    if (this.validFormService.isValid(this.form, [])) {
+      this.submitLoading = true;
+
+      const email = this.form.controls['email'].value;
+
+      this.authService
+        .resetPassword(email)
+        .subscribe({
+          next: res => {
+            console.log(res.data.token);
+            this.submitLoading = false;
+            this.authService.email = email;
+            this.responseService.onSuccessAndRedirect('/code/0', 'Solicitud recibida');
+          },
+          error: err => {
+            this.responseService.onError(err, 'No se pudo procesar la solicitud');
+            this.submitLoading = false;
+          }
+        });
+    }
+  }
+
+  alreadyHadCode() {
+    this.router.navigateByUrl('/code/1');
+  }
+
+  onGoingHome() {
+    this.router.navigateByUrl('/login');
   }
 
 }

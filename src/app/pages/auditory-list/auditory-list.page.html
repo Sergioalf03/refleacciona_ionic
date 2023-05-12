@@ -1,0 +1,23 @@
+<ion-content >
+  <div class="d-flex flex-row-reverse mt-3 me-3" >
+    <ion-button size="small" (click)="onGoingHome()">
+      <ion-icon slot="icon-only" name="home-sharp"></ion-icon>
+    </ion-button>
+  </div>
+
+  <div class="mx-2 mt-2">
+    <h1>Auditorías</h1>
+
+    <ion-item *ngFor="let aud of auditories" class="mt-2 txtInput">
+      <ion-label>
+        <h2 class="text-start">Calle: {{ aud.street }}</h2>
+        <p>Fecha: {{ aud.date }}</p>
+      </ion-label>
+
+      <ion-button (click)="onEdit(aud.id)" slot="end" size="small">
+        <ion-icon slot="icon-only" name="create-sharp"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </div>
+
+</ion-content>

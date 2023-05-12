@@ -1,36 +1,47 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button text="" ></ion-back-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
-
-
 <ion-content class="center">
-  <div class="principal col-md-6 col-xl-12 mr-auto mb-4">
-  <form (ngSubmit)="onRecuperar(formRecuperar)" #formRecuperar="ngForm">
-    <div class="card-body mx-2 mt-2">
-        <h1>Confirmación de código</h1>
+  <app-header-buttons
+    backUrl="/login"
+    homeUrl="/login"
+  ></app-header-buttons>
 
-        <ion-label>Para obtener un código de verificación, introduce tu dirección de correo eléctronico</ion-label>
-          <ion-item class="mt-4 txtInput">
-            <ion-label position="floating">Correo Electrónico</ion-label>
-            <ion-input [clearInput]="true"
-                        name="email"
-                        type="email"
-                        #email="ngModel"
-                        [(ngModel)]="user.email"
-                        placeholder="email@domain.com" 
-                        required
-                        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
-            </ion-input>
-          </ion-item>
-          <div class="d-flex flex-row-reverse mt-3" >
-            <ion-button expand="full"type="submit">CONTINUAR</ion-button>
-            <!-- <ion-label color="tertiary txt-pwd">¿Has olvidado tu contraseña? </ion-label> -->
+  <div class="principal col-md-6 col-xl-12 mr-auto mb-4">
+  <form *ngIf="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="card-body mx-2 mt-2">
+        <h1>Generar código</h1>
+
+        <p class="text-center">Enviaremos un código a tu correo</p>
+
+        <ion-item class="mt-4 txtInput">
+          <ion-label position="floating">Correo Electrónico</ion-label>
+          <ion-input
+            [autofocus]="true"
+            [clearInput]="true"
+            [autocomplete]="true"
+            formControlName="email"
+            type="email"
+            placeholder="email@domain.com">
+          </ion-input>
+        </ion-item>
+
+        <div class="d-flex flex-row-reverse mt-3 me-3">
+          <ion-label color="tertiary txt-pwd" (click)="alreadyHadCode()">Ya tengo un código</ion-label>
+        </div>
+
+        <div class="row mt-5">
+          <div class="col">
+            <ion-button color="danger" expand="full" (click)="onGoingHome()">
+              CANCELAR
+            </ion-button>
           </div>
-    </div>
+          <div class="col">
+            <ion-button [disabled]="submitLoading" expand="full"type="submit">
+              CONTINUAR
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" [hidden]="!submitLoading"></span>
+            </ion-button>
+          </div>
+        </div>
+
+      </div>
     </form>
   </div>
 </ion-content>
