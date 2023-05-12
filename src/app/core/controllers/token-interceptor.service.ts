@@ -13,7 +13,7 @@ export class TokenInterceptorService implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler) {
       const token = this.sessionService.token;
-    console.log(token, token === '')
+    // console.log(token, token === '')
 
       if (token === '') {
         return next.handle(req);

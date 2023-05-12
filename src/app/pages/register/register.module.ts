@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { RecoverAccountPageRoutingModule } from './recover-account-routing.module';
+import { RegisterPageRoutingModule } from './register-routing.module';
 
-import { RecoverAccountPage } from './recover-account.page';
+import { RegisterPage } from './register.page';
 import { HeaderButtonsModule } from 'src/app/components/header-buttons/header-buttons.module';
 
 @NgModule({
@@ -14,9 +14,9 @@ import { HeaderButtonsModule } from 'src/app/components/header-buttons/header-bu
     CommonModule,
     ReactiveFormsModule,
     IonicModule,
-    RecoverAccountPageRoutingModule,
+    RegisterPageRoutingModule,
     HeaderButtonsModule,
   ],
-  declarations: [RecoverAccountPage]
+  declarations: [RegisterPage]
 })
-export class RecoverAccountPageModule {}
+export class RegisterPageModule {}
