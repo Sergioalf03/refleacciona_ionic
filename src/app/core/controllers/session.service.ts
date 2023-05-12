@@ -45,6 +45,7 @@ export class SessionService {
         })
       );
   }
+
   register(body: any) {
     return this.httpService
     .post('/register', {name:body.name, email:body.email,phone_number: body.phone_number, password:body.password, key: body.key})
@@ -86,6 +87,16 @@ export class SessionService {
           this.storageService.set(STORAGE_KEY_USER_NAME, data.userName);
 
           return true;
+        })
+      );
+  }
+
+  getProfileFormData() {
+    return this.httpService
+      .get('/user-form')
+      .pipe(
+        map(res => {
+          return res.data;
         })
       );
   }

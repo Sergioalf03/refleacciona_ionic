@@ -37,13 +37,25 @@ export class ProfilePage implements OnInit {
       email: new FormControl('', {
         validators: [Validators.required],
       }),
-      password: new FormControl('', {
-        validators: [Validators.required],
-      }),
     })
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.sessionService
+      .getProfileFormData()
+      .subscribe({
+        next: res => this.setData(res),
+        error: err => console.log(err)
+      })
+  }
+
+  private setData(data: any) {
+    this.form.setValue({
+      name: data.userName,
+      phoneNumber: data.userPhone,
+      email: data.userEmail,
+    });
+  }
 
   ionViewWillEnter() {
     this.initForm();
