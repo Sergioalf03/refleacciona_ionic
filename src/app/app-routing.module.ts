@@ -52,7 +52,11 @@ const routes: Routes = [
   {
     path: 'auditory-list',
     loadChildren: () => import('./pages/auditory-list/auditory-list.module').then( m => m.AuditoryListPageModule)
+  },  {
+    path: 'profile',
+    loadChildren: () => import('./pages/profile/profile.module').then( m => m.ProfilePageModule)
   },
+
 ];
 
 @NgModule({
