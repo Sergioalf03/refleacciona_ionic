@@ -45,9 +45,23 @@ export class SessionService {
         })
       );
   }
+
   register(body: any) {
     return this.httpService
-    .post('/register', {name:body.name, email:body.email,phone_number: body.phone_number, password:body.password, key: body.key})
+      .post('/register', {name:body.name, email:body.email,phone_number: body.phone_number, password:body.password, key: body.key})
+  }
+
+  update(body: any) {
+    return this.httpService
+      .post('/update-user', {name:body.name, email:body.email,phone_number: body.phone_number, password:body.password, key: body.key})
+  }
+
+  uploadLogo(blob: any) {
+    let formData = new FormData();
+    formData.append('image', blob);
+
+    return this.httpService
+      .post('/update-logo', formData)
   }
 
   async setValuesFromStorage() {
@@ -86,6 +100,16 @@ export class SessionService {
           this.storageService.set(STORAGE_KEY_USER_NAME, data.userName);
 
           return true;
+        })
+      );
+  }
+
+  getProfileFormData() {
+    return this.httpService
+      .get('/user-form')
+      .pipe(
+        map(res => {
+          return res.data;
         })
       );
   }
