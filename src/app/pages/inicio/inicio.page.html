@@ -1,8 +1,27 @@
 
 <ion-content class="center">
-  <div class="d-flex flex-row-reverse mt-3 me-3" (click)="onLogout()">
-    <ion-label color="tertiary txt-pwd">Salir </ion-label>
+  <div class="row mt-2 mx-0">
+    <div class="col text-end">
+      <ion-button id="click-trigger" size="small">
+        <ion-icon slot="icon-only" name="person"></ion-icon>
+      </ion-button>
+      <ion-popover trigger="click-trigger" [dismissOnSelect]="true" triggerAction="click">
+        <ng-template>
+          <ion-content>
+            <ion-list lines="none">
+              <ion-item button routerLink="/profile">
+                <ion-label>Usuario</ion-label>
+              </ion-item>
+              <ion-item button (click)="onLogout()">
+                <ion-label>Salir</ion-label>
+              </ion-item>
+            </ion-list>
+          </ion-content>
+        </ng-template>
+      </ion-popover>
+    </div>
   </div>
+
   <div class="col-md-6 col-xl-12 mr-auto mb-4 mt-4">
     <h1>Módulos</h1>
     <!-- <ion-card>
@@ -51,7 +70,7 @@
         <ion-button class="btn-right">
           <ion-icon name="add-outline"></ion-icon>
         </ion-button>
-        <ion-card-title><strong>Velocidad</strong></ion-card-title>
+        <ion-card-title><strong>Cinturones</strong></ion-card-title>
       </ion-card-header>
       <!-- <ion-card-content>
         Esta encuesta contiene información de primera mano
@@ -65,39 +84,12 @@
         <ion-button class="btn-right">
           <ion-icon name="add-outline"></ion-icon>
         </ion-button>
-        <ion-card-title><strong>Conteo de flujo</strong></ion-card-title>
+        <ion-card-title><strong>Cascos</strong></ion-card-title>
       </ion-card-header>
       <!-- <ion-card-content>
         Esta encuesta contiene información de primera mano
       </ion-card-content> -->
     </ion-card>
 
-    <ion-card>
-      <ion-card-header>
-        <ion-card-subtitle>Creado: 12 de Enero 2023</ion-card-subtitle>
-        <ion-button class="btn-right" fill="outline" >Ver</ion-button>
-        <ion-button class="btn-right">
-          <ion-icon name="add-outline"></ion-icon>
-        </ion-button>
-        <ion-card-title><strong>Pasajeros</strong></ion-card-title>
-      </ion-card-header>
-      <!-- <ion-card-content>
-        Esta encuesta contiene información de primera mano
-      </ion-card-content> -->
-    </ion-card>
-
-    <ion-card>
-      <ion-card-header>
-        <ion-card-subtitle>Creado: 13 de Enero 2023</ion-card-subtitle>
-        <ion-button class="btn-right" fill="outline" >Ver</ion-button>
-        <ion-button class="btn-right">
-          <ion-icon name="add-outline"></ion-icon>
-        </ion-button>
-        <ion-card-title><strong>Peatones</strong></ion-card-title>
-      </ion-card-header>
-      <!-- <ion-card-content>
-        Esta encuesta contiene información de primera mano
-      </ion-card-content> -->
-    </ion-card>
   </div>
 </ion-content>

@@ -1,0 +1,82 @@
+<ion-content >
+  <app-header-buttons
+    backUrl="/home"
+    homeUrl="/home"
+  ></app-header-buttons>
+
+  <div class=" principal col-md-6 col-xl-12 mr-auto mb-4">
+
+    <form *ngIf="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="card-body mx-2 mt-2">
+          <h1>Mis Datos</h1>
+
+          <ion-item class="mt-4 txtInput">
+            <ion-label position="stacked">Nombre completo</ion-label>
+
+            <ion-input
+              [clearInput]="true"
+              formControlName="name"
+              type="text"
+              placeholder="Escriba su nombre"
+            ></ion-input>
+
+          </ion-item>
+
+          <ion-item class="mt-2 txtInput">
+
+            <ion-label position="stacked">Número de teléfono</ion-label>
+
+            <ion-input
+              [clearInput]="true"
+              formControlName="phoneNumber"
+              type="tel"
+              placeholder="8888888888"
+            ></ion-input>
+
+          </ion-item>
+
+          <ion-item class="mt-2 txtInput">
+
+            <ion-label position="stacked">Correo Electrónico</ion-label>
+
+            <ion-input
+              [clearInput]="true"
+              formControlName="email"
+              type="email"
+              placeholder="email@dominio.com"
+            ></ion-input>
+
+          </ion-item>
+      </div>
+
+
+
+      <ion-row *ngIf="ImageSrc" class="mt-3">
+        <ion-col>
+          <ion-img [src]="ImageSrc"></ion-img>
+        </ion-col>
+      </ion-row>
+      <ion-row class="mt-3">
+        <ion-col>
+          <ion-button (click)="onSelectPhoto()" expand="full" type="button">
+            {{!ImageSrc ? 'SELECCIONAR LOGO' : 'CAMBIAR LOGO' }}
+          </ion-button>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="mt-3">
+        <ion-col>
+          <ion-button color="danger" expand="full" (click)="onGoingHome()">
+            CANCELAR
+          </ion-button>
+        </ion-col>
+        <ion-col>
+          <ion-button [disabled]="btnLoading" expand="full" type="submit">
+            ACTUALIZAR
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" [hidden]="!btnLoading"></span>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </form>
+  </div>
+</ion-content>
