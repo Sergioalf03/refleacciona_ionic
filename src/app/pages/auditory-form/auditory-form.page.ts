@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
+import { PhotoService } from 'src/app/core/controllers/photo.service';
 import { ValidFormService } from 'src/app/core/controllers/valid-form.service';
 import { AuditoryService } from 'src/app/services/auditory.service';
 
@@ -21,12 +22,16 @@ export class AuditoryFormPage implements OnInit {
 
   form!: FormGroup;
 
+  ImageSrc:any = [];
+  ListPhotos: any = 10;
+
   constructor(
     private auditoryService: AuditoryService,
     private router: Router,
     private route: ActivatedRoute,
     private validFormService: ValidFormService,
     private responseService: HttpResponseService,
+    private photoService: PhotoService,
   ) { }
 
   private initForm() {
@@ -149,6 +154,16 @@ export class AuditoryFormPage implements OnInit {
 
   onGoingHome() {
     this.router.navigateByUrl('home');
+  }
+
+  onAddPhoto() {
+    let text = '';
+    this.photoService.openGallery(text).then(async res => {
+      for (let index = 0; index < res.photos.length; index++) {
+        this.ImageSrc.push(res.photos[index].webPath);
+      }
+      console.log(this.ImageSrc);
+    });
   }
 
 }

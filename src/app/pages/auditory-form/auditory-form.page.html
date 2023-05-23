@@ -62,6 +62,18 @@
         type="hidden"
       ></ion-input>
 
+      <!-- <ion-button class="btn-right" (click)="onAddPhoto()">FOTOS</ion-button> -->
+      <ion-button class="btn-right" fill="clear" size="small" (click)="onAddPhoto()">
+        <ion-icon class="icon-color" slot="icon-only" name="image-outline"></ion-icon>
+      </ion-button>
+
+      <ion-row *ngIf="ImageSrc" class="mt-2">
+        <ion-col *ngFor="let img of ImageSrc">
+          <ion-img [src]="img"></ion-img>
+        </ion-col>
+      </ion-row>
+
+      
       <ion-button expand="full" color="light" class="mt-2" (click)="onAddLocation()">UBICACIÓN</ion-button>
 
       <div class="row mt-5">
