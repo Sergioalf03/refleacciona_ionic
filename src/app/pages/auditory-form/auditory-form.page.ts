@@ -4,6 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { ValidFormService } from 'src/app/core/controllers/valid-form.service';
 import { AuditoryService } from 'src/app/services/auditory.service';
+import { Geolocation } from '@capacitor/geolocation';
+import { MapService } from 'src/app/core/controllers/map.service';
 
 @Component({
   selector: 'app-auditory-form',
@@ -27,15 +29,15 @@ export class AuditoryFormPage implements OnInit {
     private route: ActivatedRoute,
     private validFormService: ValidFormService,
     private responseService: HttpResponseService,
+    private mapService: MapService,
   ) { }
 
   private initForm() {
     this.form = new FormGroup({
-      street: new FormControl('', {
+      title: new FormControl('', {
         validators: [ Validators.required ]
       }),
-      type: new FormControl(''),
-      way: new FormControl(''),
+      description: new FormControl(''),
       date: new FormControl(''),
       lat: new FormControl(''),
       lng: new FormControl(''),
@@ -143,8 +145,9 @@ export class AuditoryFormPage implements OnInit {
   }
 
 
-  onAddLocation() {
-
+  async onAddLocation() {
+    const coordinates = await Geolocation.getCurrentPosition();
+    this.mapService.setCenter(coordinates.coords.latitude, coordinates.coords.longitude);
   }
 
   onGoingHome() {

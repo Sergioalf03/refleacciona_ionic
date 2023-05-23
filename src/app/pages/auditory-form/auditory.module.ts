@@ -7,6 +7,8 @@ import { IonicModule } from '@ionic/angular';
 import { AuditoryFormPageRoutingModule } from './auditory-routing.module';
 
 import { AuditoryFormPage } from './auditory-form.page';
+import { MapModule } from 'src/app/components/map/map.module';
+import { HeaderButtonsModule } from 'src/app/components/header-buttons/header-buttons.module';
 
 @NgModule({
   imports: [
@@ -14,7 +16,9 @@ import { AuditoryFormPage } from './auditory-form.page';
     ReactiveFormsModule,
     FormsModule,
     IonicModule,
-    AuditoryFormPageRoutingModule
+    AuditoryFormPageRoutingModule,
+    MapModule,
+    HeaderButtonsModule,
   ],
   declarations: [AuditoryFormPage]
 })

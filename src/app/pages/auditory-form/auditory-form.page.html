@@ -1,68 +1,58 @@
 <ion-content >
-  <div class="d-flex flex-row-reverse mt-3 me-3" >
-    <ion-button size="small" (click)="onGoingHome()">
-      <ion-icon slot="icon-only" name="home-sharp"></ion-icon>
-    </ion-button>
-  </div>
+  <app-header-buttons
+    backUrl="/home"
+    homeUrl="/home"
+  ></app-header-buttons>
 
   <form *ngIf="form" [formGroup]="form" (ngSubmit)="onSubmit()">
 
-    <div class="mx-2 mt-2">
+    <div class="mx-2 mt-4">
       <h1>{{formActionText}} Auditoría</h1>
 
-
-
-      <ion-item class="mt-2 txtInput">
-        <ion-label position="floating">*Calle (Entre qué calles)</ion-label>
+      <ion-item class="mt-4 txtInput">
+        <ion-label position="floating">*Título</ion-label>
         <ion-input
           [clearInput]="true"
-          formControlName="street"
+          formControlName="title"
           type="text"
-          placeholder="Escriba la calle"
+          placeholder="Escriba un título"
         ></ion-input>
       </ion-item>
 
       <ion-item class="mt-2 txtInput">
-        <ion-label position="floating">Tipo funcional de calle</ion-label>
-        <ion-input
-          [clearInput]="true"
-          formControlName="type"
-          type="text"
-          placeholder="Escriba el tipo"
-        ></ion-input>
-      </ion-item>
-
-      <ion-item class="mt-2 txtInput">
-        <ion-label position="floating">Sentidos (Carriles por sentido)</ion-label>
-        <ion-input
-          [clearInput]="true"
-          formControlName="way"
-          type="text"
-          placeholder="Escriba el sentido"
-        ></ion-input>
-      </ion-item>
-
-      <ion-item class="mt-2 txtInput">
-        <ion-label position="floating">Fecha de realización</ion-label>
+        <ion-label position="floating">Fecha</ion-label>
         <ion-input
           [clearInput]="true"
           formControlName="date"
           type="date"
-          placeholder="Seleccione la fecha"
+          placeholder="Escriba el sentido"
         ></ion-input>
+      </ion-item>
+
+      <ion-item class="mt-2 txtInput mb-2">
+        <ion-label position="floating">Descripción</ion-label>
+        <ion-textarea
+          formControlName="description"
+          type="text"
+          placeholder="Agregue una descripción"
+        ></ion-textarea>
       </ion-item>
 
       <ion-input
         formControlName="lat"
         type="hidden"
+        hidden
       ></ion-input>
 
       <ion-input
         formControlName="lng"
         type="hidden"
+        hidden
       ></ion-input>
 
-      <ion-button expand="full" color="light" class="mt-2" (click)="onAddLocation()">UBICACIÓN</ion-button>
+      <app-map></app-map>
+
+      <ion-button expand="full" color="light" class="mt-2" (click)="onAddLocation()">UBICACIÓN ACTUAL</ion-button>
 
       <div class="row mt-5">
         <div class="col">
