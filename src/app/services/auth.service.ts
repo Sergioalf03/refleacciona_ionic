@@ -6,6 +6,7 @@ import { HttpRequestService } from '../core/controllers/http-request.service';
 })
 export class AuthService {
 
+  userId = '';
   email = '';
 
   constructor(
