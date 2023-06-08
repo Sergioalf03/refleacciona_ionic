@@ -10,10 +10,13 @@
 
     <ion-item *ngFor="let aud of auditories" class="mt-2 txtInput">
       <ion-label>
-        <h2 class="text-start">Calle: {{ aud.street }}</h2>
+        <h2 class="text-start">Título: {{ aud.title }}</h2>
         <p>Fecha: {{ aud.date }}</p>
       </ion-label>
 
+      <ion-button (click)="onDelete(aud.id)" color="danger" slot="end" size="small">
+        <ion-icon slot="icon-only" name="trash"></ion-icon>
+      </ion-button>
       <ion-button (click)="onEdit(aud.id)" slot="end" size="small">
         <ion-icon slot="icon-only" name="create-sharp"></ion-icon>
       </ion-button>

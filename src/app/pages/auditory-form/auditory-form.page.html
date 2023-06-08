@@ -50,7 +50,7 @@
         hidden
       ></ion-input>
 
-      <app-map></app-map>
+      <app-map (centerEvent)="onSetCoords($event)"></app-map>
 
       <ion-button expand="full" color="light" class="mt-2" (click)="onAddLocation()">UBICACIÓN ACTUAL</ion-button>
       <!-- <ion-button class="btn-right" (click)="onAddPhoto()">FOTOS</ion-button> -->

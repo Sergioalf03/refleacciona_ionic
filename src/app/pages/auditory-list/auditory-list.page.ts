@@ -24,10 +24,10 @@ export class AuditoryListPage implements OnInit {
   ionViewWillEnter() {
     this.loading = true;
     this.auditoryService
-      .getList()
+      .getLocalList()
       .subscribe({
         next: res => {
-          this.auditories = res.data;
+          this.auditories = res.values;
           this.loading = false;
           this.responseService.onSuccess('Auditorías recuperadas');
         },
@@ -44,6 +44,23 @@ export class AuditoryListPage implements OnInit {
 
   onEdit(id: string) {
     this.router.navigateByUrl(`/auditory-form/${id}`);
+  }
+
+  onDelete(id: string) {
+    this.loading = true;
+    this.auditoryService
+      .deleteLocal(id)
+      .subscribe({
+        next: () => {
+          this.loading = false;
+          this.responseService.onSuccess('Auditoría eliminada');
+          this.ionViewWillEnter();
+        },
+        error: err => {
+          this.responseService.onError(err, 'No se pudo eliminar la auditoría');
+          this.loading = false;
+        }
+      })
   }
 
 }

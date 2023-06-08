@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import * as L from 'leaflet';
 import { Subscription } from 'rxjs';
 import { MapService } from 'src/app/core/controllers/map.service';
@@ -10,6 +10,8 @@ import { Geolocation } from '@capacitor/geolocation';
   styleUrls: ['./map.component.scss'],
 })
 export class MapComponent implements OnInit, AfterViewInit {
+
+  @Output() centerEvent = new EventEmitter<any>();
 
   private map!: L.Map;
 
@@ -27,7 +29,13 @@ export class MapComponent implements OnInit, AfterViewInit {
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     });
 
+    this.map
+    .on('dblclick', () => this.setCoords())
+    .on('moveend', () => this.setCoords())
+    .on('zoomend', () => this.setCoords());
+
     tiles.addTo(this.map);
+    this.setCoords();
   }
 
   centerSubscription!: Subscription;
@@ -37,15 +45,35 @@ export class MapComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit() {
+    // this.map.remove();
     this.centerSubscription = this.mapService
       .getCenter()
       .subscribe({
-        next: coords => coords.lat !== 0 && coords.lng !== 0 && this.map.flyTo(L.latLng(coords.lat, coords.lng), 17)
+        next: coords => {
+          if (coords.lat !== 0 && coords.lng !== 0){
+            this.map.flyTo(L.latLng(coords.lat, coords.lng), 17)
+          } else {
+            if (this.map) {
+              this.map.off();
+              this.map.remove();
+            }
+          }
+        }
       });
   }
 
   ngAfterViewInit(): void {
-    this.initMap();
+    if (!this.map) {
+      this.initMap();
+    }
+  }
+
+  private setCoords() {
+    if (this.map) {
+      const coords = this.map.getCenter();
+      console.log(coords)
+      this.centerEvent.emit({ lat: coords.lat, lng: coords.lng })
+    }
   }
 
 }

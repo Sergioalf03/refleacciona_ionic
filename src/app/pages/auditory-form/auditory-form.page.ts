@@ -21,6 +21,7 @@ export class AuditoryFormPage implements OnInit {
   fetchLoading = false;
   submitLoading = false;
   locationAdded = false;
+  hideMap = true;
 
   form!: FormGroup;
 
@@ -51,12 +52,20 @@ export class AuditoryFormPage implements OnInit {
 
   private createAuditory(auditory: any) {
     this.auditoryService
-      .save(auditory)
+      .localSave(auditory)
       .subscribe({
-        next: res => {
-          this.auditoryId = res.data.id;
-          this.submitLoading = false;
-          this.responseService.onSuccessAndRedirect('/home', 'Auditoría guarda');
+        next: () => {
+
+          this.auditoryService
+            .getLastSavedId()
+            .subscribe({
+              next: res => {
+                this.hideMap = true;
+                this.auditoryId = res.values[0].id;
+                this.submitLoading = false;
+                this.responseService.onSuccessAndRedirect('/home', 'Auditoría guarda');
+              }
+            });
         },
         error: err => {
           this.submitLoading = false;
@@ -67,9 +76,10 @@ export class AuditoryFormPage implements OnInit {
 
   private updateAuditory(auditory: any) {
     this.auditoryService
-      .update(this.auditoryId, auditory)
+      .updateLocal(this.auditoryId, auditory)
       .subscribe({
         next: () => {
+          this.hideMap = true;
           this.submitLoading = false;
           this.responseService.onSuccessAndRedirect('/auditory-list', 'Auditoría actualizada');
         },
@@ -82,25 +92,31 @@ export class AuditoryFormPage implements OnInit {
 
   private setAuditory(auditory: any) {
     this.form.setValue({
-      street: auditory.street,
-      type: auditory.type,
-      way: auditory.way,
+      title: auditory.title,
+      description: auditory.description,
       date: auditory.date,
       lat: auditory.lat,
       lng: auditory.lng,
-    })
+    });
+
+    setTimeout(() => {
+      this.mapService.setCenter(auditory.lat, auditory.lng);
+    }, 1000)
     this.fetchLoading = false;
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
+    this.hideMap = true;
   }
 
   ionViewWillEnter() {
+    this.hideMap = true;
     this.initForm();
     this.route
       .paramMap
       .subscribe({
         next: paramMap => {
+          this.hideMap = false;
           const id = paramMap.get('id') || '0';
           if (id !== '0') {
             this.fetchLoading = true;
@@ -108,38 +124,42 @@ export class AuditoryFormPage implements OnInit {
             this.formActionText = 'Actualizando';
             this.SubmitButtonText = 'Guardar';
             this.auditoryService
-              .getForm(this.auditoryId)
+              .getLocalForm(this.auditoryId)
               .subscribe({
                 next: res => {
+                  console.log(res);
                   this.responseService.onSuccess('Se recuperaron los datos');
                   this.fetchLoading = false;
 
-                  this.setAuditory(res.data);
+                  this.setAuditory(res.values[0]);
                 },
                 error: err => {
                   this.fetchLoading = false;
                   this.responseService.onError(err, 'No se pudieron recuperar los datos');
-                }
+                },
               })
           }
         }
       });
   }
 
+  ionViewWillLeave() {
+    console.log('leave')
+    this.hideMap = true;
+  }
+
   onSubmit() {
     if (this.validFormService.isValid(this.form, [])) {
       this.submitLoading = true;
 
+      this.mapService.setCenter(0, 0);
       const auditory = {
+        title: this.form.controls['title'].value,
+        description: this.form.controls['description'].value,
         date: this.form.controls['date'].value,
-        street: this.form.controls['street'].value,
-        street_type: this.form.controls['type'].value,
-        street_way: this.form.controls['way'].value,
         lat: this.form.controls['lat'].value,
         lng: this.form.controls['lng'].value,
       };
-
-      console.log(this.auditoryId)
 
       if (this.auditoryId === '0') {
         this.createAuditory(auditory);
@@ -167,6 +187,12 @@ export class AuditoryFormPage implements OnInit {
       }
       console.log(this.ImageSrc);
     });
+  }
+
+  onSetCoords(coords: any) {
+    console.log(coords);
+    this.form.controls['lat'].setValue(coords.lat);
+    this.form.controls['lng'].setValue(coords.lng);
   }
 
 }
