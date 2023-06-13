@@ -99,6 +99,30 @@ export class PhotoService {
     });
   }
 
+  async saveLocalEvidence(photo: any, auditoryId: string) {
+    const base64Data = await this.readAsBase64(photo);
+
+    const fileName = `${auditoryId}-${this.generateName()}`;
+    const savedFile = await Filesystem.writeFile({
+      path: fileName,
+      data: base64Data,
+      directory: Directory.Data
+    });
+
+    return fileName;
+  }
+
+  generateName() {
+    const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.-_*&%$#@!";
+    const lengthOfCode = 20;
+
+    let text = "";
+    for (let i = 0; i < lengthOfCode; i++) {
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return text;
+  }
+
   getLocalLogo() {
     return Filesystem.readFile({
       path: 'logo.jpeg',

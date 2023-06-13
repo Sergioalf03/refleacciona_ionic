@@ -7,6 +7,7 @@ import { ValidFormService } from 'src/app/core/controllers/valid-form.service';
 import { AuditoryService } from 'src/app/services/auditory.service';
 import { Geolocation } from '@capacitor/geolocation';
 import { MapService } from 'src/app/core/controllers/map.service';
+import { AuditoryEvidenceService } from 'src/app/services/auditory-evidence.service';
 
 @Component({
   selector: 'app-auditory-form',
@@ -30,6 +31,7 @@ export class AuditoryFormPage implements OnInit {
 
   constructor(
     private auditoryService: AuditoryService,
+    private auditoryEvidenceService: AuditoryEvidenceService,
     private router: Router,
     private route: ActivatedRoute,
     private validFormService: ValidFormService,
@@ -59,11 +61,32 @@ export class AuditoryFormPage implements OnInit {
           this.auditoryService
             .getLastSavedId()
             .subscribe({
-              next: res => {
+              next: async res => {
                 this.hideMap = true;
                 this.auditoryId = res.values[0].id;
-                this.submitLoading = false;
-                this.responseService.onSuccessAndRedirect('/home', 'Auditoría guarda');
+
+                let count = 0;
+
+                this.ImageSrc.forEach(async (src: any) => {
+                  const blob = await fetch(src).then(r => r.blob());
+
+                  const photoId = this.photoService.saveLocalEvidence(blob, this.auditoryId);
+
+                  this.auditoryEvidenceService
+                    .localSave({ auditoryId: this.auditoryId, dir: photoId })
+                    .subscribe({
+                      next: async res => {
+                        count++;
+                        if (count === this.ImageSrc.length) {
+                          this.submitLoading = false;
+                          this.responseService.onSuccessAndRedirect('/home', 'Auditoría guarda');
+                        }
+                      },
+                      error: err => {
+                        this.responseService.onError(err, 'No se pudo guardar una imagen')
+                      },
+                    })
+                });
               }
             });
         },

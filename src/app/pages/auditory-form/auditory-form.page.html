@@ -52,15 +52,18 @@
 
       <app-map (centerEvent)="onSetCoords($event)"></app-map>
 
-      <ion-button expand="full" color="light" class="mt-2" (click)="onAddLocation()">UBICACIÓN ACTUAL</ion-button>
+      <ion-button expand="full" color="light" class="mt-3" (click)="onAddLocation()">UBICACIÓN ACTUAL</ion-button>
       <!-- <ion-button class="btn-right" (click)="onAddPhoto()">FOTOS</ion-button> -->
-      <ion-button class="btn-right" fill="clear" size="small" (click)="onAddPhoto()">
-        <ion-icon class="icon-color" slot="icon-only" name="image-outline"></ion-icon>
-      </ion-button>
 
-      <ion-row *ngIf="ImageSrc" class="mt-2">
-        <ion-col *ngFor="let img of ImageSrc">
-          <ion-img [src]="img"></ion-img>
+
+      <ion-row *ngIf="ImageSrc" class="mt-3">
+        <ion-col [size]="3" *ngFor="let img of ImageSrc">
+          <ion-img style="height:80px" [src]="img"></ion-img>
+        </ion-col>
+        <ion-col [size]="3">
+          <ion-button *ngIf="ImageSrc.length < 10" class="btn-right" fill="clear" size="large" (click)="onAddPhoto()">
+            <ion-icon class="icon-color" slot="icon-only" name="image-outline"></ion-icon>
+          </ion-button>
         </ion-col>
       </ion-row>
 
