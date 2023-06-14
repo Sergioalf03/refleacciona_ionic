@@ -11,7 +11,6 @@ CREATE TABLE IF NOT EXISTS sections (
   subname TEXT NOT NULL,
   page INTEGER NOT NULL,
   indx INTEGER NOT NULL,
-  is_subsection INTEGER NOT NULL,
   status INTEGER NOT NULL
 );
 
@@ -81,8 +80,8 @@ const QUESTION_ROWS: Array<Array<any>> = [
 ];
 
 export const loadData: string = `
-  INSERT INTO sections (name, subname, page, indx, is_subsection, status) VALUES
-  ${SECTION_ROWS.map(i => `("${i[0]}", "${i[1]}", ${i[2]}, ${i[3]}, ${i[4]}, ${i[5]})`).join(',')};
+  INSERT INTO sections (name, subname, page, indx, status) VALUES
+  ${SECTION_ROWS.map(i => `("${i[0]}", "${i[1]}", ${i[2]}, ${i[3]}, ${i[4]})`).join(',')};
 
   INSERT INTO questions (section_id, uid, score, condition, has_evidence, indx, status, sentence, answers) VALUES
   ${QUESTION_ROWS.map(i => `(${i[0]}, "${i[1]}", ${i[2]}, "${i[3]}", ${i[4]}, ${i[5]}, ${i[6]}, "${i[7]}", "${i[8]}")`).join(',')};

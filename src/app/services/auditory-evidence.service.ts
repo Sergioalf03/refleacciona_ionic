@@ -22,6 +22,10 @@ export class AuditoryEvidenceService {
     return this.databaseService.executeQuery(`SELECT * FROM auditory_evidences WHERE auditory_id = ${id};`);
   }
 
+  getLastInsertedDir() {
+    return this.databaseService.executeQuery(`SELECT MAX(id) AS id, dir FROM auditory_evidences LIMIT 1;`);
+  }
+
   localRemove(id: string) {
     return this.databaseService.executeQuery(`DELETE FROM auditory_evidences WHERE dir = "${id}";`);
   }

@@ -52,9 +52,14 @@ const routes: Routes = [
   {
     path: 'auditory-list',
     loadChildren: () => import('./pages/auditory-list/auditory-list.module').then( m => m.AuditoryListPageModule)
-  },  {
+  },
+  {
     path: 'profile',
     loadChildren: () => import('./pages/profile/profile.module').then( m => m.ProfilePageModule)
+  },
+  {
+    path: 'question-form/:sectionId',
+    loadChildren: () => import('./pages/question-form/question-form.module').then( m => m.QuestionFormPageModule)
   },
 
 ];

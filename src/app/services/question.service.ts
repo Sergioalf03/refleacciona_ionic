@@ -14,4 +14,12 @@ export class QuestionService {
     return this.dbService.executeQuery('SELECT * FROM questions;');
   }
 
+  getSection(id: string) {
+    return this.dbService.executeQuery(`SELECT * FROM sections WHERE id = ${id};`);
+  }
+
+  getLocalQuestionsBySection(id: string) {
+    return this.dbService.executeQuery(`SELECT * FROM questions WHERE section_id = ${id};`);
+  }
+
 }

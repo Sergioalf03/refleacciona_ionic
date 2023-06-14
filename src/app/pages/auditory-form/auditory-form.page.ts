@@ -230,13 +230,45 @@ export class AuditoryFormPage implements OnInit {
   onAddPhoto() {
     let text = '';
     this.photoService.openGallery(text).then(async res => {
-      for (let index = 0; index < res.photos.length; index++) {
-        this.ImageSrc.push({
-          id: '',
-          file: res.photos[index].webPath
-        });
+      if (this.auditoryId === '0') {
+        for (let index = 0; index < res.photos.length; index++) {
+          this.ImageSrc.push({
+            id: '',
+            file: res.photos[index].webPath
+          });
+        }
+      } else {
+        if (this.ImageSrc.length > 0) {
+          for (let index = 0; index < res.photos.length; index++) {
+            const img = res.photos[index].webPath;
+            const blob = await fetch(img).then(r => r.blob());
+
+            this.photoService
+              .saveLocalAuditoryEvidence(blob, this.auditoryId)
+              .then(photoId => {
+                this.auditoryEvidenceService
+                  .localSave({ auditoryId: this.auditoryId, dir: photoId })
+                  .subscribe({
+                    next: async () => {
+                      this.auditoryEvidenceService
+                        .getLastInsertedDir()
+                        .subscribe({
+                          next: async (res: any) => {
+                            this.ImageSrc.push({
+                              id: res.values[0].dir,
+                              file: img
+                            });
+                          }
+                        });
+                    },
+                    error: err => {
+                      this.responseService.onError(err, 'No se pudo guardar una imagen')
+                    },
+                  })
+              });
+          }
+        }
       }
-      console.log(this.ImageSrc);
     });
   }
 
