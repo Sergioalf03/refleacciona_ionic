@@ -18,4 +18,12 @@ export class AuditoryEvidenceService {
     `);
   }
 
+  getEvidencesByAuditory(id: string) {
+    return this.databaseService.executeQuery(`SELECT * FROM auditory_evidences WHERE auditory_id = ${id};`);
+  }
+
+  localRemove(id: string) {
+    return this.databaseService.executeQuery(`DELETE FROM auditory_evidences WHERE dir = "${id}";`);
+  }
+
 }

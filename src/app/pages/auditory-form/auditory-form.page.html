@@ -57,8 +57,8 @@
 
 
       <ion-row *ngIf="ImageSrc" class="mt-3">
-        <ion-col [size]="3" *ngFor="let img of ImageSrc">
-          <ion-img style="height:80px" [src]="img"></ion-img>
+        <ion-col [size]="3" *ngFor="let img of ImageSrc; let i = index;">
+          <ion-img style="height:80px" [src]="img.file" (click)="onImgClicked(img.id, i)"></ion-img>
         </ion-col>
         <ion-col [size]="3">
           <ion-button *ngIf="ImageSrc.length < 10" class="btn-right" fill="clear" size="large" (click)="onAddPhoto()">

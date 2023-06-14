@@ -27,6 +27,7 @@ export class AuditoryListPage implements OnInit {
       .getLocalList()
       .subscribe({
         next: res => {
+          console.log(res)
           this.auditories = res.values;
           this.loading = false;
           this.responseService.onSuccess('Auditorías recuperadas');

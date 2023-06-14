@@ -99,10 +99,10 @@ export class PhotoService {
     });
   }
 
-  async saveLocalEvidence(photo: any, auditoryId: string) {
+  async saveLocalAuditoryEvidence(photo: any, id: string) {
     const base64Data = await this.readAsBase64(photo);
 
-    const fileName = `${auditoryId}-${this.generateName()}`;
+    const fileName = `${id}-${this.generateName()}`;
     const savedFile = await Filesystem.writeFile({
       path: fileName,
       data: base64Data,
@@ -110,6 +110,21 @@ export class PhotoService {
     });
 
     return fileName;
+  }
+
+  getLocalAuditoryEvidence(id: string) {
+    return Filesystem.readFile({
+      path: id,
+      encoding: Encoding.UTF8,
+      directory: Directory.Data
+    })
+  }
+
+  removeLocalAuditoryEvidence(dir: string) {
+    return Filesystem.deleteFile({
+      path: dir,
+      directory: Directory.Data
+    })
   }
 
   generateName() {

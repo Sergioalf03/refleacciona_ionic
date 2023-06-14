@@ -8,6 +8,7 @@ import { AuditoryService } from 'src/app/services/auditory.service';
 import { Geolocation } from '@capacitor/geolocation';
 import { MapService } from 'src/app/core/controllers/map.service';
 import { AuditoryEvidenceService } from 'src/app/services/auditory-evidence.service';
+import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 
 @Component({
   selector: 'app-auditory-form',
@@ -26,7 +27,7 @@ export class AuditoryFormPage implements OnInit {
 
   form!: FormGroup;
 
-  ImageSrc:any = [];
+  ImageSrc:any[] = [];
   ListPhotos: any = 10;
 
   constructor(
@@ -38,6 +39,7 @@ export class AuditoryFormPage implements OnInit {
     private responseService: HttpResponseService,
     private mapService: MapService,
     private photoService: PhotoService,
+    private confirmDialogService: ConfirmDialogService,
   ) { }
 
   private initForm() {
@@ -67,26 +69,34 @@ export class AuditoryFormPage implements OnInit {
 
                 let count = 0;
 
-                this.ImageSrc.forEach(async (src: any) => {
-                  const blob = await fetch(src).then(r => r.blob());
+                if (this.ImageSrc.length > 0) {
+                  this.ImageSrc.forEach(async (src: any) => {
+                    const blob = await fetch(src.file).then(r => r.blob());
 
-                  const photoId = this.photoService.saveLocalEvidence(blob, this.auditoryId);
+                    this.photoService
+                      .saveLocalAuditoryEvidence(blob, this.auditoryId)
+                      .then(photoId => {
+                        this.auditoryEvidenceService
+                          .localSave({ auditoryId: this.auditoryId, dir: photoId })
+                          .subscribe({
+                            next: async res => {
+                              count++;
+                              if (count === this.ImageSrc.length) {
+                                this.submitLoading = false;
+                                this.responseService.onSuccessAndRedirect('/home', 'Auditoría guarda');
+                              }
+                            },
+                            error: err => {
+                              this.responseService.onError(err, 'No se pudo guardar una imagen')
+                            },
+                          })
+                      });
+                  });
+                } else {
+                  this.submitLoading = false;
+                  this.responseService.onSuccessAndRedirect('/home', 'Auditoría guarda');
+                }
 
-                  this.auditoryEvidenceService
-                    .localSave({ auditoryId: this.auditoryId, dir: photoId })
-                    .subscribe({
-                      next: async res => {
-                        count++;
-                        if (count === this.ImageSrc.length) {
-                          this.submitLoading = false;
-                          this.responseService.onSuccessAndRedirect('/home', 'Auditoría guarda');
-                        }
-                      },
-                      error: err => {
-                        this.responseService.onError(err, 'No se pudo guardar una imagen')
-                      },
-                    })
-                });
               }
             });
         },
@@ -121,6 +131,21 @@ export class AuditoryFormPage implements OnInit {
       lat: auditory.lat,
       lng: auditory.lng,
     });
+
+    this.auditoryEvidenceService
+      .getEvidencesByAuditory(this.auditoryId)
+      .subscribe({
+        next: res => {
+          res.values.forEach(async (row: any) => {
+            this.photoService.getLocalAuditoryEvidence(row.dir).then(photo => {
+              this.ImageSrc.push({
+                id: row.dir,
+                file: 'data:image/jpeg;base64,' + photo.data
+              });
+            })
+          });
+        }
+      })
 
     setTimeout(() => {
       this.mapService.setCenter(auditory.lat, auditory.lng);
@@ -206,7 +231,10 @@ export class AuditoryFormPage implements OnInit {
     let text = '';
     this.photoService.openGallery(text).then(async res => {
       for (let index = 0; index < res.photos.length; index++) {
-        this.ImageSrc.push(res.photos[index].webPath);
+        this.ImageSrc.push({
+          id: '',
+          file: res.photos[index].webPath
+        });
       }
       console.log(this.ImageSrc);
     });
@@ -216,6 +244,25 @@ export class AuditoryFormPage implements OnInit {
     console.log(coords);
     this.form.controls['lat'].setValue(coords.lat);
     this.form.controls['lng'].setValue(coords.lng);
+  }
+
+  onImgClicked(dir: string, index: number) {
+    console.log(dir);
+    this.confirmDialogService.presentAlert('¿Desea eliminar la imagen?', () => {
+      if (!!dir) {
+        this.auditoryEvidenceService
+          .localRemove(dir)
+          .subscribe({
+            next: () => {
+              this.photoService
+                .removeLocalAuditoryEvidence(dir)
+                .then(() => this.ImageSrc.splice(index, 1));
+            }
+          })
+      } else {
+        this.ImageSrc.splice(index, 1);
+      }
+    });
   }
 
 }
