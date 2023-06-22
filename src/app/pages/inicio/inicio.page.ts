@@ -36,20 +36,33 @@ export class InicioPage implements OnInit, AfterViewInit {
   }
 
   ionViewDidEnter() {
-    this.auditoryService
-      .getCount()
-      .subscribe({
-        next: res => {
-          this.auditoriesCount = res.data;
-          this.httpResponseService.onSuccess('Información recuperada')
-        },
-        error: err => this.httpResponseService.onError(err, 'No se pudo recuperar la información'),
+    this.databaseService.initConnection()
+      .then(databases => {
+        console.log(databases)
+        this.databaseService
+          .checkDatabaseVersion()
+          .then(() => {
+            this.auditoryService
+              .getCount()
+              .subscribe({
+                next: res => {
+                  this.auditoriesCount = res.data;
+                  // this.httpResponseService.onSuccess('Información recuperada')
+                },
+                error: err => this.httpResponseService.onError(err, 'No se pudo recuperar la información'),
+              });
+          })
+        ;
       });
 
     // this.databaseService.ngetProductList().subscribe({
     //   next: (res: any) => console.log(res),
     //   error: (err: any) => console.log(err),
     // })
+  }
+
+  ionViewWillLeave() {
+    this.databaseService.closeConnection();
   }
 
   async onLogout() {
@@ -66,7 +79,7 @@ export class InicioPage implements OnInit, AfterViewInit {
   }
 
   onNewAuditory() {
-    this.router.navigateByUrl('/question-form/1')
+    this.router.navigateByUrl('/auditory-form/0')
   }
 
   onAuditoryList() {

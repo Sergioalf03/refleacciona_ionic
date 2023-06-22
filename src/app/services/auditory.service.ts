@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpRequestService } from '../core/controllers/http-request.service';
 import { DatabaseService } from '../core/controllers/database.service';
+import { BehaviorSubject, Observable, take } from 'rxjs';
+import { PhotoService } from '../core/controllers/photo.service';
 
 const BASE_URI = '/auditory';
 
@@ -12,6 +14,7 @@ export class AuditoryService {
   constructor(
     private httpService: HttpRequestService,
     private databaseService: DatabaseService,
+    private photoService: PhotoService,
   ) { }
 
   save(data: any) {
@@ -69,11 +72,32 @@ export class AuditoryService {
   }
 
   deleteLocal(id: string) {
-    const now = new Date().toISOString();
-    return this.databaseService.executeQuery(`
-      DELETE FROM auditories
-      WHERE id = ${id} AND status = 1;
-    `);
+    const result = new BehaviorSubject<any>('waiting');
+    this.databaseService
+      .executeQuery(`SELECT dir FROM auditory_evidences WHERE auditory_id = ${id}`)
+      .subscribe(directories => {
+        console.log(directories)
+        if (directories !== 'waiting') {
+          directories.values.forEach((dir: any) => {
+            this.photoService.removeLocalAuditoryEvidence(dir.dir)
+          });
+          this.databaseService
+            .executeQuery(`DELETE FROM auditory_evidences WHERE auditory_id = ${id}`)
+            .subscribe(rm => {
+              if (rm !== 'waiting') {
+                this.databaseService.executeQuery(`
+                  DELETE FROM auditories
+                  WHERE id = ${id} AND status = 1;
+                `)
+                .subscribe({
+                  next: () => result.next('deleted')
+                });
+              }
+            });
+        }
+      });
+
+      return result.pipe(take(2));
   }
 
 }

@@ -9,7 +9,11 @@ import { QuestionService } from 'src/app/services/question.service';
 export class QuestionFormPage implements OnInit {
 
   sectionId = '0';
-
+  sectionName = '';
+  subsectionName  = '';
+  openedPopover = 0;
+  questions: any[] = [];
+  loading = false;
   constructor(
     private questionService: QuestionService,
     private route: ActivatedRoute,
@@ -17,9 +21,6 @@ export class QuestionFormPage implements OnInit {
   ) { }
 
   ngOnInit() {
-  }
-
-  ionViewWillEnter() {
     this.route
       .paramMap
       .subscribe({
@@ -30,20 +31,60 @@ export class QuestionFormPage implements OnInit {
 
           this.sectionId = `${paramMap.get('sectionId')}`;
 
-          this.questionService
-            .getSection(this.sectionId)
-            .subscribe({
-              next: res1 => {
-                console.log(res1);
-                this.questionService
-                  .getLocalQuestionsBySection(this.sectionId)
-                  .subscribe({
-                    next: res => console.log(res),
-                  });
-              }
-            })
+          this.fetchSection();
         }
       })
+  }
+
+  ionViewWillEnter() {
+    const data = JSON.stringify([{ id: 1, text: 'hola' }, { id: 1, text: 'hola' }, { id: 1, text: 'hola' }]);
+    console.log(data);
+    const decode = JSON.parse(data);
+    console.log(decode);
+  }
+
+  onNext() {
+    if (this.sectionId !== '7') {
+      this.sectionId = `${+this.sectionId + 1}`;
+      this.fetchSection();
+    }
+  }
+
+  onPrevious() {
+    if (this.sectionId !== '1') {
+      this.sectionId = `${+this.sectionId - 1}`;
+      this.fetchSection();
+    }
+  }
+
+  private fetchSection() {
+    this.questionService
+      .getSection(this.sectionId)
+      .subscribe({
+        next: res1 => {
+          if (res1 !== 'waiting') {
+            this.loading = true;
+            const section = res1.values[0];
+            this.sectionName = section.name;
+            this.subsectionName = section.subname;
+            this.questionService
+              .getLocalQuestionsBySection(this.sectionId)
+              .subscribe({
+                next: res => {
+                  if (res !== 'waiting') {
+                    this.questions = res.values;
+                    this.loading = false;
+                  }
+                },
+              });
+          }
+        }
+      })
+  }
+
+  jsonCast(jsonString: string) {
+    const data = JSON.parse(jsonString);
+    return data;
   }
 
 }

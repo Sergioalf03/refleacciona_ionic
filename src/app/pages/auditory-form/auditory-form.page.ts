@@ -9,6 +9,7 @@ import { Geolocation } from '@capacitor/geolocation';
 import { MapService } from 'src/app/core/controllers/map.service';
 import { AuditoryEvidenceService } from 'src/app/services/auditory-evidence.service';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
+import { DatabaseService } from 'src/app/core/controllers/database.service';
 
 @Component({
   selector: 'app-auditory-form',
@@ -19,6 +20,7 @@ export class AuditoryFormPage implements OnInit {
   formActionText = 'Nueva';
   SubmitButtonText = 'Comenzar';
   auditoryId = '0';
+  backUrl = '/home';
 
   fetchLoading = false;
   submitLoading = false;
@@ -28,7 +30,6 @@ export class AuditoryFormPage implements OnInit {
   form!: FormGroup;
 
   ImageSrc:any[] = [];
-  ListPhotos: any = 10;
 
   constructor(
     private auditoryService: AuditoryService,
@@ -54,51 +55,59 @@ export class AuditoryFormPage implements OnInit {
     });
   }
 
-  private createAuditory(auditory: any) {
+  private async createAuditory(auditory: any) {
     this.auditoryService
       .localSave(auditory)
       .subscribe({
-        next: () => {
+        next: (save) => {
+          if (save !== 'waiting') {
+            console.log(save)
 
-          this.auditoryService
-            .getLastSavedId()
-            .subscribe({
-              next: async res => {
-                this.hideMap = true;
-                this.auditoryId = res.values[0].id;
+            this.auditoryService
+              .getLastSavedId()
+              .subscribe({
+                next: async res => {
+                  if (res !== 'waiting') {
+                    console.log(res)
+                    this.hideMap = true;
+                    this.auditoryId = res.values[0].id;
 
-                let count = 0;
+                    let count = 0;
 
-                if (this.ImageSrc.length > 0) {
-                  this.ImageSrc.forEach(async (src: any) => {
-                    const blob = await fetch(src.file).then(r => r.blob());
+                    if (this.ImageSrc.length > 0) {
+                      this.ImageSrc.forEach(async (src: any) => {
+                        const blob = await fetch(src.file).then(r => r.blob());
 
-                    this.photoService
-                      .saveLocalAuditoryEvidence(blob, this.auditoryId)
-                      .then(photoId => {
-                        this.auditoryEvidenceService
-                          .localSave({ auditoryId: this.auditoryId, dir: photoId })
-                          .subscribe({
-                            next: async res => {
-                              count++;
-                              if (count === this.ImageSrc.length) {
-                                this.submitLoading = false;
-                                this.responseService.onSuccessAndRedirect('/home', 'Auditoría guarda');
-                              }
-                            },
-                            error: err => {
-                              this.responseService.onError(err, 'No se pudo guardar una imagen')
-                            },
-                          })
+                        this.photoService
+                          .saveLocalAuditoryEvidence(blob, this.auditoryId)
+                          .then(photoId => {
+                            this.auditoryEvidenceService
+                              .localSave({ auditoryId: this.auditoryId, dir: photoId })
+                              .subscribe({
+                                next: async photo => {
+                                  if (photo !== 'waiting') {
+                                    count++;
+                                    if (count === this.ImageSrc.length) {
+                                      this.submitLoading = false;
+                                      this.responseService.onSuccessAndRedirect('/question-form/1', 'Auditoría guarda');
+                                    }
+                                  }
+                                },
+                                error: err => {
+                                  this.responseService.onError(err, 'No se pudo guardar una imagen')
+                                },
+                              })
+                          });
                       });
-                  });
-                } else {
-                  this.submitLoading = false;
-                  this.responseService.onSuccessAndRedirect('/home', 'Auditoría guarda');
-                }
+                    } else {
+                      this.submitLoading = false;
+                      this.responseService.onSuccessAndRedirect('/question-form/1', 'Auditoría guarda');
+                    }
+                  }
 
-              }
-            });
+                }
+              });
+          }
         },
         error: err => {
           this.submitLoading = false;
@@ -124,6 +133,7 @@ export class AuditoryFormPage implements OnInit {
   }
 
   private setAuditory(auditory: any) {
+    this.backUrl = 'auditory-list';
     this.form.setValue({
       title: auditory.title,
       description: auditory.description,
@@ -136,14 +146,16 @@ export class AuditoryFormPage implements OnInit {
       .getEvidencesByAuditory(this.auditoryId)
       .subscribe({
         next: res => {
-          res.values.forEach(async (row: any) => {
-            this.photoService.getLocalAuditoryEvidence(row.dir).then(photo => {
-              this.ImageSrc.push({
-                id: row.dir,
-                file: 'data:image/jpeg;base64,' + photo.data
-              });
-            })
-          });
+          if (res !== 'waiting') {
+            res.values.forEach(async (row: any) => {
+              this.photoService.getLocalAuditoryEvidence(row.dir).then(photo => {
+                this.ImageSrc.push({
+                  id: row.dir,
+                  file: 'data:image/jpeg;base64,' + photo.data
+                });
+              })
+            });
+          }
         }
       })
 
@@ -165,7 +177,11 @@ export class AuditoryFormPage implements OnInit {
       .subscribe({
         next: paramMap => {
           this.hideMap = false;
-          const id = paramMap.get('id') || '0';
+          let id = paramMap.get('id') || '0';
+          if (id === '00') {
+            this.backUrl = 'auditory-list';
+            id = '0';
+          }
           if (id !== '0') {
             this.fetchLoading = true;
             this.auditoryId = id;
@@ -175,11 +191,12 @@ export class AuditoryFormPage implements OnInit {
               .getLocalForm(this.auditoryId)
               .subscribe({
                 next: res => {
-                  console.log(res);
-                  this.responseService.onSuccess('Se recuperaron los datos');
-                  this.fetchLoading = false;
+                  if (res !== 'waiting') {
+                    console.log(res);
+                    this.fetchLoading = false;
 
-                  this.setAuditory(res.values[0]);
+                    this.setAuditory(res.values[0]);
+                  }
                 },
                 error: err => {
                   this.fetchLoading = false;
@@ -188,32 +205,48 @@ export class AuditoryFormPage implements OnInit {
               })
           }
         }
-      });
+      }).unsubscribe();
   }
 
   ionViewWillLeave() {
-    console.log('leave')
+    this.formActionText = 'Nueva';
+    this.SubmitButtonText = 'Comenzar';
+    this.auditoryId = '0';
+
+    this.fetchLoading = false;
+    this.submitLoading = false;
+    this.locationAdded = false;
+    this.hideMap = true;
+
+    this.form = new FormGroup({});
+
+    this.ImageSrc = [];
     this.hideMap = true;
   }
 
   onSubmit() {
+    this.responseService.onSuccessAndRedirect('/question-form/1', 'Auditoría guarda');
+    return;
     if (this.validFormService.isValid(this.form, [])) {
-      this.submitLoading = true;
+      this.confirmDialogService
+        .presentAlert('¿Desea guardar los cambios?', () => {
+          this.submitLoading = true;
 
-      this.mapService.setCenter(0, 0);
-      const auditory = {
-        title: this.form.controls['title'].value,
-        description: this.form.controls['description'].value,
-        date: this.form.controls['date'].value,
-        lat: this.form.controls['lat'].value,
-        lng: this.form.controls['lng'].value,
-      };
+          this.mapService.setCenter(0, 0);
+          const auditory = {
+            title: this.form.controls['title'].value,
+            description: this.form.controls['description'].value,
+            date: this.form.controls['date'].value,
+            lat: this.form.controls['lat'].value,
+            lng: this.form.controls['lng'].value,
+          };
 
-      if (this.auditoryId === '0') {
-        this.createAuditory(auditory);
-      } else {
-        this.updateAuditory(auditory);
-      }
+          if (this.auditoryId === '0') {
+            this.createAuditory(auditory);
+          } else {
+            this.updateAuditory(auditory);
+          }
+        })
     }
   }
 
@@ -223,8 +256,8 @@ export class AuditoryFormPage implements OnInit {
     this.mapService.setCenter(coordinates.coords.latitude, coordinates.coords.longitude);
   }
 
-  onGoingHome() {
-    this.router.navigateByUrl('home');
+  onCancel() {
+    this.router.navigateByUrl(this.backUrl);
   }
 
   onAddPhoto() {
@@ -249,17 +282,21 @@ export class AuditoryFormPage implements OnInit {
                 this.auditoryEvidenceService
                   .localSave({ auditoryId: this.auditoryId, dir: photoId })
                   .subscribe({
-                    next: async () => {
-                      this.auditoryEvidenceService
-                        .getLastInsertedDir()
-                        .subscribe({
-                          next: async (res: any) => {
-                            this.ImageSrc.push({
-                              id: res.values[0].dir,
-                              file: img
-                            });
-                          }
-                        });
+                    next: async save => {
+                      if (save !== 'waiting') {
+                        this.auditoryEvidenceService
+                          .getLastInsertedDir()
+                          .subscribe({
+                            next: async (res: any) => {
+                              if (res !== 'waiting') {
+                                this.ImageSrc.push({
+                                  id: res.values[0].dir,
+                                  file: img
+                                });
+                              }
+                            }
+                          });
+                      }
                     },
                     error: err => {
                       this.responseService.onError(err, 'No se pudo guardar una imagen')

@@ -3,7 +3,8 @@ import { SQLiteService } from './sqlite.service';
 import { LOCAL_DATABASE } from 'src/environments/environment';
 import { SQLiteDBConnection } from '@capacitor-community/sqlite';
 import { createSchema, loadData } from 'src/app/utils/database.util';
-import { Observable, from, of } from 'rxjs';
+import { BehaviorSubject, Observable, from, } from 'rxjs';
+import { map, take, tap, } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -20,40 +21,78 @@ export class DatabaseService {
     this.db = await this._sqlite
       .createConnection(LOCAL_DATABASE.name, LOCAL_DATABASE.encrypted, LOCAL_DATABASE.mode, LOCAL_DATABASE.version);
 
-    return this.db.open();
+    await this.db.open();
+
+    // this.createDatabase();
+  }
+
+  closeConnection() {
+    if (this.db) {
+      this._sqlite.closeConnection(LOCAL_DATABASE.name);
+      this.db = undefined;
+    }
   }
 
   async checkDatabaseVersion() {
-    try {
-      const result = await this.db?.query('SELECT * FROM versions;');
-      if (result?.values?.length === 0) {
-        this.loadInitialData();
-      }
-      // verificar nuevas versiones en el backend
-    } catch (err: any) {
-      if (err.message.includes('no such table: versions')) {
-        this.createDatabase();
-      }
-    }
+    this.executeQuery('SELECT * FROM versions;')
+      .subscribe(res => {
+        if (res !== 'waiting') {
+          console.log(res);
+          if (res.includes && res.includes('no such table: versions')) {
+            this.createDatabase();
+          }
+        }
+      });
   }
 
   executeQuery(query: string): Observable<any> {
-    return from(this.db?.query(query) || new Promise((res, rej) => true));
-  }
+    const data = new BehaviorSubject<any>('waiting');
 
-  private async loadInitialData() {
-    console.log('loading data')
-    const result = await this.db?.query(loadData);
-    if (!!result) {
-      this.checkDatabaseVersion();
-    }
+    this._sqlite
+      .createConnection(LOCAL_DATABASE.name, LOCAL_DATABASE.encrypted, LOCAL_DATABASE.mode, LOCAL_DATABASE.version)
+      .then(async connection => {
+        await connection.open();
+
+        connection?.query(query)
+          .then(result => {
+            console.log(result)
+            data.next(result);
+            connection.close();
+          })
+          .catch(e => {
+            console.log(e)
+            connection.close();
+            data.next(`error: ${e.message}`);
+          });
+      });
+
+
+
+    return data.asObservable().pipe(take(2));
   }
 
   private async createDatabase() {
-    console.log('creating database')
-    const result = await this.db?.execute(createSchema);
-    if (!!result) {
-      this.checkDatabaseVersion();
-    }
+    this._sqlite
+      .createConnection(LOCAL_DATABASE.name, LOCAL_DATABASE.encrypted, LOCAL_DATABASE.mode, LOCAL_DATABASE.version)
+      .then(async connection => {
+        await connection.open();
+        connection.execute(createSchema)
+          .then(result => {
+            console.log(result);
+            connection.execute(loadData)
+            .then(result1 => {
+                console.log(result1);
+                connection.close();
+              })
+              .catch(e => {
+                console.log(`error: ${e.message}`);
+                connection.close();
+              });
+          })
+          .catch(e => {
+            console.log(`error: ${e.message}`);
+            connection.close();
+          });
+      });
   }
 }

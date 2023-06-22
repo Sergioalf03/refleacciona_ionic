@@ -6,12 +6,14 @@ import { IonicModule } from '@ionic/angular';
 import { AuditoryListPageRoutingModule } from './auditory-list-routing.module';
 
 import { AuditoryListPage } from './auditory-list.page';
+import { HeaderButtonsModule } from 'src/app/components/header-buttons/header-buttons.module';
 
 @NgModule({
   imports: [
     CommonModule,
     IonicModule,
-    AuditoryListPageRoutingModule
+    AuditoryListPageRoutingModule,
+    HeaderButtonsModule,
   ],
   declarations: [AuditoryListPage]
 })

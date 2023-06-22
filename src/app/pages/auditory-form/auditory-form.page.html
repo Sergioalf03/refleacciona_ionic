@@ -1,6 +1,6 @@
 <ion-content >
   <app-header-buttons
-    backUrl="/home"
+    [backUrl]="backUrl"
     homeUrl="/home"
   ></app-header-buttons>
 
@@ -69,7 +69,7 @@
 
       <div class="row mt-5">
         <div class="col">
-          <ion-button color="danger" expand="full" (click)="onGoingHome()">
+          <ion-button color="danger" expand="full" (click)="onCancel()">
             CANCELAR
           </ion-button>
         </div>

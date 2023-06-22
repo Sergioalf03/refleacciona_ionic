@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
+import { DatabaseService } from 'src/app/core/controllers/database.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { AuditoryService } from 'src/app/services/auditory.service';
 
@@ -15,28 +17,38 @@ export class AuditoryListPage implements OnInit {
   constructor(
     private auditoryService: AuditoryService,
     private responseService: HttpResponseService,
+    private databaseService: DatabaseService,
     private router: Router,
+    private confirmDialogService: ConfirmDialogService,
   ) { }
 
   ngOnInit() {
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.loading = true;
-    this.auditoryService
-      .getLocalList()
-      .subscribe({
-        next: res => {
-          console.log(res)
-          this.auditories = res.values;
-          this.loading = false;
-          this.responseService.onSuccess('Auditorías recuperadas');
-        },
-        error: err => {
-          this.responseService.onError(err, 'No se pudieron recuperar las auditorías');
-          this.loading = false;
-        }
-      })
+    await this.databaseService
+      .initConnection()
+      .then(() => {
+        this.auditoryService
+          .getLocalList()
+          .subscribe({
+            next: res => {
+              console.log(res)
+              if (res !== 'waiting') {
+                this.auditories = res.values;
+                this.loading = false;
+                this.databaseService.closeConnection();
+                // this.responseService.onSuccess('Auditorías recuperadas');
+              }
+            },
+            error: err => {
+              this.responseService.onError(err, 'No se pudieron recuperar las auditorías');
+              this.databaseService.closeConnection();
+              this.loading = false;
+            }
+          })
+      });
   }
 
   onGoingHome() {
@@ -47,21 +59,29 @@ export class AuditoryListPage implements OnInit {
     this.router.navigateByUrl(`/auditory-form/${id}`);
   }
 
+  onNewAuditory() {
+    this.router.navigateByUrl(`/auditory-form/00`);
+  }
+
   onDelete(id: string) {
-    this.loading = true;
-    this.auditoryService
-      .deleteLocal(id)
-      .subscribe({
-        next: () => {
-          this.loading = false;
-          this.responseService.onSuccess('Auditoría eliminada');
-          this.ionViewWillEnter();
-        },
-        error: err => {
-          this.responseService.onError(err, 'No se pudo eliminar la auditoría');
-          this.loading = false;
-        }
-      })
+    this.confirmDialogService.presentAlert('¿Desea eliminar la auditoría?', () => {
+      this.loading = true;
+      this.auditoryService
+        .deleteLocal(id)
+        .subscribe({
+          next: (rm) => {
+            if (rm !== 'waiting') {
+              this.loading = false;
+              this.responseService.onSuccess('Auditoría eliminada');
+              this.ionViewWillEnter();
+            }
+          },
+          error: err => {
+            this.responseService.onError(err, 'No se pudo eliminar la auditoría');
+            this.loading = false;
+          }
+        })
+    });
   }
 
 }

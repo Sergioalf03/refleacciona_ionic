@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { SessionService } from './core/controllers/session.service';
 import { HttpResponseService } from './core/controllers/http-response.service';
 import { RandomStringService } from './core/controllers/random-string.service';
@@ -7,13 +7,14 @@ import { Storage } from '@ionic/storage-angular';
 import { Platform } from '@ionic/angular';
 import { SQLiteService } from './core/controllers/sqlite.service';
 import { DatabaseService } from './core/controllers/database.service';
+import { LOCAL_DATABASE } from 'src/environments/environment';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
 
   public isWeb: boolean = false;
   private initPlugin?: boolean;
@@ -75,15 +76,21 @@ export class AppComponent implements OnInit {
           }
         }
 
-        console.log(`>>>> in App  this.initPlugin ${this.initPlugin}`);
-        this.databaseService
-          .initConnection()
-          .then(() => {
-            this.databaseService.checkDatabaseVersion();
+        this.initPlugin = ret;
 
-          });
+
       });
     });
+  }
+
+  ionViewWillLeave() {
+    console.log('leave')
+    this.databaseService.closeConnection();
+  }
+
+  ngOnDestroy(): void {
+    console.log('destroy')
+    this.databaseService.closeConnection();
   }
 
   private submit() {

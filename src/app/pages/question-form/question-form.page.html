@@ -1,7 +1,81 @@
-<ion-content >
+<ion-header class="ion-no-border">
   <app-header-buttons
     backUrl="/home"
     homeUrl="/home"
   ></app-header-buttons>
 
+  <div class="principal col-md-6 col-xl-12  mr-auto mb-4">
+  <!-- <form *ngIf="form" [formGroup]="form" (ngSubmit)="onSubmit()"> -->
+    <div class=" mx-2 mt-2">
+      <h5 class="text-center">{{ sectionName }}</h5>
+      <h6 class="text-center">{{ subsectionName }}</h6>
+    </div>
+  </div>
+
+  <!-- <ion-item *ngIf="loading" class="ion-text-center" lines="none"> -->
+
+  <!-- </ion-item> -->
+</ion-header>
+
+<ion-content  class="ion-padding-horizontal">
+  <ion-spinner  name="circular"></ion-spinner>
+  <div *ngIf="!loading">
+    <div *ngFor="let question of questions" class="mt-2 mb-2">
+      <div class="row">
+        <div [class]="question.popup || question.has_evidence ? 'col-10' : 'col' + ' ion-text-justify'">{{ question.uid + '.- ' + question.sentence}}</div>
+        <div class="col-2">
+          <ion-button *ngIf="question.has_evidence" size="small" (click)="true">
+            <ion-icon style="font-size: 15px;" slot="icon-only" name="camera">
+          </ion-icon></ion-button>
+          <ion-button *ngIf="question.popup" size="small" (click)="openedPopover = question.indx">
+            <ion-icon style="font-size: 15px;" slot="icon-only" name="help"></ion-icon>
+          </ion-button>
+          <ion-popover [isOpen]="openedPopover === question.indx" (didDismiss)="openedPopover = 0">
+            <ng-template>
+              <ion-content class="ion-padding ion-text-justify">{{ question.popup }}</ion-content>
+            </ng-template>
+          </ion-popover>
+        </div>
+      </div>
+      <ion-item *ngIf="question.answers === 'FREETEXT'" class="txtInput">
+        <ion-input
+          [autofocus]="true"
+          [clearInput]="true"
+          [autocomplete]="true"
+        ></ion-input>
+      </ion-item>
+
+
+      <ion-item *ngIf="question.answers === 'ONEDIGIT'" class="txtInput">
+        <ion-input
+          *ngIf="question.answers === 'ONEDIGIT'"
+          [autofocus]="true"
+          [clearInput]="true"
+          [autocomplete]="true"
+          maxlength="1"
+          type="number"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item *ngIf="question.answers !== 'FREETEXT' && question.answers !== 'ONEDIGIT'" lines="none">
+        <ion-radio-group class="ion-no-border">
+          <ion-radio *ngFor="let option of jsonCast(question.answers)" justify="start" label-placement="end" mode="ios" [value]="option.v">{{ option.t }}</ion-radio><br />
+        </ion-radio-group>
+      </ion-item>
+    </div>
+  </div>
+
 </ion-content>
+
+<ion-footer class="ion-no-border">
+
+  <ion-row class="mt-3">
+    <ion-col>
+      <ion-button expand="full" (click)="onPrevious()">ANTERIOR</ion-button>
+    </ion-col>
+
+    <ion-col>
+      <ion-button expand="full" (click)="onNext()">SIGUIENTE</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-footer>
