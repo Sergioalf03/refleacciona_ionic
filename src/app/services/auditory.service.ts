@@ -3,6 +3,7 @@ import { HttpRequestService } from '../core/controllers/http-request.service';
 import { DatabaseService } from '../core/controllers/database.service';
 import { BehaviorSubject, Observable, take } from 'rxjs';
 import { PhotoService } from '../core/controllers/photo.service';
+import { SessionService } from '../core/controllers/session.service';
 
 const BASE_URI = '/auditory';
 
@@ -15,6 +16,7 @@ export class AuditoryService {
     private httpService: HttpRequestService,
     private databaseService: DatabaseService,
     private photoService: PhotoService,
+    private sessionService: SessionService,
   ) { }
 
   save(data: any) {
@@ -44,18 +46,22 @@ export class AuditoryService {
   // local database
   localSave(data: any) {
     const now = new Date().toISOString();
+    const userId = this.sessionService.userId;
+    console.log(userId);
     return this.databaseService.executeQuery(`
-      INSERT INTO auditories (title, date, description, lat, lng, status, creationDate, updateDate)
-      VALUES ("${data.title}", "${data.date}", "${data.description}", "${data.lat}", "${data.lng}", 1, "${now}", "${now}");
+      INSERT INTO auditories (title, date, description, lat, lng, status, creationDate, updateDate, user_id)
+      VALUES ("${data.title}", "${data.date}", "${data.description}", "${data.lat}", "${data.lng}", 1, "${now}", "${now}", ${userId});
     `);
   }
 
   getLastSavedId() {
-    return this.databaseService.executeQuery(`SELECT MAX(id) AS id FROM auditories WHERE status = 1 LIMIT 1;`);
+    const userId = this.sessionService.userId;
+    return this.databaseService.executeQuery(`SELECT MAX(id) AS id FROM auditories WHERE status = 1 AND user_id = ${userId} LIMIT 1;`);
   }
 
   getLocalList() {
-    return this.databaseService.executeQuery(`SELECT id, title, date FROM auditories WHERE status = 1;`);
+    const userId = this.sessionService.userId;
+    return this.databaseService.executeQuery(`SELECT id, title, date FROM auditories WHERE status = 1 AND user_id = ${userId};`);
   }
 
   getLocalForm(id: string) {

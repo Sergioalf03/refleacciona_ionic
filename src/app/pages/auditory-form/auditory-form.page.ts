@@ -10,6 +10,8 @@ import { MapService } from 'src/app/core/controllers/map.service';
 import { AuditoryEvidenceService } from 'src/app/services/auditory-evidence.service';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { DatabaseService } from 'src/app/core/controllers/database.service';
+import { AnswerService } from 'src/app/services/answer.service';
+import { ActionSheetController } from '@ionic/angular';
 
 @Component({
   selector: 'app-auditory-form',
@@ -41,6 +43,8 @@ export class AuditoryFormPage implements OnInit {
     private mapService: MapService,
     private photoService: PhotoService,
     private confirmDialogService: ConfirmDialogService,
+    private answerService: AnswerService,
+    private actionSheetCtrl: ActionSheetController,
   ) { }
 
   private initForm() {
@@ -89,7 +93,7 @@ export class AuditoryFormPage implements OnInit {
                                     count++;
                                     if (count === this.ImageSrc.length) {
                                       this.submitLoading = false;
-                                      this.responseService.onSuccessAndRedirect('/question-form/1', 'Auditoría guarda');
+                                      this.responseService.onSuccessAndRedirect(`/question-form/${this.auditoryId}/1`, 'Auditoría guarda');
                                     }
                                   }
                                 },
@@ -101,7 +105,7 @@ export class AuditoryFormPage implements OnInit {
                       });
                     } else {
                       this.submitLoading = false;
-                      this.responseService.onSuccessAndRedirect('/question-form/1', 'Auditoría guarda');
+                      this.responseService.onSuccessAndRedirect(`/question-form/${this.auditoryId}/1`, 'Auditoría guarda');
                     }
                   }
 
@@ -141,6 +145,14 @@ export class AuditoryFormPage implements OnInit {
       lat: auditory.lat,
       lng: auditory.lng,
     });
+
+    this.answerService
+      .getAnswersBySection(this.auditoryId, '1')
+      .subscribe({
+        next: res => {
+          console.log(res);
+        }
+      })
 
     this.auditoryEvidenceService
       .getEvidencesByAuditory(this.auditoryId)
@@ -225,8 +237,8 @@ export class AuditoryFormPage implements OnInit {
   }
 
   onSubmit() {
-    this.responseService.onSuccessAndRedirect('/question-form/1', 'Auditoría guarda');
-    return;
+    // this.responseService.onSuccessAndRedirect(`/question-form/${this.auditoryId}/1`, 'Auditoría guarda');
+    // return;
     if (this.validFormService.isValid(this.form, [])) {
       this.confirmDialogService
         .presentAlert('¿Desea guardar los cambios?', () => {
@@ -260,9 +272,35 @@ export class AuditoryFormPage implements OnInit {
     this.router.navigateByUrl(this.backUrl);
   }
 
-  onAddPhoto() {
-    let text = '';
-    this.photoService.openGallery(text).then(async res => {
+  async onAddPhoto() {
+      const actionSheet = await this.actionSheetCtrl.create({
+        header: 'Opciones',
+        mode: 'ios',
+        buttons: [
+          {
+            text: 'Cámara',
+            handler: () => this.fromCamera(),
+          },
+          {
+            text: 'Galería',
+            handler: () => this.fromGallery(),
+          },
+          {
+            text: 'Cerrar',
+            role: 'cancel',
+            data: {
+              action: 'cancel',
+            },
+          },
+        ],
+      });
+
+      await actionSheet.present();
+
+  }
+
+  fromGallery() {
+    this.photoService.openGallery().then(async res => {
       if (this.auditoryId === '0') {
         for (let index = 0; index < res.photos.length; index++) {
           this.ImageSrc.push({
@@ -304,6 +342,50 @@ export class AuditoryFormPage implements OnInit {
                   })
               });
           }
+        }
+      }
+    });
+  }
+
+  fromCamera() {
+    this.photoService.takePicture().then(async res => {
+      if (this.auditoryId === '0') {
+          this.ImageSrc.push({
+            id: '',
+            file: res.webPath
+          });
+      } else {
+        if (this.ImageSrc.length > 0) {
+          const img = res.webPath || '';
+          const blob = await fetch(img).then(r => r.blob());
+
+          this.photoService
+            .saveLocalAuditoryEvidence(blob, this.auditoryId)
+            .then(photoId => {
+              this.auditoryEvidenceService
+                .localSave({ auditoryId: this.auditoryId, dir: photoId })
+                .subscribe({
+                  next: async save => {
+                    if (save !== 'waiting') {
+                      this.auditoryEvidenceService
+                        .getLastInsertedDir()
+                        .subscribe({
+                          next: async (res: any) => {
+                            if (res !== 'waiting') {
+                              this.ImageSrc.push({
+                                id: res.values[0].dir,
+                                file: img
+                              });
+                            }
+                          }
+                        });
+                    }
+                  },
+                  error: err => {
+                    this.responseService.onError(err, 'No se pudo guardar una imagen')
+                  },
+                })
+            });
         }
       }
     });

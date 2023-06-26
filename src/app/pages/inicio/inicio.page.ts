@@ -7,6 +7,7 @@ import { DatabaseService } from 'src/app/core/controllers/database.service';
 import { SQLiteService } from 'src/app/core/controllers/sqlite.service';
 import { timeout } from 'rxjs';
 import { QuestionService } from 'src/app/services/question.service';
+import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 
 @Component({
   selector: 'app-inicio',
@@ -29,6 +30,7 @@ export class InicioPage implements OnInit, AfterViewInit {
     private databaseService: DatabaseService,
     private questionService: QuestionService,
     private router: Router,
+    private confirmDialogService: ConfirmDialogService,
   ) { }
 
   ngOnInit() {
@@ -65,17 +67,21 @@ export class InicioPage implements OnInit, AfterViewInit {
     this.databaseService.closeConnection();
   }
 
-  async onLogout() {
-    return await this.sessionService.logout()
-    .subscribe({
-      next: (res:any) => {
-        console.log(res);
-        this.httpResponseService.onSuccessAndRedirect('/login', 'Sesión cerrada');
-      },
-      error: err => {
-        this.httpResponseService.onError(err, '');
-      },
-    })
+  onLogout() {
+    this.confirmDialogService
+      .presentAlert('¿Desea cerrar sesión?', async () => {
+        return await this.sessionService.logout()
+        .subscribe({
+          next: (res:any) => {
+            console.log(res);
+            this.router.navigateByUrl('/login')
+            // this.httpResponseService.onSuccessAndRedirect('/login', 'Sesión cerrada');
+          },
+          error: err => {
+            this.httpResponseService.onError(err, '');
+          },
+        })
+      })
   }
 
   onNewAuditory() {

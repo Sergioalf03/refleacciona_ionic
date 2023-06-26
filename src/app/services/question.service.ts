@@ -18,8 +18,8 @@ export class QuestionService {
     return this.dbService.executeQuery(`SELECT * FROM sections WHERE id = ${id};`);
   }
 
-  getLocalQuestionsBySection(id: string) {
-    return this.dbService.executeQuery(`SELECT * FROM questions WHERE section_id = ${id};`);
+  getLocalQuestionsBySection(id: string, auditoryId: string) {
+    return this.dbService.executeQuery(`SELECT questions.*, answers.value as answer FROM questions LEFT JOIN answers ON answers.question_id = questions.id AND answers.auditory_id = ${auditoryId} WHERE questions.section_id = ${id};`);
   }
 
 }

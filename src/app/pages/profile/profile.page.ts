@@ -120,8 +120,7 @@ export class ProfilePage implements OnInit {
   }
 
   onSelectPhoto() {
-    let text = '';
-    this.photoService.openGallery(text).then(async res => {
+    this.photoService.openGallery().then(async res => {
       console.log(res)
       this.ImageSrc = res.photos[0].webPath;
 

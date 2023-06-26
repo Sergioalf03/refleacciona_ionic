@@ -4,6 +4,7 @@ import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.se
 import { DatabaseService } from 'src/app/core/controllers/database.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { AuditoryService } from 'src/app/services/auditory.service';
+import { ActionSheetController } from '@ionic/angular';
 
 @Component({
   selector: 'app-auditory-list',
@@ -20,6 +21,7 @@ export class AuditoryListPage implements OnInit {
     private databaseService: DatabaseService,
     private router: Router,
     private confirmDialogService: ConfirmDialogService,
+    private actionSheetCtrl: ActionSheetController,
   ) { }
 
   ngOnInit() {
@@ -59,6 +61,10 @@ export class AuditoryListPage implements OnInit {
     this.router.navigateByUrl(`/auditory-form/${id}`);
   }
 
+  onEditAnswers(id: string) {
+    this.router.navigateByUrl(`/question-form/${id}/1`);
+  }
+
   onNewAuditory() {
     this.router.navigateByUrl(`/auditory-form/00`);
   }
@@ -82,6 +88,38 @@ export class AuditoryListPage implements OnInit {
           }
         })
     });
+  }
+
+  async presentActionSheetOptions(id: string) {
+    console.log(id);
+    const actionSheet = await this.actionSheetCtrl.create({
+      header: 'Opciones',
+      mode: 'ios',
+      buttons: [
+        {
+          text: 'Actualizar Auditoría',
+          handler: () => this.onEdit(id),
+        },
+        {
+          text: 'Actualizar Respuestas',
+          handler: () => this.onEditAnswers(id),
+        },
+        {
+          text: 'Eliminar Auditoría',
+          role: 'destructive',
+          handler: () => this.onDelete(id),
+        },
+        {
+          text: 'Cerrar',
+          role: 'cancel',
+          data: {
+            action: 'cancel',
+          },
+        },
+      ],
+    });
+
+    await actionSheet.present();
   }
 
 }

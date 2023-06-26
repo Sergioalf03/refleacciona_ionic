@@ -18,7 +18,7 @@ export class LoginPage implements OnInit {
   constructor( private router:Router,
               private sessionService: SessionService,
               private randomService: RandomStringService,
-              private httpResponseService: HttpResponseService) { 
+              private httpResponseService: HttpResponseService) {
 
                 this.btnLoading = false;
               }
@@ -40,12 +40,13 @@ export class LoginPage implements OnInit {
     this.sessionService.login(this.user.email,this.user.password,this.user['deviceId'])
     .subscribe({
       next: (res:any) => {
-        this.httpResponseService.onSuccessAndRedirect('/home','Inicio de sesión correcto');
+        // this.httpResponseService.onSuccessAndRedirect('/home','Inicio de sesión correcto');
+        this.router.navigateByUrl('/home');
         this.resetForm(formLogin);
       },
       error: err => {
         this.httpResponseService.onError(err, '');
-        
+
         this.resetForm();
       },
     });

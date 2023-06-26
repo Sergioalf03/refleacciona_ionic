@@ -39,6 +39,7 @@ CREATE INDEX IF NOT EXISTS questions_index_indx ON questions (indx);
 
 CREATE TABLE IF NOT EXISTS auditories (
   id INTEGER PRIMARY KEY NOT NULL,
+  user_id INTEGER NOT NULL,
   title TEXT NOT NULL,
   description TEXT,
   date TEXT NOT NULL,
@@ -58,6 +59,26 @@ CREATE TABLE IF NOT EXISTS auditory_evidences (
   dir TEXT NOT NULL,
   creationDate TEXT NOT NULL,
   FOREIGN KEY (auditory_id) REFERENCES auditories(id) ON DELETE SET DEFAULT
+);
+
+CREATE TABLE IF NOT EXISTS answers (
+  id INTEGER PRIMARY KEY NOT NULL,
+  auditory_id INTEGER NOT NULL,
+  question_id INTEGER NOT NULL,
+  value TEXT NOT NULL,
+  notes TEXT,
+  creationDate TEXT NOT NULL,
+  updateDate TEXT NOT NULL,
+  FOREIGN KEY (auditory_id) REFERENCES auditories(id) ON DELETE SET DEFAULT
+  FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE SET DEFAULT
+);
+
+CREATE TABLE IF NOT EXISTS answer_evidences (
+  id INTEGER PRIMARY KEY NOT NULL,
+  answer_id INTEGER NOT NULL,
+  dir TEXT NOT NULL,
+  creationDate TEXT NOT NULL,
+  FOREIGN KEY (answer_id) REFERENCES answers(id) ON DELETE SET DEFAULT
 );
 `;
 

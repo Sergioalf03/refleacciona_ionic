@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Camera, CameraResultType } from '@capacitor/camera';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 
 @Injectable({
@@ -13,22 +13,16 @@ export class PhotoService {
   ) { }
 
   takePicture = async () => {
-    const image = await Camera.getPhoto({
+    return await Camera.getPhoto({
       quality: 90,
       allowEditing: true,
+      source: CameraSource.Camera,
       resultType: CameraResultType.Uri
     });
 
-    // image.webPath will contain a path that can be set as an image src.
-    // You can access the original file using image.path, which can be
-    // passed to the Filesystem API to read the raw data of the image,
-    // if desired (or pass resultType: CameraResultType.Base64 to getPhoto)
-    var imageUrl = image.webPath;
-
-    // Can be set to the src of an image now
   };
 
-  openGallery = async (imageUrl: any) => {
+  openGallery = async () => {
     return await Camera.pickImages({
       quality: 90,
     });
@@ -100,6 +94,19 @@ export class PhotoService {
   }
 
   async saveLocalAuditoryEvidence(photo: any, id: string) {
+    const base64Data = await this.readAsBase64(photo);
+
+    const fileName = `${id}-${this.generateName()}`;
+    const savedFile = await Filesystem.writeFile({
+      path: fileName,
+      data: base64Data,
+      directory: Directory.Data
+    });
+
+    return fileName;
+  }
+
+  async saveLocalAnswerEvidence(photo: any, id: string) {
     const base64Data = await this.readAsBase64(photo);
 
     const fileName = `${id}-${this.generateName()}`;

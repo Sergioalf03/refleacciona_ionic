@@ -18,11 +18,8 @@
         <p>Fecha: {{ aud.date }}</p>
       </ion-label>
 
-      <ion-button (click)="onDelete(aud.id)" color="danger" slot="end" size="small">
-        <ion-icon slot="icon-only" name="trash"></ion-icon>
-      </ion-button>
-      <ion-button (click)="onEdit(aud.id)" slot="end" size="small">
-        <ion-icon slot="icon-only" name="create-sharp"></ion-icon>
+      <ion-button (click)="presentActionSheetOptions(aud.id)" slot="end" size="small">
+        <ion-icon slot="icon-only" name="menu"></ion-icon>
       </ion-button>
     </ion-item>
   </div>

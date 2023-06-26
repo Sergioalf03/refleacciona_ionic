@@ -58,7 +58,7 @@ const routes: Routes = [
     loadChildren: () => import('./pages/profile/profile.module').then( m => m.ProfilePageModule)
   },
   {
-    path: 'question-form/:sectionId',
+    path: 'question-form/:auditoryId/:sectionId',
     loadChildren: () => import('./pages/question-form/question-form.module').then( m => m.QuestionFormPageModule)
   },
 
