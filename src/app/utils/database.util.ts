@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS auditories (
   user_id INTEGER NOT NULL,
   title TEXT NOT NULL,
   description TEXT,
+  close_note TEXT,
   date TEXT NOT NULL,
   lat TEXT NOT NULL,
   lng TEXT NOT NULL,
@@ -75,10 +76,12 @@ CREATE TABLE IF NOT EXISTS answers (
 
 CREATE TABLE IF NOT EXISTS answer_evidences (
   id INTEGER PRIMARY KEY NOT NULL,
-  answer_id INTEGER NOT NULL,
+  auditory_id INTEGER NOT NULL,
+  question_id INTEGER NOT NULL,
   dir TEXT NOT NULL,
   creationDate TEXT NOT NULL,
-  FOREIGN KEY (answer_id) REFERENCES answers(id) ON DELETE SET DEFAULT
+  FOREIGN KEY (auditory_id) REFERENCES auditories(id) ON DELETE SET DEFAULT
+  FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE SET DEFAULT
 );
 `;
 

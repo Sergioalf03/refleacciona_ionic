@@ -15,11 +15,9 @@ export class PhotoService {
   takePicture = async () => {
     return await Camera.getPhoto({
       quality: 90,
-      allowEditing: true,
       source: CameraSource.Camera,
       resultType: CameraResultType.Uri
     });
-
   };
 
   openGallery = async () => {
@@ -127,7 +125,22 @@ export class PhotoService {
     })
   }
 
+  getLocalAnswerEvidence(id: string) {
+    return Filesystem.readFile({
+      path: id,
+      encoding: Encoding.UTF8,
+      directory: Directory.Data
+    })
+  }
+
   removeLocalAuditoryEvidence(dir: string) {
+    return Filesystem.deleteFile({
+      path: dir,
+      directory: Directory.Data
+    })
+  }
+
+  removeLocalAnswerEvidence(dir: string) {
     return Filesystem.deleteFile({
       path: dir,
       directory: Directory.Data

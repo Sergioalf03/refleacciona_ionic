@@ -1,0 +1,45 @@
+<ion-content >
+  <app-header-buttons
+    [backUrl]="backUrl"
+    homeUrl="/home"
+  ></app-header-buttons>
+
+  <form *ngIf="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="mx-3 mt-4">
+      <h1>Resultados</h1>
+
+      <p class="ion-text-justify mt-3">Con las repuestas ingresadas en la auditoría se consiguieron los siguientes acumulados:</p>
+      <h5 class="mt-2">Puntuación Si: {{yesCount}}</h5>
+      <h5>Puntuación No: {{notCount}}</h5>
+
+      <div class="mt-5">
+        Notas finales
+      </div>
+
+      <ion-item class="txtInput">
+        <ion-textarea
+          formControlName="notes"
+          type="text"
+          [autoGrow]="true"
+          rows="3"
+          placeholder="Agregue una conclusión o nota"
+        ></ion-textarea>
+      </ion-item>
+
+      <div class="row mt-5">
+        <div class="col">
+          <ion-button color="danger" expand="full" (click)="onReturn()">
+            REGRESAR
+          </ion-button>
+        </div>
+        <div class="col">
+          <ion-button [disabled]="submitLoading" expand="full"type="submit">
+            TERMINAR
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" [hidden]="!submitLoading"></span>
+          </ion-button>
+        </div>
+      </div>
+    </div>
+  </form>
+
+</ion-content>

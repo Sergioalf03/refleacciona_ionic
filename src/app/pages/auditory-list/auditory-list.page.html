@@ -15,7 +15,8 @@
     <ion-item *ngFor="let aud of auditories" class="mt-2 txtInput">
       <ion-label>
         <h2 class="text-start">Título: {{ aud.title }}</h2>
-        <p>Fecha: {{ aud.date }}</p>
+        <p *ngIf="aud.date">Fecha: {{ aud.date }}</p>
+        <p>Estado: {{ aud.statusWord }}</p>
       </ion-label>
 
       <ion-button (click)="presentActionSheetOptions(aud.id)" slot="end" size="small">

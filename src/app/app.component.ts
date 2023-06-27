@@ -85,12 +85,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ionViewWillLeave() {
     console.log('leave')
-    this.databaseService.closeConnection();
   }
 
   ngOnDestroy(): void {
     console.log('destroy')
-    this.databaseService.closeConnection();
   }
 
   private submit() {

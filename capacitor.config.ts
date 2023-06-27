@@ -1,8 +1,8 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.example.app',
-  appName: 'refleacciona_mobile',
+  appId: 'com.refleacciona.callesmasseguras',
+  appName: 'Calles Más Seguras',
   webDir: 'www',
   bundledWebRuntime: false,
   plugins: {

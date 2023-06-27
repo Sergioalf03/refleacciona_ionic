@@ -11,34 +11,19 @@ import { map, take, tap, } from 'rxjs/operators';
 })
 export class DatabaseService {
 
-  private db?: SQLiteDBConnection;
-
   constructor(
     private _sqlite: SQLiteService,
   ) { }
 
-  async initConnection() {
-    this.db = await this._sqlite
-      .createConnection(LOCAL_DATABASE.name, LOCAL_DATABASE.encrypted, LOCAL_DATABASE.mode, LOCAL_DATABASE.version);
-
-    await this.db.open();
-
-    // this.createDatabase();
-  }
-
-  closeConnection() {
-    if (this.db) {
-      this._sqlite.closeConnection(LOCAL_DATABASE.name);
-      this.db = undefined;
-    }
-  }
-
   async checkDatabaseVersion() {
+    console.log('version query');
     this.executeQuery('SELECT * FROM versions;')
-      .subscribe(res => {
-        if (res !== 'waiting') {
+    .subscribe(res => {
+      if (res !== 'waiting') {
+          console.log('version result');
           console.log(res);
           if (res.includes && res.includes('no such table: versions')) {
+            console.log('createdatabase');
             this.createDatabase();
           }
         }
@@ -47,52 +32,96 @@ export class DatabaseService {
 
   executeQuery(query: string): Observable<any> {
     const data = new BehaviorSubject<any>('waiting');
-
     this._sqlite
       .createConnection(LOCAL_DATABASE.name, LOCAL_DATABASE.encrypted, LOCAL_DATABASE.mode, LOCAL_DATABASE.version)
       .then(async connection => {
-        await connection.open();
-
-        connection?.query(query)
-          .then(result => {
-            console.log(result)
-            data.next(result);
-            connection.close();
+        this.sendQuery(connection, query, data);
+      })
+      .catch(async err => {
+        console.log('ya existe la conexión', err)
+        this._sqlite
+          .retrieveConnection(LOCAL_DATABASE.name)
+          .then(async connection => {
+            this.sendQuery(connection, query, data);
           })
-          .catch(e => {
-            console.log(e)
-            connection.close();
-            data.next(`error: ${e.message}`);
+          .catch(() => {
+            console.log('no existe la conexión')
+            this._sqlite
+              .createConnection(LOCAL_DATABASE.name, LOCAL_DATABASE.encrypted, LOCAL_DATABASE.mode, LOCAL_DATABASE.version)
+              .then(async connection => {
+                this.sendQuery(connection, query, data);
+              })
           });
       });
-
-
 
     return data.asObservable().pipe(take(2));
   }
 
+  private async sendQuery(connection: SQLiteDBConnection, query: string, data: BehaviorSubject<any>) {
+    console.log('open');
+    await connection.open();
+
+    connection?.query(query)
+      .then(async (result) => {
+        console.log(result)
+        connection
+          .close()
+          .then(async () => {
+            data.next(result);
+          });
+      })
+      .catch(async (e) => {
+        connection
+          .close()
+          .then(async () => {
+            data.next(`error: ${e.message}`);
+          });
+        console.log(e)
+      });
+  }
+
   private async createDatabase() {
+    console.log('createdatabase start');
     this._sqlite
       .createConnection(LOCAL_DATABASE.name, LOCAL_DATABASE.encrypted, LOCAL_DATABASE.mode, LOCAL_DATABASE.version)
       .then(async connection => {
-        await connection.open();
-        connection.execute(createSchema)
-          .then(result => {
-            console.log(result);
-            connection.execute(loadData)
-            .then(result1 => {
-                console.log(result1);
-                connection.close();
-              })
-              .catch(e => {
-                console.log(`error: ${e.message}`);
-                connection.close();
-              });
-          })
-          .catch(e => {
-            console.log(`error: ${e.message}`);
-            connection.close();
+        this.sendCreateDatabase(connection);
+      })
+      .catch(async err => {
+        console.log('connection error', err)
+        this._sqlite
+          .retrieveConnection(LOCAL_DATABASE.name)
+          .then(async connection => {
+            this.sendCreateDatabase(connection);
           });
+      });
+  }
+
+  private async sendCreateDatabase(connection: SQLiteDBConnection,) {
+    await connection.open();
+    console.log('connection open');
+    console.log('schema');
+    connection.execute(createSchema)
+      .then(result => {
+        console.log('schemaresult');
+        console.log(result);
+        console.log('loaddata');
+        connection.execute(loadData)
+          .then(async (result1) => {
+            console.log('loaddataresult');
+            console.log(result1);
+            await connection.close();
+          })
+          .catch(async (e) => {
+            console.log('loaddataerror');
+            console.log(`error: ${e.message}`);
+            await connection.close();
+          });
+      })
+      .catch(async (e) => {
+        console.log('schemaerror');
+        console.log(`error: ${e.message}`);
+        await connection.close();
       });
   }
 }

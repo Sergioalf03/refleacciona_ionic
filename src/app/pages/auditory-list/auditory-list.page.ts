@@ -29,28 +29,26 @@ export class AuditoryListPage implements OnInit {
 
   async ionViewWillEnter() {
     this.loading = true;
-    await this.databaseService
-      .initConnection()
-      .then(() => {
-        this.auditoryService
-          .getLocalList()
-          .subscribe({
-            next: res => {
-              console.log(res)
-              if (res !== 'waiting') {
-                this.auditories = res.values;
-                this.loading = false;
-                this.databaseService.closeConnection();
-                // this.responseService.onSuccess('Auditorías recuperadas');
-              }
-            },
-            error: err => {
-              this.responseService.onError(err, 'No se pudieron recuperar las auditorías');
-              this.databaseService.closeConnection();
-              this.loading = false;
-            }
-          })
-      });
+
+    this.auditoryService
+      .getLocalList()
+      .subscribe({
+        next: res => {
+          console.log(res)
+          if (res !== 'waiting') {
+            this.auditories = res.values.map((a: any) => ({
+              ...a,
+              statusWord: a.status === 1 ? 'En progreso' : 'Terminada',
+            }));
+            this.loading = false;
+            // this.responseService.onSuccess('Auditorías recuperadas');
+          }
+        },
+        error: err => {
+          this.responseService.onError(err, 'No se pudieron recuperar las auditorías');
+          this.loading = false;
+        }
+      })
   }
 
   onGoingHome() {
@@ -63,6 +61,10 @@ export class AuditoryListPage implements OnInit {
 
   onEditAnswers(id: string) {
     this.router.navigateByUrl(`/question-form/${id}/1`);
+  }
+
+  onFinish(id: string) {
+    this.router.navigateByUrl(`/auditory-finish-form/${id}`);
   }
 
   onNewAuditory() {
@@ -104,6 +106,10 @@ export class AuditoryListPage implements OnInit {
           text: 'Actualizar Respuestas',
           handler: () => this.onEditAnswers(id),
         },
+        // {
+        //   text: 'Finalizar auditoría',
+        //   handler: () => this.onFinish(id),
+        // },
         {
           text: 'Eliminar Auditoría',
           role: 'destructive',

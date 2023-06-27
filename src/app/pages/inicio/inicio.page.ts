@@ -34,28 +34,25 @@ export class InicioPage implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit() {
-
+    console.log('version start')
+    this.databaseService
+      .checkDatabaseVersion()
+      .then(() => {
+        // this.auditoryService
+        //   .getCount()
+        //   .subscribe({
+        //     next: res => {
+        //       this.auditoriesCount = res.data;
+        //       // this.httpResponseService.onSuccess('Información recuperada')
+        //     },
+        //     error: err => this.httpResponseService.onError(err, 'No se pudo recuperar la información'),
+        //   });
+      });
   }
 
   ionViewDidEnter() {
-    this.databaseService.initConnection()
-      .then(databases => {
-        console.log(databases)
-        this.databaseService
-          .checkDatabaseVersion()
-          .then(() => {
-            this.auditoryService
-              .getCount()
-              .subscribe({
-                next: res => {
-                  this.auditoriesCount = res.data;
-                  // this.httpResponseService.onSuccess('Información recuperada')
-                },
-                error: err => this.httpResponseService.onError(err, 'No se pudo recuperar la información'),
-              });
-          })
-        ;
-      });
+
+
 
     // this.databaseService.ngetProductList().subscribe({
     //   next: (res: any) => console.log(res),
@@ -64,7 +61,6 @@ export class InicioPage implements OnInit, AfterViewInit {
   }
 
   ionViewWillLeave() {
-    this.databaseService.closeConnection();
   }
 
   onLogout() {

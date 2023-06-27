@@ -68,7 +68,7 @@
         </div>
 
         <div class="col-2">
-          <ion-button *ngIf="question.has_evidence" [disabled]="!this.ImageSrc[questionIndex].canTakePickture" size="small" (click)="onSelectPhoto(questionIndex)">
+          <ion-button *ngIf="question.has_evidence" [disabled]="!this.ImageSrc[questionIndex].canTakePickture || !!ImageSrc[questionIndex].url" size="small" (click)="onSelectPhoto(questionIndex, question.id)">
             <ion-icon style="font-size: 15px;" slot="icon-only" name="camera">
           </ion-icon></ion-button>
 
@@ -95,16 +95,22 @@
 
 </ion-content>
 
-<ion-footer class="ion-no-border">
+<ion-footer >
 
-  <ion-row class="mt-3">
+  <ion-row class="mt-2">
+    <ion-col>
+      <p class="text-center"><strong> {{answerCount}}/{{questions.length}} Respuestas</strong></p>
+    </ion-col>
+  </ion-row>
+
+  <ion-row>
     <ion-col >
-      <ion-button *ngIf="sectionId !== '1'" expand="full" (click)="onPrevious()">ANTERIOR</ion-button>
+      <ion-button *ngIf="sectionId !== '1'" [disabled]="loading" expand="full" (click)="onPrevious()">ANTERIOR</ion-button>
     </ion-col>
 
     <ion-col>
-      <ion-button [disabled]="!alreadyAnsweredAll()" *ngIf="sectionId !== '7'" expand="full" (click)="onNext()">SIGUIENTE</ion-button>
-      <ion-button [disabled]="!alreadyAnsweredAll()" *ngIf="sectionId === '7'" expand="full" (click)="onFinish()">FINALIZAR</ion-button>
+      <ion-button [disabled]="!alreadyAnsweredAll() || loading" *ngIf="sectionId !== '7'" expand="full" (click)="onNext()">SIGUIENTE</ion-button>
+      <ion-button [disabled]="!alreadyAnsweredAll() || loading" *ngIf="sectionId === '7'" expand="full" (click)="onFinish()">FINALIZAR</ion-button>
     </ion-col>
   </ion-row>
 </ion-footer>

@@ -34,6 +34,8 @@
         <ion-textarea
           formControlName="description"
           type="text"
+          [autoGrow]="true"
+          rows="3"
           placeholder="Agregue una descripción"
         ></ion-textarea>
       </ion-item>
@@ -69,7 +71,7 @@
 
       <div class="row mt-5">
         <div class="col">
-          <ion-button color="danger" expand="full" (click)="onCancel()">
+          <ion-button [disabled]="submitLoading" color="danger" expand="full" (click)="onCancel()">
             CANCELAR
           </ion-button>
         </div>

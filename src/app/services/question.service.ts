@@ -19,7 +19,11 @@ export class QuestionService {
   }
 
   getLocalQuestionsBySection(id: string, auditoryId: string) {
-    return this.dbService.executeQuery(`SELECT questions.*, answers.value as answer FROM questions LEFT JOIN answers ON answers.question_id = questions.id AND answers.auditory_id = ${auditoryId} WHERE questions.section_id = ${id};`);
+    return this.dbService.executeQuery(`SELECT questions.*, answers.value as answer, answer_evidences.dir FROM questions LEFT JOIN answers ON answers.question_id = questions.id AND answers.auditory_id = ${auditoryId} LEFT JOIN answer_evidences ON answer_evidences.question_id = questions.id AND answers.auditory_id = ${auditoryId} WHERE questions.section_id = ${id};`);
+  }
+
+  getPointsResume(auditoryId: string) {
+    return this.dbService.executeQuery(`SELECT answers.value as answer FROM questions JOIN answers ON answers.question_id = questions.id AND answers.auditory_id = ${auditoryId} WHERE questions.score = "1";`);
   }
 
 }

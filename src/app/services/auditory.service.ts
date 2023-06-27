@@ -61,11 +61,11 @@ export class AuditoryService {
 
   getLocalList() {
     const userId = this.sessionService.userId;
-    return this.databaseService.executeQuery(`SELECT id, title, date FROM auditories WHERE status = 1 AND user_id = ${userId};`);
+    return this.databaseService.executeQuery(`SELECT id, title, date, status FROM auditories WHERE (status = 1 OR status = 2) AND user_id = ${userId};`);
   }
 
   getLocalForm(id: string) {
-    return this.databaseService.executeQuery(`SELECT title, date, description, lat, lng FROM auditories WHERE id = ${id} AND status = 1;`);
+    return this.databaseService.executeQuery(`SELECT title, date, description, lat, lng, close_note FROM auditories WHERE id = ${id} AND (status = 1 OR status = 2);`);
   }
 
   updateLocal(id: string, data: any) {
@@ -73,6 +73,15 @@ export class AuditoryService {
     return this.databaseService.executeQuery(`
       UPDATE auditories
       SET title = "${data.title}", date = "${data.date}", description = "${data.description}", lat = "${data.lat}", lng = "${data.lng}", updateDate = "${now}"
+      WHERE id = ${id} AND status = 1;
+    `);
+  }
+
+  closeLocal(id: string, note: string) {
+    const now = new Date().toISOString();
+    return this.databaseService.executeQuery(`
+      UPDATE auditories
+      SET close_note = "${note}", status = 2, updateDate = "${now}"
       WHERE id = ${id} AND status = 1;
     `);
   }
@@ -91,13 +100,40 @@ export class AuditoryService {
             .executeQuery(`DELETE FROM auditory_evidences WHERE auditory_id = ${id}`)
             .subscribe(rm => {
               if (rm !== 'waiting') {
-                this.databaseService.executeQuery(`
-                  DELETE FROM auditories
-                  WHERE id = ${id} AND status = 1;
-                `)
-                .subscribe({
-                  next: () => result.next('deleted')
-                });
+
+                this.databaseService
+                  .executeQuery(`SELECT dir FROM answer_evidences WHERE auditory_id = ${id}`)
+                  .subscribe(directories2 => {
+                    console.log(directories2)
+                    if (directories2 !== 'waiting') {
+                      directories2.values.forEach((dir: any) => {
+                        this.photoService.removeLocalAnswerEvidence(dir.dir)
+                      });
+                      this.databaseService
+                        .executeQuery(`DELETE FROM answer_evidences WHERE auditory_id = ${id}`)
+                        .subscribe(rm => {
+                          if (rm !== 'waiting') {
+
+                            this.databaseService
+                              .executeQuery(`DELETE FROM answers WHERE auditory_id = ${id}`)
+                              .subscribe(rm => {
+                                if (rm !== 'waiting') {
+
+                                  this.databaseService.executeQuery(`
+                                    DELETE FROM auditories
+                                    WHERE id = ${id} AND status = 1;
+                                  `)
+                                  .subscribe({
+                                    next: () => result.next('deleted')
+                                  });
+
+                                }
+                              });
+                          }
+                        });
+                    }
+                  });
+
               }
             });
         }

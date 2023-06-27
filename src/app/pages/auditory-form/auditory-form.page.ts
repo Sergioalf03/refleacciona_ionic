@@ -146,14 +146,6 @@ export class AuditoryFormPage implements OnInit {
       lng: auditory.lng,
     });
 
-    this.answerService
-      .getAnswersBySection(this.auditoryId, '1')
-      .subscribe({
-        next: res => {
-          console.log(res);
-        }
-      })
-
     this.auditoryEvidenceService
       .getEvidencesByAuditory(this.auditoryId)
       .subscribe({
@@ -309,26 +301,28 @@ export class AuditoryFormPage implements OnInit {
           });
         }
       } else {
-        if (this.ImageSrc.length > 0) {
-          for (let index = 0; index < res.photos.length; index++) {
-            const img = res.photos[index].webPath;
-            const blob = await fetch(img).then(r => r.blob());
+        for (let index = 0; index < res.photos.length; index++) {
+          const img = res.photos[index].webPath;
+          const blob = await fetch(img).then(r => r.blob());
 
-            this.photoService
-              .saveLocalAuditoryEvidence(blob, this.auditoryId)
-              .then(photoId => {
+          this.photoService
+            .saveLocalAuditoryEvidence(blob, this.auditoryId)
+            .then(photoId => {
+              if (photoId !== 'waiting') {
+                console.log(photoId)
                 this.auditoryEvidenceService
-                  .localSave({ auditoryId: this.auditoryId, dir: photoId })
-                  .subscribe({
-                    next: async save => {
-                      if (save !== 'waiting') {
+                .localSave({ auditoryId: this.auditoryId, dir: photoId })
+                .subscribe({
+                  next: async save => {
+                    if (save !== 'waiting') {
+                        console.log(save)
                         this.auditoryEvidenceService
                           .getLastInsertedDir()
                           .subscribe({
-                            next: async (res: any) => {
-                              if (res !== 'waiting') {
+                            next: async (res2: any) => {
+                              if (res2 !== 'waiting') {
                                 this.ImageSrc.push({
-                                  id: res.values[0].dir,
+                                  id: res2.values[0].dir,
                                   file: img
                                 });
                               }
@@ -340,8 +334,8 @@ export class AuditoryFormPage implements OnInit {
                       this.responseService.onError(err, 'No se pudo guardar una imagen')
                     },
                   })
-              });
-          }
+              }
+            });
         }
       }
     });
@@ -355,25 +349,29 @@ export class AuditoryFormPage implements OnInit {
             file: res.webPath
           });
       } else {
-        if (this.ImageSrc.length > 0) {
-          const img = res.webPath || '';
-          const blob = await fetch(img).then(r => r.blob());
+        console.log(res);
+        const img = res.webPath || '';
+        const blob = await fetch(img).then(r => r.blob());
 
-          this.photoService
-            .saveLocalAuditoryEvidence(blob, this.auditoryId)
-            .then(photoId => {
+        this.photoService
+          .saveLocalAuditoryEvidence(blob, this.auditoryId)
+          .then(photoId => {
+            if (photoId !== 'waiting') {
+              console.log(photoId);
               this.auditoryEvidenceService
                 .localSave({ auditoryId: this.auditoryId, dir: photoId })
                 .subscribe({
                   next: async save => {
                     if (save !== 'waiting') {
+                      console.log(save);
                       this.auditoryEvidenceService
                         .getLastInsertedDir()
                         .subscribe({
-                          next: async (res: any) => {
-                            if (res !== 'waiting') {
+                          next: async (res2: any) => {
+                            if (res2 !== 'waiting') {
+                              console.log(res2);
                               this.ImageSrc.push({
-                                id: res.values[0].dir,
+                                id: res2.values[0].dir,
                                 file: img
                               });
                             }
@@ -384,9 +382,10 @@ export class AuditoryFormPage implements OnInit {
                   error: err => {
                     this.responseService.onError(err, 'No se pudo guardar una imagen')
                   },
-                })
-            });
-        }
+                });
+            }
+          });
+
       }
     });
   }

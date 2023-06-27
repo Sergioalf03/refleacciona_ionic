@@ -15,22 +15,22 @@
 
         <div class="row px-5">
           <div class="col px-1">
-            <input maxlength="1" formControlName="code1" #i1 (click)="setInputFocus(i1)" (keyup)="$event.key === 'Backspace' ? true : setInputFocus(i2)" class="form-control text-center">
+            <input type="tel" maxlength="1" formControlName="code1" #i1 (click)="setInputFocus(i1)" (keyup)="$event.key === 'Backspace' ? true : setInputFocus(i2)" class="form-control text-center">
           </div>
           <div class="col px-1">
-            <input maxlength="1" formControlName="code2" #i2 (click)="setInputFocus(i2)" (keyup)="$event.key === 'Backspace' ? setInputFocus(i1) : setInputFocus(i3)" class="form-control text-center">
+            <input type="tel" maxlength="1" formControlName="code2" #i2 (click)="setInputFocus(i2)" (keyup)="$event.key === 'Backspace' ? setInputFocus(i1) : setInputFocus(i3)" class="form-control text-center">
           </div>
           <div class="col px-1">
-            <input maxlength="1" formControlName="code3" #i3 (click)="setInputFocus(i3)" (keyup)="$event.key === 'Backspace' ? setInputFocus(i2) : setInputFocus(i4)" class="form-control text-center">
+            <input type="tel" maxlength="1" formControlName="code3" #i3 (click)="setInputFocus(i3)" (keyup)="$event.key === 'Backspace' ? setInputFocus(i2) : setInputFocus(i4)" class="form-control text-center">
           </div>
           <div class="col px-1">
-            <input maxlength="1" formControlName="code4" #i4 (click)="setInputFocus(i4)" (keyup)="$event.key === 'Backspace' ? setInputFocus(i3) : setInputFocus(i5)" class="form-control text-center">
+            <input type="tel" maxlength="1" formControlName="code4" #i4 (click)="setInputFocus(i4)" (keyup)="$event.key === 'Backspace' ? setInputFocus(i3) : setInputFocus(i5)" class="form-control text-center">
           </div>
           <div class="col px-1">
-            <input maxlength="1" formControlName="code5" #i5 (click)="setInputFocus(i5)" (keyup)="$event.key === 'Backspace' ? setInputFocus(i4) : setInputFocus(i6)" class="form-control text-center">
+            <input type="tel" maxlength="1" formControlName="code5" #i5 (click)="setInputFocus(i5)" (keyup)="$event.key === 'Backspace' ? setInputFocus(i4) : setInputFocus(i6)" class="form-control text-center">
           </div>
           <div class="col px-1">
-            <input maxlength="1" formControlName="code6" #i6 (click)="setInputFocus(i6)" (keyup)="$event.key === 'Backspace' ? setInputFocus(i5) : setInputFocus(password)" class="form-control text-center">
+            <input type="tel" maxlength="1" formControlName="code6" #i6 (click)="setInputFocus(i6)" (keyup)="$event.key === 'Backspace' ? setInputFocus(i5) : setInputFocus(password)" class="form-control text-center">
           </div>
         </div>
 
