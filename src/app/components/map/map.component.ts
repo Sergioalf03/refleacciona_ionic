@@ -71,7 +71,6 @@ export class MapComponent implements OnInit, AfterViewInit {
   private setCoords() {
     if (this.map) {
       const coords = this.map.getCenter();
-      console.log(coords)
       this.centerEvent.emit({ lat: coords.lat, lng: coords.lng })
     }
   }

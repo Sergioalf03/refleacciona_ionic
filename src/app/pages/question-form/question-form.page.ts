@@ -23,6 +23,8 @@ export class QuestionFormPage implements OnInit {
   ImageSrc: any[] = [];
   answerCount = 0;
   loading = false;
+  sectionIds: number[] = [];
+  sectionIndex = 0;
 
   constructor(
     private questionService: QuestionService,
@@ -45,11 +47,22 @@ export class QuestionFormPage implements OnInit {
             this.router.navigateByUrl('/home');
           }
 
-
           this.auditoryId = `${paramMap.get('auditoryId')}`;
           this.sectionId = `${paramMap.get('sectionId')}`;
 
-          this.fetchSection();
+          this.questionService
+            .getSectionIds()
+            .subscribe({
+              next: sections => {
+                if (sections !== 'waiting') {
+                  this.sectionIds = sections.values.map((s: any) => s.id);
+
+                  this.sectionIndex = this.sectionIds.findIndex(s => +s === +this.sectionId);
+
+                  this.fetchSection();
+                }
+              }
+            });
         }
       })
   }
@@ -59,15 +72,17 @@ export class QuestionFormPage implements OnInit {
   }
 
   onNext() {
-    if (this.sectionId !== '7') {
-      this.sectionId = `${+this.sectionId + 1}`;
+    if (this.sectionIndex < this.sectionIds.length) {
+      this.sectionIndex++;
+      this.sectionId = `${+this.sectionIds[this.sectionIndex]}`;
       this.fetchSection();
     }
   }
 
   onPrevious() {
-    if (this.sectionId !== '1') {
-      this.sectionId = `${+this.sectionId - 1}`;
+    if (this.sectionIndex !== 0) {
+      this.sectionIndex--;
+      this.sectionId = `${+this.sectionIds[this.sectionIndex]}`;
       this.fetchSection();
     }
   }

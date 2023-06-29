@@ -14,7 +14,7 @@ export class HttpResponseService {
   ) { }
 
   onSuccess(message: string) {
-    if(message === '/NA'){return;} 
+    if(message === '/NA'){return;}
       this.toastService.showSuccessToast(message);
   }
 
@@ -22,7 +22,7 @@ export class HttpResponseService {
     this.router.navigateByUrl(redirectTo);
     if(message === '/NA' ){
       return;
-    } 
+    }
       this.toastService.showSuccessToast(message);
   }
 
@@ -30,7 +30,6 @@ export class HttpResponseService {
     if (error.startsWith && error.startsWith('M/:')) {
        this.defaultMessage = error.substring(3);
     }
-    // console.log(this.defaultMessage);
     this.toastService.showErrorToast(this.defaultMessage);
   }
 

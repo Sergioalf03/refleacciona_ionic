@@ -112,7 +112,6 @@ export class SendCodeRecoverPage implements OnInit {
         .changePassword(data)
         .subscribe({
           next: res => {
-            console.log(res.data);
             this.responseService.onSuccessAndRedirect('/login', 'Contraseña cambiada');
             this.submitLoading = false;
           },
@@ -129,7 +128,6 @@ export class SendCodeRecoverPage implements OnInit {
   }
 
   printEvent(event: any) {
-    console.log(event);
   }
 
   setInputFocus(input: any) {

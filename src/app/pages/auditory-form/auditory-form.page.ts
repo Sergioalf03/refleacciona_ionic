@@ -43,7 +43,6 @@ export class AuditoryFormPage implements OnInit {
     private mapService: MapService,
     private photoService: PhotoService,
     private confirmDialogService: ConfirmDialogService,
-    private answerService: AnswerService,
     private actionSheetCtrl: ActionSheetController,
   ) { }
 
@@ -54,6 +53,7 @@ export class AuditoryFormPage implements OnInit {
       }),
       description: new FormControl(''),
       date: new FormControl(''),
+      time: new FormControl(''),
       lat: new FormControl(''),
       lng: new FormControl(''),
     });
@@ -65,14 +65,12 @@ export class AuditoryFormPage implements OnInit {
       .subscribe({
         next: (save) => {
           if (save !== 'waiting') {
-            console.log(save)
 
             this.auditoryService
               .getLastSavedId()
               .subscribe({
                 next: async res => {
                   if (res !== 'waiting') {
-                    console.log(res)
                     this.hideMap = true;
                     this.auditoryId = res.values[0].id;
 
@@ -124,7 +122,7 @@ export class AuditoryFormPage implements OnInit {
     this.auditoryService
       .updateLocal(this.auditoryId, auditory)
       .subscribe({
-        next: () => {
+        next: (updateRes) => {
           this.hideMap = true;
           this.submitLoading = false;
           this.responseService.onSuccessAndRedirect('/auditory-list', 'Auditoría actualizada');
@@ -142,6 +140,7 @@ export class AuditoryFormPage implements OnInit {
       title: auditory.title,
       description: auditory.description,
       date: auditory.date,
+      time: auditory.time,
       lat: auditory.lat,
       lng: auditory.lng,
     });
@@ -196,7 +195,6 @@ export class AuditoryFormPage implements OnInit {
               .subscribe({
                 next: res => {
                   if (res !== 'waiting') {
-                    console.log(res);
                     this.fetchLoading = false;
 
                     this.setAuditory(res.values[0]);
@@ -241,6 +239,7 @@ export class AuditoryFormPage implements OnInit {
             title: this.form.controls['title'].value,
             description: this.form.controls['description'].value,
             date: this.form.controls['date'].value,
+            time: this.form.controls['time'].value,
             lat: this.form.controls['lat'].value,
             lng: this.form.controls['lng'].value,
           };
@@ -309,13 +308,11 @@ export class AuditoryFormPage implements OnInit {
             .saveLocalAuditoryEvidence(blob, this.auditoryId)
             .then(photoId => {
               if (photoId !== 'waiting') {
-                console.log(photoId)
                 this.auditoryEvidenceService
                 .localSave({ auditoryId: this.auditoryId, dir: photoId })
                 .subscribe({
                   next: async save => {
                     if (save !== 'waiting') {
-                        console.log(save)
                         this.auditoryEvidenceService
                           .getLastInsertedDir()
                           .subscribe({
@@ -349,7 +346,6 @@ export class AuditoryFormPage implements OnInit {
             file: res.webPath
           });
       } else {
-        console.log(res);
         const img = res.webPath || '';
         const blob = await fetch(img).then(r => r.blob());
 
@@ -357,19 +353,16 @@ export class AuditoryFormPage implements OnInit {
           .saveLocalAuditoryEvidence(blob, this.auditoryId)
           .then(photoId => {
             if (photoId !== 'waiting') {
-              console.log(photoId);
               this.auditoryEvidenceService
                 .localSave({ auditoryId: this.auditoryId, dir: photoId })
                 .subscribe({
                   next: async save => {
                     if (save !== 'waiting') {
-                      console.log(save);
                       this.auditoryEvidenceService
                         .getLastInsertedDir()
                         .subscribe({
                           next: async (res2: any) => {
                             if (res2 !== 'waiting') {
-                              console.log(res2);
                               this.ImageSrc.push({
                                 id: res2.values[0].dir,
                                 file: img
@@ -391,13 +384,11 @@ export class AuditoryFormPage implements OnInit {
   }
 
   onSetCoords(coords: any) {
-    console.log(coords);
     this.form.controls['lat'].setValue(coords.lat);
     this.form.controls['lng'].setValue(coords.lng);
   }
 
   onImgClicked(dir: string, index: number) {
-    console.log(dir);
     this.confirmDialogService.presentAlert('¿Desea eliminar la imagen?', () => {
       if (!!dir) {
         this.auditoryEvidenceService

@@ -23,7 +23,6 @@ export class AnswerService {
       .executeQuery(`SELECT * FROM answers WHERE auditory_id = ${auditoryId} AND question_id = ${questionId};`)
       .subscribe(answers => {
         if (answers !== 'waiting') {
-          console.log(answers);
           const now = new Date().toISOString();
           if (answers.values.length === 0) {
             this.databaseService

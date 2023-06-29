@@ -49,9 +49,7 @@ export class AADatabaseService {
   }
 
   private async setupDatabase() {
-    console.log('here')
     const dbSetupDone = await this._storage?.get(DB_SETUP_KEY);
-    console.log(dbSetupDone)
 
     if (!dbSetupDone) {
       this.downloadDatabase();
@@ -65,7 +63,6 @@ export class AADatabaseService {
   // Potentially build this out to an update logic:
   // Sync your data on every app start and update the device DB
   private async downloadDatabase(update = false) {
-    console.log('here');
     // this.http
     //   .get('https://devdactic.fra1.digitaloceanspaces.com/tutorial/db.json')
     //   .subscribe(async (jsonExport: any) => {

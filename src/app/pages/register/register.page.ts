@@ -55,7 +55,6 @@ export class RegisterPage implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.form)
     if (this.validFormService.isValid(this.form, [])) {
       this.btnLoading = true;
 
@@ -71,7 +70,6 @@ export class RegisterPage implements OnInit {
         .register(user)
         .subscribe({
           next: (res:any) => {
-            console.log(res.data.token);
             this.authService.userId = res.data.id;
             this.httpResponseService.onSuccessAndRedirect('/email-confirmation','Usuario registrado correctamente.');
             this.resetForm();

@@ -28,27 +28,7 @@ export class AuditoryListPage implements OnInit {
   }
 
   async ionViewWillEnter() {
-    this.loading = true;
-
-    this.auditoryService
-      .getLocalList()
-      .subscribe({
-        next: res => {
-          console.log(res)
-          if (res !== 'waiting') {
-            this.auditories = res.values.map((a: any) => ({
-              ...a,
-              statusWord: a.status === 1 ? 'En progreso' : 'Terminada',
-            }));
-            this.loading = false;
-            // this.responseService.onSuccess('Auditorías recuperadas');
-          }
-        },
-        error: err => {
-          this.responseService.onError(err, 'No se pudieron recuperar las auditorías');
-          this.loading = false;
-        }
-      })
+    this.fetchList();
   }
 
   onGoingHome() {
@@ -59,8 +39,8 @@ export class AuditoryListPage implements OnInit {
     this.router.navigateByUrl(`/auditory-form/${id}`);
   }
 
-  onEditAnswers(id: string) {
-    this.router.navigateByUrl(`/question-form/${id}/1`);
+  onEditAnswers(id: string, lastIndex: number) {
+    this.router.navigateByUrl(`/question-form/${id}/${lastIndex}`);
   }
 
   onFinish(id: string) {
@@ -81,7 +61,9 @@ export class AuditoryListPage implements OnInit {
             if (rm !== 'waiting') {
               this.loading = false;
               this.responseService.onSuccess('Auditoría eliminada');
-              this.ionViewWillEnter();
+              setTimeout(() => {
+                this.fetchList();
+              }, 100)
             }
           },
           error: err => {
@@ -92,28 +74,26 @@ export class AuditoryListPage implements OnInit {
     });
   }
 
-  async presentActionSheetOptions(id: string) {
-    console.log(id);
-    const actionSheet = await this.actionSheetCtrl.create({
-      header: 'Opciones',
-      mode: 'ios',
-      buttons: [
+  async presentActionSheetOptions(auditory: any) {
+
+    const buttons = auditory.status === 1 ?
+      auditory.answersCompleted ? [
         {
           text: 'Actualizar Auditoría',
-          handler: () => this.onEdit(id),
+          handler: () => this.onEdit(auditory.id),
         },
         {
           text: 'Actualizar Respuestas',
-          handler: () => this.onEditAnswers(id),
+          handler: () => this.onEditAnswers(auditory.id, 1),
         },
-        // {
-        //   text: 'Finalizar auditoría',
-        //   handler: () => this.onFinish(id),
-        // },
+        {
+          text: 'Finalizar auditoría',
+          handler: () => this.onFinish(auditory.id),
+        },
         {
           text: 'Eliminar Auditoría',
           role: 'destructive',
-          handler: () => this.onDelete(id),
+          handler: () => this.onDelete(auditory.id),
         },
         {
           text: 'Cerrar',
@@ -122,10 +102,87 @@ export class AuditoryListPage implements OnInit {
             action: 'cancel',
           },
         },
-      ],
+      ] :
+      [
+          {
+            text: 'Actualizar Auditoría',
+            handler: () => this.onEdit(auditory.id),
+          },
+          {
+            text: 'Actualizar Respuestas',
+            handler: () => this.onEditAnswers(auditory.id, auditory.lastIndex),
+          },
+          {
+            text: 'Eliminar Auditoría',
+            role: 'destructive',
+            handler: () => this.onDelete(auditory.id),
+          },
+          {
+            text: 'Cerrar',
+            role: 'cancel',
+            data: {
+              action: 'cancel',
+            },
+          },
+      ] :
+      [
+        {
+          text: 'Actualizar Auditoría',
+          handler: () => this.onEdit(auditory.id),
+        },
+        {
+          text: 'Actualizar Respuestas',
+          handler: () => this.onEditAnswers(auditory.id, 1),
+        },
+        {
+          text: 'Actualizar Finalización',
+          handler: () => this.onFinish(auditory.id),
+        },
+        {
+          text: 'Eliminar Auditoría',
+          role: 'destructive',
+          handler: () => this.onDelete(auditory.id),
+        },
+        {
+          text: 'Cerrar',
+          role: 'cancel',
+          data: {
+            action: 'cancel',
+          },
+        },
+      ];
+
+    const actionSheet = await this.actionSheetCtrl.create({
+      header: 'Opciones',
+      mode: 'ios',
+      buttons: buttons,
     });
 
     await actionSheet.present();
+  }
+
+
+  private fetchList() {
+    this.loading = true;
+
+    this.auditoryService
+      .getLocalList()
+      .subscribe({
+        next: res => {
+          if (res !== 'waiting') {
+            this.auditories = res.map((a: any) => ({
+              ...a,
+              statusWord: a.status === 1 ? 'En progreso' : 'Terminada',
+            }));
+            this.loading = false;
+            // this.responseService.onSuccess('Auditorías recuperadas');
+          }
+        },
+        error: err => {
+          this.responseService.onError(err, 'No se pudieron recuperar las auditorías');
+          this.loading = false;
+        }
+      })
   }
 
 }

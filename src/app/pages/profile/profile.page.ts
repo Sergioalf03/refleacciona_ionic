@@ -67,7 +67,6 @@ export class ProfilePage implements OnInit {
 
     this.photoService.getLocalLogo().then(photo => {
       this.ImageSrc = 'data:image/jpeg;base64,' + photo.data;
-      console.log(photo);
     });;
   }
 
@@ -88,7 +87,6 @@ export class ProfilePage implements OnInit {
             this.toastService.showSuccessToast('Guardado exitoso')
             if (this.ImageSrc) {
               const blob = await fetch(this.ImageSrc).then(r => r.blob());
-              console.log(blob)
               this.sessionService
                 .uploadLogo(blob)
                 .subscribe({
@@ -121,7 +119,6 @@ export class ProfilePage implements OnInit {
 
   onSelectPhoto() {
     this.photoService.openGallery().then(async res => {
-      console.log(res)
       this.ImageSrc = res.photos[0].webPath;
 
     });

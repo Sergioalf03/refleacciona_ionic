@@ -52,7 +52,6 @@ export class RecoverAccountPage implements OnInit {
         .resetPassword(email)
         .subscribe({
           next: res => {
-            console.log(res.data.token);
             this.submitLoading = false;
             this.authService.email = email;
             this.responseService.onSuccessAndRedirect('/code/0', 'Solicitud recibida');

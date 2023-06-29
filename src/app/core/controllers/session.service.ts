@@ -87,8 +87,6 @@ export class SessionService {
           this.clearStorage();
           this.clearVariables();
 
-          console.log(error);
-
           return of(false);
         })
       );

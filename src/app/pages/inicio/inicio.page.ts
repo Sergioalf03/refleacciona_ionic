@@ -8,6 +8,7 @@ import { SQLiteService } from 'src/app/core/controllers/sqlite.service';
 import { timeout } from 'rxjs';
 import { QuestionService } from 'src/app/services/question.service';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
+import { VersionService } from 'src/app/services/version.service';
 
 @Component({
   selector: 'app-inicio',
@@ -24,39 +25,109 @@ export class InicioPage implements OnInit, AfterViewInit {
   initPlugin: boolean = false;
 
   constructor(
-    private auditoryService: AuditoryService,
     private sessionService: SessionService,
     private httpResponseService: HttpResponseService,
     private databaseService: DatabaseService,
-    private questionService: QuestionService,
     private router: Router,
+    private versionService: VersionService,
     private confirmDialogService: ConfirmDialogService,
   ) { }
 
   ngOnInit() {
-    console.log('version start')
     this.databaseService
       .checkDatabaseVersion()
-      .then(() => {
-        // this.auditoryService
-        //   .getCount()
-        //   .subscribe({
-        //     next: res => {
-        //       this.auditoriesCount = res.data;
-        //       // this.httpResponseService.onSuccess('Información recuperada')
-        //     },
-        //     error: err => this.httpResponseService.onError(err, 'No se pudo recuperar la información'),
-        //   });
+      .then((localVersion: any) => {
+        this.versionService
+          .checkLastVersion()
+          .subscribe({
+            next: res => {
+              const localVersionLowerThanRemote = (localVersion === 'new' ? 1 : +localVersion.values[0].number) < +res.data.number;
+              if (localVersionLowerThanRemote) {
+                this.confirmDialogService.presentAlert('Hay una nueva versión del formulario de auditorías. ¿Desea actualizar?', () => {
+                  this.versionService
+                    .getNewVersion()
+                    .subscribe({
+                      next: newVersionRes => {
+                        let query = '';
+                        let count = 0;
+
+                        if (newVersionRes.data.sections.length > 0) {
+                          newVersionRes.data.sections.forEach((s: any, i: number, arr: any[]) => {
+                            this.databaseService
+                              .executeQuery(`SELECT * FROM sections WHERE uid = "${s.uid}"`)
+                              .subscribe({
+                                next: questionExists => {
+                                  if (questionExists !== 'waiting') {
+                                    if (questionExists.values.length === 0) {
+                                      query += `INSERT INTO sections (uid, name, subname, page, indx, status) VALUES ("${s.uid}", "${s.name}", "${s.subname}", ${s.page}, ${s.indx}, ${s.status}); `
+                                    } else {
+                                      query += `UPDATE sections SET uid = "${s.uid}", name = "${s.name}", subname = "${s.subname}", page = ${s.page}, indx = ${s.indx}, status = ${s.status}  WHERE uid = "${s.uid}"; `
+                                    }
+
+                                    count++;
+                                    if (count === arr.length) {
+                                      this.importQuestions(newVersionRes.data.questions, query);
+                                    }
+                                  }
+                                }
+                              })
+                          });
+                        } else {
+                          this.importQuestions(newVersionRes.data.questions, query);
+                        }
+                      },
+                      error: err => this.httpResponseService.onError(err, 'No se pudo recuperar la actualización'),
+                    })
+                });
+              }
+            },
+            error: err => this.httpResponseService.onError(err, 'No se pudo recuperar'),
+          });
+      });
+  }
+
+  private importQuestions(questions: any[], sectionsQuery: string) {
+    let query = '';
+    let count = 0;
+
+    if (questions.length > 0) {
+      questions.forEach((q: any, i: number, arr: any[]) => {
+        this.databaseService
+          .executeQuery(`SELECT * FROM questions WHERE uid = "${q.uid}"`)
+          .subscribe({
+            next: questionExists => {
+              if (questionExists !== 'waiting') {
+                if (questionExists.values.length === 0) {
+                  query += `INSERT INTO questions (section_id, uid, score, cond, has_evidence, indx, status, sentence, answers, popup) VALUES (${q.section_id}, "${q.uid}", ${q.score}, "${q.cond}", ${q.has_evidence}, ${q.indx}, ${q.status}, "${q.sentence}", '${q.answers}', "${q.popup}"); `
+                } else {
+                  query += `UPDATE questions SET uid = "${q.uid}", score = ${q.score}, cond = "${q.cond}", has_evidence = ${q.has_evidence}, indx = ${q.indx}, status = ${q.status}, sentence = "${q.sentence}", answers = '${q.answers}', popup = "${q.popup}") WHERE uid = "${q.uid}"; `
+                }
+
+                count++;
+                if (count === arr.length) {
+                  this.updateAuditories(sectionsQuery + query);
+                }
+              }
+            }
+          })
+      });
+    }
+  }
+
+  updateAuditories(query: string) {
+    this.databaseService
+      .executeQuery(query)
+      .subscribe({
+        next: result => {
+          // finishLoading;
+        }
       });
   }
 
   ionViewDidEnter() {
-
-
-
     // this.databaseService.ngetProductList().subscribe({
-    //   next: (res: any) => console.log(res),
-    //   error: (err: any) => console.log(err),
+    //   next: (res: any) => true,
+    //   error: (err: any) => true,
     // })
   }
 
@@ -69,7 +140,6 @@ export class InicioPage implements OnInit, AfterViewInit {
         return await this.sessionService.logout()
         .subscribe({
           next: (res:any) => {
-            console.log(res);
             this.router.navigateByUrl('/login')
             // this.httpResponseService.onSuccessAndRedirect('/login', 'Sesión cerrada');
           },

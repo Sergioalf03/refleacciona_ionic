@@ -97,20 +97,23 @@
 
 <ion-footer >
 
-  <ion-row class="mt-2">
+  <ion-row *ngIf="questions" class="mt-2">
     <ion-col>
-      <p class="text-center"><strong> {{answerCount}}/{{questions.length}} Respuestas</strong></p>
+      <p class="text-center"><strong>Sección {{sectionIndex + 1}}/{{sectionIds.length}}</strong></p>
+    </ion-col>
+    <ion-col>
+      <p class="text-center"><strong>{{answerCount}}/{{questions.length}} Respuestas</strong></p>
     </ion-col>
   </ion-row>
 
   <ion-row>
     <ion-col >
-      <ion-button *ngIf="sectionId !== '1'" [disabled]="loading" expand="full" (click)="onPrevious()">ANTERIOR</ion-button>
+      <ion-button *ngIf="sectionIndex !== 0" [disabled]="loading" expand="full" (click)="onPrevious()">ANTERIOR</ion-button>
     </ion-col>
 
     <ion-col>
-      <ion-button [disabled]="!alreadyAnsweredAll() || loading" *ngIf="sectionId !== '7'" expand="full" (click)="onNext()">SIGUIENTE</ion-button>
-      <ion-button [disabled]="!alreadyAnsweredAll() || loading" *ngIf="sectionId === '7'" expand="full" (click)="onFinish()">FINALIZAR</ion-button>
+      <ion-button [disabled]="!alreadyAnsweredAll() || loading" *ngIf="sectionIndex !== sectionIds.length - 1" expand="full" (click)="onNext()">SIGUIENTE</ion-button>
+      <ion-button [disabled]="!alreadyAnsweredAll() || loading" *ngIf="sectionIndex === sectionIds.length - 1" expand="full" (click)="onFinish()">FINALIZAR</ion-button>
     </ion-col>
   </ion-row>
 </ion-footer>

@@ -47,10 +47,9 @@ export class AuditoryService {
   localSave(data: any) {
     const now = new Date().toISOString();
     const userId = this.sessionService.userId;
-    console.log(userId);
     return this.databaseService.executeQuery(`
-      INSERT INTO auditories (title, date, description, lat, lng, status, creationDate, updateDate, user_id)
-      VALUES ("${data.title}", "${data.date}", "${data.description}", "${data.lat}", "${data.lng}", 1, "${now}", "${now}", ${userId});
+      INSERT INTO auditories (title, date, time, description, lat, lng, status, creationDate, updateDate, user_id)
+      VALUES ("${data.title}", "${data.date}", "${data.time}", "${data.description}", "${data.lat}", "${data.lng}", 1, "${now}", "${now}", ${userId});
     `);
   }
 
@@ -61,19 +60,72 @@ export class AuditoryService {
 
   getLocalList() {
     const userId = this.sessionService.userId;
-    return this.databaseService.executeQuery(`SELECT id, title, date, status FROM auditories WHERE (status = 1 OR status = 2) AND user_id = ${userId};`);
+    const result = new BehaviorSubject<any>('waiting');
+
+    this.databaseService
+      .executeQuery(`SELECT id, title, date, status FROM auditories WHERE (status = 1 OR status = 2) AND user_id = ${userId};`)
+      .subscribe({
+        next: res => {
+          if (res !== 'waiting') {
+
+            const auditoryResult: any[] = [];
+
+            res.values.forEach((auditory: any, i: number, arr: any[]) => {
+              this.databaseService
+                .executeQuery(`SELECT questions.section_id FROM answers JOIN questions ON questions.id = answers.question_id WHERE answers.auditory_id = ${auditory.id} ORDER BY answers.id DESC LIMIT 1`)
+                .subscribe({
+                  next: lastAnswer => {
+                    if (lastAnswer !== 'waiting') {
+
+                      this.databaseService
+                        .executeQuery(`SELECT count(*) as answers FROM answers WHERE auditory_id = ${auditory.id};`)
+                        .subscribe({
+                          next: answerCount => {
+                            if (answerCount !== 'waiting') {
+
+                              this.databaseService
+                                .executeQuery('SELECT count(*) as questions FROM questions WHERE status = 1')
+                                .subscribe({
+                                  next: questionCount => {
+                                    if (questionCount !== 'waiting') {
+
+                                      auditoryResult.push({
+                                        id: auditory.id,
+                                        title: auditory.title,
+                                        date: auditory.date,
+                                        status: auditory.status,
+                                        lastIndex: lastAnswer.values[0].section_id,
+                                        answersCompleted: answerCount.values[0].answers === questionCount.values[0].questions,
+                                      });
+
+                                      if (auditoryResult.length === arr.length) {
+                                        result.next(auditoryResult);
+                                      }
+                                    }
+                                  }
+                                });
+                            }
+                          }
+                        })
+                    }
+                  }
+                });
+            });
+          }
+        }
+      });
+
+    return result.asObservable().pipe(take(2));
   }
 
   getLocalForm(id: string) {
-    return this.databaseService.executeQuery(`SELECT title, date, description, lat, lng, close_note FROM auditories WHERE id = ${id} AND (status = 1 OR status = 2);`);
+    return this.databaseService.executeQuery(`SELECT * FROM auditories WHERE id = ${id} AND (status = 1 OR status = 2);`);
   }
 
   updateLocal(id: string, data: any) {
     const now = new Date().toISOString();
     return this.databaseService.executeQuery(`
-      UPDATE auditories
-      SET title = "${data.title}", date = "${data.date}", description = "${data.description}", lat = "${data.lat}", lng = "${data.lng}", updateDate = "${now}"
-      WHERE id = ${id} AND status = 1;
+      UPDATE auditories SET title = "${data.title}", date = "${data.date}", time = "${data.time}", description = "${data.description}", lat = "${data.lat}", lng = "${data.lng}", updateDate = "${now}" WHERE id = ${id} AND status = 1;
     `);
   }
 
@@ -91,7 +143,6 @@ export class AuditoryService {
     this.databaseService
       .executeQuery(`SELECT dir FROM auditory_evidences WHERE auditory_id = ${id}`)
       .subscribe(directories => {
-        console.log(directories)
         if (directories !== 'waiting') {
           directories.values.forEach((dir: any) => {
             this.photoService.removeLocalAuditoryEvidence(dir.dir)
@@ -104,7 +155,6 @@ export class AuditoryService {
                 this.databaseService
                   .executeQuery(`SELECT dir FROM answer_evidences WHERE auditory_id = ${id}`)
                   .subscribe(directories2 => {
-                    console.log(directories2)
                     if (directories2 !== 'waiting') {
                       directories2.values.forEach((dir: any) => {
                         this.photoService.removeLocalAnswerEvidence(dir.dir)

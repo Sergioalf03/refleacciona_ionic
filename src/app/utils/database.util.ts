@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS versions (
 
 CREATE TABLE IF NOT EXISTS sections (
   id INTEGER PRIMARY KEY NOT NULL,
+  uid TEXT NOT NULL,
   name TEXT NOT NULL,
   subname TEXT NOT NULL,
   page INTEGER NOT NULL,
@@ -25,7 +26,7 @@ CREATE TABLE IF NOT EXISTS questions (
   sentence TEXT NOT NULL,
   popup TEXT NOT NULL,
   score TEXT NOT NULL,
-  condition TEXT,
+  cond TEXT,
   answers TEXT NOT NULL,
   has_evidence INTEGER NOT NULL,
   indx INTEGER NOT NULL,
@@ -44,6 +45,7 @@ CREATE TABLE IF NOT EXISTS auditories (
   description TEXT,
   close_note TEXT,
   date TEXT NOT NULL,
+  time TEXT NOT NULL,
   lat TEXT NOT NULL,
   lng TEXT NOT NULL,
   status INTEGER NOT NULL,
@@ -59,7 +61,7 @@ CREATE TABLE IF NOT EXISTS auditory_evidences (
   auditory_id INTEGER NOT NULL,
   dir TEXT NOT NULL,
   creationDate TEXT NOT NULL,
-  FOREIGN KEY (auditory_id) REFERENCES auditories(id) ON DELETE SET DEFAULT
+  FOREIGN KEY (auditory_id) REFERENCES auditories(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS answers (
@@ -70,8 +72,8 @@ CREATE TABLE IF NOT EXISTS answers (
   notes TEXT,
   creationDate TEXT NOT NULL,
   updateDate TEXT NOT NULL,
-  FOREIGN KEY (auditory_id) REFERENCES auditories(id) ON DELETE SET DEFAULT
-  FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE SET DEFAULT
+  FOREIGN KEY (auditory_id) REFERENCES auditories(id) ON DELETE CASCADE
+  FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS answer_evidences (
@@ -80,19 +82,19 @@ CREATE TABLE IF NOT EXISTS answer_evidences (
   question_id INTEGER NOT NULL,
   dir TEXT NOT NULL,
   creationDate TEXT NOT NULL,
-  FOREIGN KEY (auditory_id) REFERENCES auditories(id) ON DELETE SET DEFAULT
-  FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE SET DEFAULT
+  FOREIGN KEY (auditory_id) REFERENCES auditories(id) ON DELETE CASCADE
+  FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE
 );
 `;
 
 const SECTION_ROWS: Array<Array<any>> = [
-  ['CARACTERÍSTICAS DE LA CALLE', '',               1, 1, 0, 1],
-  ['SEGURIDAD',                   'Tramo de calle', 2, 2, 0, 1],
-  ['SEGURIDAD',                   'Intersección',   3, 3, 0, 1],
-  ['ACCESIBILIDAD',               'Tramo de calle', 4, 4, 0, 1],
-  ['ACCESIBILIDAD',               'Intersección',   5, 5, 0, 1],
-  ['CONFORT',                     'Tramo de calle', 6, 6, 0, 1],
-  ['CONFORT',                     'Intersección',   7, 7, 0, 1],
+  ['S1', 'CARACTERÍSTICAS DE LA CALLE', '',               1, 1, 1],
+  ['S2', 'SEGURIDAD',                   'Tramo de calle', 2, 2, 1],
+  ['S3', 'SEGURIDAD',                   'Intersección',   3, 3, 1],
+  ['S4', 'ACCESIBILIDAD',               'Tramo de calle', 4, 4, 1],
+  ['S5', 'ACCESIBILIDAD',               'Intersección',   5, 5, 1],
+  ['S6', 'CONFORT',                     'Tramo de calle', 6, 6, 1],
+  ['S7', 'CONFORT',                     'Intersección',   7, 7, 1],
 ];
 
 const QUESTION_ROWS: Array<Array<any>> = [
@@ -154,10 +156,10 @@ const QUESTION_ROWS: Array<Array<any>> = [
 ];
 
 export const loadData: string = `
-  INSERT INTO sections (name, subname, page, indx, status) VALUES
-  ${SECTION_ROWS.map(i => `("${i[0]}", "${i[1]}", ${i[2]}, ${i[3]}, ${i[4]})`).join(',')};
+  INSERT INTO sections (uid, name, subname, page, indx, status) VALUES
+  ${SECTION_ROWS.map(i => `("${i[0]}", "${i[1]}", "${i[2]}", ${i[3]}, ${i[4]}, ${i[5]})`).join(',')};
 
-  INSERT INTO questions (section_id, uid, score, condition, has_evidence, indx, status, sentence, answers, popup) VALUES
+  INSERT INTO questions (section_id, uid, score, cond, has_evidence, indx, status, sentence, answers, popup) VALUES
   ${QUESTION_ROWS.map(i => `(${i[0]}, "${i[1]}", ${i[2]}, "${i[3]}", ${i[4]}, ${i[5]}, ${i[6]}, "${i[7]}", '${i[8]}', "${i[9]}")`).join(',')};
 
   INSERT INTO versions (name, number) VALUES ("ORIGINAL", 1);

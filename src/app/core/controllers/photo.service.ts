@@ -37,48 +37,6 @@ export class PhotoService {
     };
   }
 
-  pickImage() {
-    // return Camera
-    //   .checkPermissions()
-    //   .then(res => {
-    //     if (res.camera !== 'granted' || res.photos !== 'granted') {
-    //       return Camera
-    //         .requestPermissions()
-    //         .then(() => {
-    //           return Camera.getPhoto({
-    //             quality: 10,
-    //             source: CameraSource.Prompt,
-    //             promptLabelHeader: 'Seleccionar Imagen',
-    //             promptLabelPhoto: 'Galería',
-    //             promptLabelPicture: 'Cámara',
-    //             promptLabelCancel: 'Cancelar',
-    //             allowEditing: false,
-
-    //             saveToGallery: false,
-    //             correctOrientation: true,
-    //             resultType: CameraResultType.DataUrl
-    //           });
-    //         })
-    //         .catch(err => console.log(err));
-    //     } else {
-    //       return Camera.getPhoto({
-    //         quality: 10,
-    //         source: CameraSource.Prompt,
-    //         promptLabelHeader: 'Seleccionar Imagen',
-    //         promptLabelPhoto: 'Galería',
-    //         promptLabelPicture: 'Cámara',
-    //         promptLabelCancel: 'Cancelar',
-    //         allowEditing: false,
-
-    //         saveToGallery: false,
-    //         correctOrientation: true,
-    //         resultType: CameraResultType.DataUrl
-    //       });
-    //     }
-    //   })
-    //   .catch(err => console.log(err));
-  }
-
   async saveLocalLogo(photo: any) {
     const base64Data = await this.readAsBase64(photo);
 

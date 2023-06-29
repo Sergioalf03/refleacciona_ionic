@@ -8,13 +8,12 @@ import { SessionService } from '../controllers/session.service';
 })
 export class AutoLoginGuard implements CanActivate {
   constructor(
-    private sessionService: SessionService, 
+    private sessionService: SessionService,
     private router: Router
   ){}
 
   async canActivate(): Promise<any> {
     const isAuthenticated = await this.sessionService.isLoggedIn();
-    console.log(isAuthenticated);
     if(isAuthenticated){
       this.router.navigateByUrl('/home');
       return true;
@@ -23,5 +22,5 @@ export class AutoLoginGuard implements CanActivate {
       return false;
     }
   }
-  
+
 }

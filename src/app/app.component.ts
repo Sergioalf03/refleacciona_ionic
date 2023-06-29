@@ -14,7 +14,7 @@ import { LOCAL_DATABASE } from 'src/environments/environment';
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
 })
-export class AppComponent implements OnInit, OnDestroy {
+export class AppComponent implements OnInit {
 
   public isWeb: boolean = false;
   private initPlugin?: boolean;
@@ -24,7 +24,6 @@ export class AppComponent implements OnInit, OnDestroy {
     private responseService: HttpResponseService,
     private randomStringService: RandomStringService,
     private storageService: StorageService,
-    private databaseService: DatabaseService,
     private sqlite: SQLiteService,
     private storage: Storage,
     private platform: Platform,
@@ -34,8 +33,6 @@ export class AppComponent implements OnInit, OnDestroy {
     this.storage.create()
     .then(async storage => {
       await this.storageService.init(storage);
-      // await this.databaseService.init();
-      // console.log(res)
 
       const logged = await this.sessionService.isLoggedIn();
       if (logged) {
@@ -55,9 +52,6 @@ export class AppComponent implements OnInit, OnDestroy {
             },
             error: err => this.responseService.onError(err, 'No se pudo verificar'),
           })
-      } else {
-        // console.log('not logged');
-        // this.submit();
       }
     });
 
@@ -70,9 +64,6 @@ export class AppComponent implements OnInit, OnDestroy {
           const jeepSqliteEl = document.querySelector('jeep-sqlite');
           if (jeepSqliteEl != null) {
             await this.sqlite.initWebStore();
-            console.log(`>>>> isStoreOpen ${await jeepSqliteEl.isStoreOpen()}`);
-          } else {
-            console.log('>>>> jeepSqliteEl is null');
           }
         }
 
@@ -82,31 +73,5 @@ export class AppComponent implements OnInit, OnDestroy {
       });
     });
   }
-
-  ionViewWillLeave() {
-    console.log('leave')
-  }
-
-  ngOnDestroy(): void {
-    console.log('destroy')
-  }
-
-  private submit() {
-    const randomString = this.randomStringService.generate(128);
-    this.loginWithId(randomString);
-  }
-
-  private loginWithId(deviceId: string) {
-    this.sessionService
-      .login('sergio@dev.com', '12345678', deviceId)
-      .subscribe({
-        next: res => {
-          // console.log(res)
-
-        },
-        error: err => this.responseService.onError(err, 'No se pudo iniciar sesión'),
-      });
-  }
-
 
 }
