@@ -17,7 +17,7 @@ export class DatabaseService {
 
   async checkDatabaseVersion() {
     const result = new Promise((res, rej) => {
-      this.executeQuery('SELECT * FROM versions ORDER BY id DESC LIMIT 1;')
+      this.executeQuery('SELECT * FROM versions ORDER BY id DESC ;')
         .subscribe(result => {
           if (result !== 'waiting') {
             if (result.includes && result.includes('no such table: versions')) {

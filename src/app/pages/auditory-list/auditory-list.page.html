@@ -7,7 +7,7 @@
   <div class="mx-2 mt-2">
     <h1>Auditorías</h1>
 
-    <div class="text-center" *ngIf="auditories.length === 0">
+    <div class="text-center" *ngIf="!loading && auditories.length === 0">
       <h4 class="mt-2" >Sin auditorías</h4>
       <ion-button (click)="onNewAuditory()">Iniciar una nueva</ion-button>
     </div>

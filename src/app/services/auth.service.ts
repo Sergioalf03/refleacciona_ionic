@@ -13,9 +13,9 @@ export class AuthService {
     private httpService: HttpRequestService
   ) { }
 
-  confirmEmail(userId: string, code: string) {
+  confirmEmail(email: string, code: string) {
     return this.httpService.post('/confirm-email', {
-      id: userId,
+      email,
       token: code,
     });
   }

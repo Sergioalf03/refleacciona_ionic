@@ -22,7 +22,7 @@ const routes: Routes = [
   },
   {
     path: 'home',
-    loadChildren: () => import('./pages/inicio/inicio.module').then( m => m.InicioPageModule),
+    loadChildren: () => import('./pages/home/home.module').then( m => m.HomePageModule),
     canLoad: [AuthGuard]
   },
   {
@@ -41,7 +41,7 @@ const routes: Routes = [
     // canActivate: [AutoLoginGuard]
   },
   {
-    path: 'email-confirmation',
+    path: 'email-confirmation/:withMail',
     loadChildren: () => import('./pages/email-confirmation/email-confirmation.module').then( m => m.EmailConfirmationPageModule),
     // canActivate: [AutoLoginGuard]
   },

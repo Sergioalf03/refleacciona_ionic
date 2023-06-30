@@ -4,17 +4,23 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { QuestionFormPageRoutingModule } from './question-form-routing.module';
-
 import { QuestionFormPage } from './question-form.page';
 import { HeaderButtonsModule } from 'src/app/components/header-buttons/header-buttons.module';
+import { RouterModule, Routes } from '@angular/router';
+
+const routes: Routes = [
+  {
+    path: '',
+    component: QuestionFormPage
+  }
+];
 
 @NgModule({
   imports: [
     CommonModule,
     ReactiveFormsModule,
     IonicModule,
-    QuestionFormPageRoutingModule,
+    RouterModule.forChild(routes),
     HeaderButtonsModule,
 
   ],

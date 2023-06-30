@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
+import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { ValidFormService } from 'src/app/core/controllers/valid-form.service';
 import { AuthService } from 'src/app/services/auth.service';
 
@@ -12,12 +14,14 @@ export class EmailConfirmationPage implements OnInit {
 
   form!: FormGroup;
 
-  submitLoading = false;
+  showEmail = false;
 
   constructor(
     private authService: AuthService,
     private validFormService: ValidFormService,
     private responseService: HttpResponseService,
+    private route: ActivatedRoute,
+    private loadingService: LoadingService,
   ) { }
 
   private initForm() {
@@ -58,10 +62,23 @@ export class EmailConfirmationPage implements OnInit {
           Validators.maxLength(1)
         ]
       }),
+      email: new FormControl(this.authService.email, {
+        validators: [
+          Validators.required,
+        ]
+      }),
     });
   }
 
   ngOnInit() {
+    this.showEmail = false;
+    this.route
+      .paramMap
+      .subscribe({
+        next: paramMap => {
+          this.showEmail = paramMap.get('withMail') === '1';
+        },
+      })
   }
 
   ionViewWillEnter() {
@@ -70,12 +87,12 @@ export class EmailConfirmationPage implements OnInit {
 
   onSubmit() {
     if (this.validFormService.isValid(this.form, [])) {
-      this.submitLoading = true;
+      this.loadingService.showLoading();
 
       const code = `${this.form.controls['code1'].value}${this.form.controls['code2'].value}${this.form.controls['code3'].value}${this.form.controls['code4'].value}${this.form.controls['code5'].value}${this.form.controls['code6'].value}`;
 
       this.authService
-        .confirmEmail(this.authService.userId, code)
+        .confirmEmail(this.form.controls['email'].value, code)
         .subscribe({
           next: () => this.responseService.onSuccessAndRedirect('/login', 'Correo confirmado'),
           error: err => this.responseService.onError(err, 'No se pudo confirmar el correo'),

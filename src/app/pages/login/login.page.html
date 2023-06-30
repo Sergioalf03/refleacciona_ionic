@@ -18,7 +18,7 @@
                         type="email"
                         #email="ngModel"
                         [(ngModel)]="user.email"
-                        placeholder="email@domain.com" 
+                        placeholder="correo@dominio.com"
                         required
                         pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
             </ion-input>
@@ -46,7 +46,6 @@
       <ion-col>
         <ion-button expand="full"type="submit">
           {{txtButtonEnter}}
-            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" [hidden]="!btnLoading"></span>
         </ion-button>
       </ion-col>
     </ion-row>

@@ -12,6 +12,9 @@
               <ion-item button routerLink="/profile">
                 <ion-label>Usuario</ion-label>
               </ion-item>
+              <ion-item button (click)="onFetchUpdate(true)">
+                <ion-label>Buscar actualización</ion-label>
+              </ion-item>
               <ion-item button (click)="onLogout()">
                 <ion-label>Salir</ion-label>
               </ion-item>

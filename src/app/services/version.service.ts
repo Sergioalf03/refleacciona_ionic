@@ -8,6 +8,8 @@ const BASE_URI = '/version';
 })
 export class VersionService {
 
+  checked = false;
+
   constructor(
     private http: HttpRequestService,
   ) { }

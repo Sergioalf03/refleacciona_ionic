@@ -81,14 +81,13 @@
 
       <div class="row mt-5">
         <div class="col">
-          <ion-button [disabled]="submitLoading" color="danger" expand="full" (click)="onCancel()">
+          <ion-button color="danger" expand="full" (click)="onCancel()">
             CANCELAR
           </ion-button>
         </div>
         <div class="col">
-          <ion-button [disabled]="submitLoading" expand="full"type="submit">
+          <ion-button expand="full"type="submit">
             {{SubmitButtonText}}
-            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" [hidden]="!submitLoading"></span>
           </ion-button>
         </div>
       </div>

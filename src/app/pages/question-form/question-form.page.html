@@ -19,7 +19,7 @@
 
 <ion-content  class="ion-padding-horizontal">
   <!-- <ion-spinner  name="circular"></ion-spinner> -->
-  <div *ngIf="!loading">
+  <div [hidden]="hideForm">
     <div *ngFor="let question of questions; let questionIndex = index" class="mt-2 mb-2">
       <div class="row">
 
@@ -108,12 +108,12 @@
 
   <ion-row>
     <ion-col >
-      <ion-button *ngIf="sectionIndex !== 0" [disabled]="loading" expand="full" (click)="onPrevious()">ANTERIOR</ion-button>
+      <ion-button *ngIf="sectionIndex !== 0" expand="full" (click)="onPrevious()">ANTERIOR</ion-button>
     </ion-col>
 
     <ion-col>
-      <ion-button [disabled]="!alreadyAnsweredAll() || loading" *ngIf="sectionIndex !== sectionIds.length - 1" expand="full" (click)="onNext()">SIGUIENTE</ion-button>
-      <ion-button [disabled]="!alreadyAnsweredAll() || loading" *ngIf="sectionIndex === sectionIds.length - 1" expand="full" (click)="onFinish()">FINALIZAR</ion-button>
+      <ion-button [disabled]="!alreadyAnsweredAll()" *ngIf="sectionIndex !== sectionIds.length - 1" expand="full" (click)="onNext()">SIGUIENTE</ion-button>
+      <ion-button [disabled]="!alreadyAnsweredAll()" *ngIf="sectionIndex === sectionIds.length - 1" expand="full" (click)="onFinish()">FINALIZAR</ion-button>
     </ion-col>
   </ion-row>
 </ion-footer>

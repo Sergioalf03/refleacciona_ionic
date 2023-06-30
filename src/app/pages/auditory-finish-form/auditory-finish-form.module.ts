@@ -4,17 +4,23 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { AuditoryFinishFormPageRoutingModule } from './auditory-finish-form-routing.module';
-
 import { AuditoryFinishFormPage } from './auditory-finish-form.page';
 import { HeaderButtonsModule } from 'src/app/components/header-buttons/header-buttons.module';
+import { RouterModule, Routes } from '@angular/router';
+
+const routes: Routes = [
+  {
+    path: '',
+    component: AuditoryFinishFormPage
+  }
+];
 
 @NgModule({
   imports: [
     CommonModule,
     ReactiveFormsModule,
     IonicModule,
-    AuditoryFinishFormPageRoutingModule,
+    RouterModule.forChild(routes),
     HeaderButtonsModule,
   ],
   declarations: [AuditoryFinishFormPage]

@@ -5,6 +5,7 @@ import { DatabaseService } from 'src/app/core/controllers/database.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { AuditoryService } from 'src/app/services/auditory.service';
 import { ActionSheetController } from '@ionic/angular';
+import { LoadingService } from 'src/app/core/controllers/loading.service';
 
 @Component({
   selector: 'app-auditory-list',
@@ -18,7 +19,7 @@ export class AuditoryListPage implements OnInit {
   constructor(
     private auditoryService: AuditoryService,
     private responseService: HttpResponseService,
-    private databaseService: DatabaseService,
+    private loadingService: LoadingService,
     private router: Router,
     private confirmDialogService: ConfirmDialogService,
     private actionSheetCtrl: ActionSheetController,
@@ -53,13 +54,12 @@ export class AuditoryListPage implements OnInit {
 
   onDelete(id: string) {
     this.confirmDialogService.presentAlert('¿Desea eliminar la auditoría?', () => {
-      this.loading = true;
+      this.loadingService.showLoading();
       this.auditoryService
         .deleteLocal(id)
         .subscribe({
           next: (rm) => {
             if (rm !== 'waiting') {
-              this.loading = false;
               this.responseService.onSuccess('Auditoría eliminada');
               setTimeout(() => {
                 this.fetchList();
@@ -68,7 +68,6 @@ export class AuditoryListPage implements OnInit {
           },
           error: err => {
             this.responseService.onError(err, 'No se pudo eliminar la auditoría');
-            this.loading = false;
           }
         })
     });
@@ -163,24 +162,25 @@ export class AuditoryListPage implements OnInit {
 
 
   private fetchList() {
+    this.loadingService.showLoading();
     this.loading = true;
 
     this.auditoryService
       .getLocalList()
       .subscribe({
         next: res => {
+          console.log(res);
           if (res !== 'waiting') {
             this.auditories = res.map((a: any) => ({
               ...a,
               statusWord: a.status === 1 ? 'En progreso' : 'Terminada',
             }));
             this.loading = false;
-            // this.responseService.onSuccess('Auditorías recuperadas');
+            this.loadingService.dismissLoading();
           }
         },
         error: err => {
           this.responseService.onError(err, 'No se pudieron recuperar las auditorías');
-          this.loading = false;
         }
       })
   }

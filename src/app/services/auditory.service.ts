@@ -70,47 +70,52 @@ export class AuditoryService {
 
             const auditoryResult: any[] = [];
 
-            res.values.forEach((auditory: any, i: number, arr: any[]) => {
-              this.databaseService
-                .executeQuery(`SELECT questions.section_id FROM answers JOIN questions ON questions.id = answers.question_id WHERE answers.auditory_id = ${auditory.id} ORDER BY answers.id DESC LIMIT 1`)
-                .subscribe({
-                  next: lastAnswer => {
-                    if (lastAnswer !== 'waiting') {
+            if (res.values.length > 0) {
+              res.values.forEach((auditory: any, i: number, arr: any[]) => {
+                this.databaseService
+                  .executeQuery(`SELECT questions.section_id FROM answers JOIN questions ON questions.id = answers.question_id WHERE answers.auditory_id = ${auditory.id} ORDER BY answers.id DESC LIMIT 1`)
+                  .subscribe({
+                    next: lastAnswer => {
+                      if (lastAnswer !== 'waiting') {
 
-                      this.databaseService
-                        .executeQuery(`SELECT count(*) as answers FROM answers WHERE auditory_id = ${auditory.id};`)
-                        .subscribe({
-                          next: answerCount => {
-                            if (answerCount !== 'waiting') {
+                        this.databaseService
+                          .executeQuery(`SELECT count(*) as answers FROM answers WHERE auditory_id = ${auditory.id};`)
+                          .subscribe({
+                            next: answerCount => {
+                              if (answerCount !== 'waiting') {
 
-                              this.databaseService
-                                .executeQuery('SELECT count(*) as questions FROM questions WHERE status = 1')
-                                .subscribe({
-                                  next: questionCount => {
-                                    if (questionCount !== 'waiting') {
+                                this.databaseService
+                                  .executeQuery('SELECT count(*) as questions FROM questions WHERE status = 1')
+                                  .subscribe({
+                                    next: questionCount => {
+                                      if (questionCount !== 'waiting') {
 
-                                      auditoryResult.push({
-                                        id: auditory.id,
-                                        title: auditory.title,
-                                        date: auditory.date,
-                                        status: auditory.status,
-                                        lastIndex: lastAnswer.values[0].section_id,
-                                        answersCompleted: answerCount.values[0].answers === questionCount.values[0].questions,
-                                      });
+                                        auditoryResult.push({
+                                          id: auditory.id,
+                                          title: auditory.title,
+                                          date: auditory.date,
+                                          status: auditory.status,
+                                          lastIndex: lastAnswer.values[0] ? lastAnswer.values[0].section_id : 1,
+                                          answersCompleted: answerCount.values[0].answers === questionCount.values[0].questions,
+                                        });
 
-                                      if (auditoryResult.length === arr.length) {
-                                        result.next(auditoryResult);
+                                        if (auditoryResult.length === arr.length) {
+                                          result.next(auditoryResult);
+                                        }
                                       }
                                     }
-                                  }
-                                });
+                                  });
+                              }
                             }
-                          }
-                        })
+                          })
+                      }
                     }
-                  }
-                });
-            });
+                  });
+              });
+            } else {
+              result.next(auditoryResult);
+            }
+
           }
         }
       });
@@ -124,18 +129,12 @@ export class AuditoryService {
 
   updateLocal(id: string, data: any) {
     const now = new Date().toISOString();
-    return this.databaseService.executeQuery(`
-      UPDATE auditories SET title = "${data.title}", date = "${data.date}", time = "${data.time}", description = "${data.description}", lat = "${data.lat}", lng = "${data.lng}", updateDate = "${now}" WHERE id = ${id} AND status = 1;
-    `);
+    return this.databaseService.executeQuery(`UPDATE auditories SET title = "${data.title}", date = "${data.date}", time = "${data.time}", description = "${data.description}", lat = "${data.lat}", lng = "${data.lng}", updateDate = "${now}" WHERE id = ${id};`);
   }
 
   closeLocal(id: string, note: string) {
     const now = new Date().toISOString();
-    return this.databaseService.executeQuery(`
-      UPDATE auditories
-      SET close_note = "${note}", status = 2, updateDate = "${now}"
-      WHERE id = ${id} AND status = 1;
-    `);
+    return this.databaseService.executeQuery(`UPDATE auditories SET close_note = "${note}", status = 2, updateDate = "${now}" WHERE id = ${id};`);
   }
 
   deleteLocal(id: string) {
@@ -171,7 +170,7 @@ export class AuditoryService {
 
                                   this.databaseService.executeQuery(`
                                     DELETE FROM auditories
-                                    WHERE id = ${id} AND status = 1;
+                                    WHERE id = ${id};
                                   `)
                                   .subscribe({
                                     next: () => result.next('deleted')
@@ -190,6 +189,11 @@ export class AuditoryService {
       });
 
       return result.pipe(take(2));
+  }
+
+  getFinalNotes(auditoryId: string) {
+    return this.databaseService
+      .executeQuery(`SELECT close_note FROM auditories WHERE id = ${auditoryId}`);
   }
 
 }

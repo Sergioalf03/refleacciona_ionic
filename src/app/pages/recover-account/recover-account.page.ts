@@ -1,19 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
+import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { ValidFormService } from 'src/app/core/controllers/valid-form.service';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-recover-account',
   templateUrl: './recover-account.page.html',
-  styleUrls: ['./recover-account.page.scss'],
 })
 export class RecoverAccountPage implements OnInit {
 
   email = '';
-  submitLoading = false;
 
   form!: FormGroup;
 
@@ -21,6 +21,8 @@ export class RecoverAccountPage implements OnInit {
     private authService: AuthService,
     private validFormService: ValidFormService,
     private responseService: HttpResponseService,
+    private loadingService: LoadingService,
+    private confirmDialogService: ConfirmDialogService,
     private router: Router,
   ) { }
 
@@ -44,22 +46,23 @@ export class RecoverAccountPage implements OnInit {
 
   onSubmit() {
     if (this.validFormService.isValid(this.form, [])) {
-      this.submitLoading = true;
+      this.confirmDialogService
+        .presentAlert('¿Desea continuar?', () => {
+          this.loadingService.showLoading();
 
-      const email = this.form.controls['email'].value;
+          const email = this.form.controls['email'].value;
 
-      this.authService
-        .resetPassword(email)
-        .subscribe({
-          next: res => {
-            this.submitLoading = false;
-            this.authService.email = email;
-            this.responseService.onSuccessAndRedirect('/code/0', 'Solicitud recibida');
-          },
-          error: err => {
-            this.responseService.onError(err, 'No se pudo procesar la solicitud');
-            this.submitLoading = false;
-          }
+          this.authService
+            .resetPassword(email)
+            .subscribe({
+              next: () => {
+                this.authService.email = email;
+                this.responseService.onSuccessAndRedirect('/code/0', 'Solicitud recibida');
+              },
+              error: err => {
+                this.responseService.onError(err, 'No se pudo procesar la solicitud');
+              }
+            });
         });
     }
   }

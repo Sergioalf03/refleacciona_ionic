@@ -12,6 +12,7 @@ import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.se
 import { DatabaseService } from 'src/app/core/controllers/database.service';
 import { AnswerService } from 'src/app/services/answer.service';
 import { ActionSheetController } from '@ionic/angular';
+import { LoadingService } from 'src/app/core/controllers/loading.service';
 
 @Component({
   selector: 'app-auditory-form',
@@ -23,9 +24,6 @@ export class AuditoryFormPage implements OnInit {
   SubmitButtonText = 'Comenzar';
   auditoryId = '0';
   backUrl = '/home';
-
-  fetchLoading = false;
-  submitLoading = false;
   locationAdded = false;
   hideMap = true;
 
@@ -44,6 +42,7 @@ export class AuditoryFormPage implements OnInit {
     private photoService: PhotoService,
     private confirmDialogService: ConfirmDialogService,
     private actionSheetCtrl: ActionSheetController,
+    private loadingService: LoadingService,
   ) { }
 
   private initForm() {
@@ -90,7 +89,6 @@ export class AuditoryFormPage implements OnInit {
                                   if (photo !== 'waiting') {
                                     count++;
                                     if (count === this.ImageSrc.length) {
-                                      this.submitLoading = false;
                                       this.responseService.onSuccessAndRedirect(`/question-form/${this.auditoryId}/1`, 'Auditoría guarda');
                                     }
                                   }
@@ -102,7 +100,6 @@ export class AuditoryFormPage implements OnInit {
                           });
                       });
                     } else {
-                      this.submitLoading = false;
                       this.responseService.onSuccessAndRedirect(`/question-form/${this.auditoryId}/1`, 'Auditoría guarda');
                     }
                   }
@@ -112,7 +109,6 @@ export class AuditoryFormPage implements OnInit {
           }
         },
         error: err => {
-          this.submitLoading = false;
           this.responseService.onError(err, 'No se pudo guardar')
         },
       })
@@ -123,12 +119,13 @@ export class AuditoryFormPage implements OnInit {
       .updateLocal(this.auditoryId, auditory)
       .subscribe({
         next: (updateRes) => {
-          this.hideMap = true;
-          this.submitLoading = false;
-          this.responseService.onSuccessAndRedirect('/auditory-list', 'Auditoría actualizada');
+          if (updateRes !== 'waiting') {
+            console.log(updateRes)
+            this.hideMap = true;
+            this.responseService.onSuccessAndRedirect('/auditory-list', 'Auditoría actualizada');
+          }
         },
         error: err => {
-          this.submitLoading = false;
           this.responseService.onError(err, 'No se pudo actualizar')
         },
       })
@@ -164,8 +161,8 @@ export class AuditoryFormPage implements OnInit {
 
     setTimeout(() => {
       this.mapService.setCenter(auditory.lat, auditory.lng);
+      this.loadingService.dismissLoading();
     }, 1000)
-    this.fetchLoading = false;
   }
 
   ngOnInit(): void {
@@ -186,7 +183,7 @@ export class AuditoryFormPage implements OnInit {
             id = '0';
           }
           if (id !== '0') {
-            this.fetchLoading = true;
+            this.loadingService.showLoading();
             this.auditoryId = id;
             this.formActionText = 'Actualizando';
             this.SubmitButtonText = 'Guardar';
@@ -195,13 +192,11 @@ export class AuditoryFormPage implements OnInit {
               .subscribe({
                 next: res => {
                   if (res !== 'waiting') {
-                    this.fetchLoading = false;
 
                     this.setAuditory(res.values[0]);
                   }
                 },
                 error: err => {
-                  this.fetchLoading = false;
                   this.responseService.onError(err, 'No se pudieron recuperar los datos');
                 },
               })
@@ -215,8 +210,6 @@ export class AuditoryFormPage implements OnInit {
     this.SubmitButtonText = 'Comenzar';
     this.auditoryId = '0';
 
-    this.fetchLoading = false;
-    this.submitLoading = false;
     this.locationAdded = false;
     this.hideMap = true;
 
@@ -232,7 +225,7 @@ export class AuditoryFormPage implements OnInit {
     if (this.validFormService.isValid(this.form, [])) {
       this.confirmDialogService
         .presentAlert('¿Desea guardar los cambios?', () => {
-          this.submitLoading = true;
+          this.loadingService.showLoading();
 
           this.mapService.setCenter(0, 0);
           const auditory = {

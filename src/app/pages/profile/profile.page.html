@@ -35,18 +35,6 @@
 
           </ion-item>
 
-          <ion-item class="mt-2 txtInput">
-
-            <ion-label position="stacked">Correo Electrónico</ion-label>
-
-            <ion-input
-              [clearInput]="true"
-              formControlName="email"
-              type="email"
-              placeholder="email@dominio.com"
-            ></ion-input>
-
-          </ion-item>
       </div>
 
 
@@ -71,9 +59,8 @@
           </ion-button>
         </ion-col>
         <ion-col>
-          <ion-button [disabled]="btnLoading" expand="full" type="submit">
+          <ion-button expand="full" type="submit">
             ACTUALIZAR
-            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" [hidden]="!btnLoading"></span>
           </ion-button>
         </ion-col>
       </ion-row>

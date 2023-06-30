@@ -56,14 +56,11 @@
             [clearInput]="true"
             type="email"
             formControlName="email"
-            placeholder="email@domain.com"
+            placeholder="correo@dominio.com"
           ></ion-input>
 
         </ion-item>
 
-        <div *ngIf="!showEmail" class="d-flex flex-row-reverse mt-3 me-3">
-          <ion-label color="tertiary txt-pwd" (click)="showEmail = true">Ya tengo un código</ion-label>
-        </div>
 
         <div class="row mt-5">
           <div class="col">
@@ -72,9 +69,8 @@
             </ion-button>
           </div>
           <div class="col">
-            <ion-button [disabled]="submitLoading" expand="full"type="submit">
+            <ion-button expand="full"type="submit">
               RESTABLECER
-              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" [hidden]="!submitLoading"></span>
             </ion-button>
           </div>
         </div>

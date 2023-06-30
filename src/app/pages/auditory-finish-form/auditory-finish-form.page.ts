@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
+import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
+import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { ToastService } from 'src/app/core/controllers/toast.service';
 import { ValidFormService } from 'src/app/core/controllers/valid-form.service';
 import { AuditoryService } from 'src/app/services/auditory.service';
@@ -17,7 +19,6 @@ export class AuditoryFinishFormPage implements OnInit {
   backUrl = '/auditory-list';
   yesCount = 0;
   notCount = 0;
-  submitLoading = false;
 
   form!: FormGroup;
 
@@ -26,7 +27,8 @@ export class AuditoryFinishFormPage implements OnInit {
     private questionService: QuestionService,
     private validFormService: ValidFormService,
     private confirmDialogService: ConfirmDialogService,
-    private toastService: ToastService,
+    private loadingService: LoadingService,
+    private responseService: HttpResponseService,
     private route: ActivatedRoute,
     private router: Router,
   ) { }
@@ -56,22 +58,31 @@ export class AuditoryFinishFormPage implements OnInit {
 
           this.auditoryId = paramMap.get('auditoryId') || '0';
 
-          this.questionService
-            .getPointsResume(this.auditoryId)
+          this.auditoryService
+            .getFinalNotes(this.auditoryId)
             .subscribe({
-              next: answers => {
-                if (answers !== 'waiting') {
-                  answers.values.forEach((answer: any) => {
-                    if (answer.answer === '1') {
-                      this.yesCount++;
-                    } else {
-                      this.notCount++;
-                    }
-                  });
+              next: note => {
+                if (note !== 'waiting') {
+                  this.form.controls['notes'].setValue(note.values[0] ? note.values[0].close_note : '');
+
+                  this.questionService
+                    .getPointsResume(this.auditoryId)
+                    .subscribe({
+                      next: answers => {
+                        if (answers !== 'waiting') {
+                          answers.values.forEach((answer: any) => {
+                            if (answer.answer === '1') {
+                              this.yesCount++;
+                            } else {
+                              this.notCount++;
+                            }
+                          });
+                        }
+                      }
+                    });
                 }
               }
-            })
-
+            });
         }
       })
   }
@@ -88,15 +99,16 @@ export class AuditoryFinishFormPage implements OnInit {
     if (this.validFormService.isValid(this.form, [])) {
       this.confirmDialogService
         .presentAlert('¿Desea guardar los cambios?', () => {
-          this.submitLoading = true;
+          this.loadingService.showLoading();
 
           this.auditoryService
             .closeLocal(this.auditoryId, this.form.controls['notes'].value)
             .subscribe({
-              next: () => {
-                this.submitLoading = false;
-                // this.toastService.showSuccessToast('Auditoría finalizada correctamente');
-                this.router.navigateByUrl('/auditory-list')
+              next: res => {
+                if (res !== 'waiting') {
+                  console.log(res);
+                  this.responseService.onSuccessAndRedirect('/auditory-list', 'Auditoría finalizada correctamente');
+                }
               }
             })
         })

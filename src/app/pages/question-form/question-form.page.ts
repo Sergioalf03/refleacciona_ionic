@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ActionSheetController } from '@ionic/angular';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
+import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { PhotoService } from 'src/app/core/controllers/photo.service';
 import { AnswerEvidenceService } from 'src/app/services/answer-evidence.service';
 import { AnswerService } from 'src/app/services/answer.service';
@@ -22,7 +23,7 @@ export class QuestionFormPage implements OnInit {
   questions: any[] = [];
   ImageSrc: any[] = [];
   answerCount = 0;
-  loading = false;
+  hideForm = true;
   sectionIds: number[] = [];
   sectionIndex = 0;
 
@@ -35,6 +36,7 @@ export class QuestionFormPage implements OnInit {
     private confirmDialogService: ConfirmDialogService,
     private answerEvidenceService: AnswerEvidenceService,
     private responseService: HttpResponseService,
+    private loadingService: LoadingService,
     private actionSheetCtrl: ActionSheetController,
   ) { }
 
@@ -88,12 +90,13 @@ export class QuestionFormPage implements OnInit {
   }
 
   private fetchSection() {
+    this.hideForm = true;
     this.questionService
       .getSection(this.sectionId)
       .subscribe({
         next: res1 => {
           if (res1 !== 'waiting') {
-            this.loading = true;
+            this.loadingService.showLoading();
             const section = res1.values[0];
             this.sectionName = section.name;
             this.subsectionName = section.subname;
@@ -120,7 +123,8 @@ export class QuestionFormPage implements OnInit {
                           });
                       }
                     })
-                    this.loading = false;
+                    this.hideForm = false;
+                    this.loadingService.dismissLoading();
                   }
                 },
               });

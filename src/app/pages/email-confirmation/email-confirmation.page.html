@@ -36,6 +36,19 @@
           </div>
         </div>
 
+        <ion-item [hidden]="!showEmail" class="mt-4 txtInput">
+
+          <ion-label position="floating">*Correo</ion-label>
+
+          <ion-input
+            [clearInput]="true"
+            type="email"
+            formControlName="email"
+            placeholder="correo@dominio.com"
+          ></ion-input>
+
+        </ion-item>
+
         <div class="d-flex flex-row-reverse mt-3" >
           <ion-button expand="full"type="submit">ACEPTAR</ion-button>
         </div>
