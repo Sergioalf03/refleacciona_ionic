@@ -63,7 +63,7 @@ export class ProfilePage {
 
     this.photoService.getLocalLogo().then(photo => {
       this.ImageSrc = 'data:image/jpeg;base64,' + photo.data;
-    });;
+    });
   }
 
   onSubmit() {

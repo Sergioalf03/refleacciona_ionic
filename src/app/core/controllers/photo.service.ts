@@ -23,6 +23,7 @@ export class PhotoService {
   openGallery = async () => {
     return await Camera.pickImages({
       quality: 90,
+      limit: 1,
     });
   };
 
@@ -52,7 +53,7 @@ export class PhotoService {
   async saveLocalAuditoryEvidence(photo: any, id: string) {
     const base64Data = await this.readAsBase64(photo);
 
-    const fileName = `${id}-${this.generateName()}`;
+    const fileName = `${id}-AUD${this.generateName()}`;
     const savedFile = await Filesystem.writeFile({
       path: fileName,
       data: base64Data,
@@ -62,10 +63,10 @@ export class PhotoService {
     return fileName;
   }
 
-  async saveLocalAnswerEvidence(photo: any, id: string) {
+  async saveLocalAnswerEvidence(photo: any, auditoryId: string, sectionId: string) {
     const base64Data = await this.readAsBase64(photo);
 
-    const fileName = `${id}-${this.generateName()}`;
+    const fileName = `${auditoryId}-ANS${sectionId}-${this.generateName()}`;
     const savedFile = await Filesystem.writeFile({
       path: fileName,
       data: base64Data,
@@ -106,7 +107,7 @@ export class PhotoService {
   }
 
   generateName() {
-    const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.-_*&%$#@!";
+    const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_";
     const lengthOfCode = 20;
 
     let text = "";

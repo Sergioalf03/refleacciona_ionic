@@ -51,7 +51,18 @@ export class MapComponent implements OnInit, AfterViewInit {
       .subscribe({
         next: coords => {
           if (coords.lat !== 0 && coords.lng !== 0){
-            this.map.flyTo(L.latLng(coords.lat, coords.lng), 17)
+            this.map.flyTo(L.latLng(coords.lat, coords.lng), 17).on('moveend', () => {
+              console.log('end');
+              if (coords.static) {
+                this.map.dragging.disable();
+                this.map.touchZoom.disable();
+                this.map.doubleClickZoom.disable();
+                this.map.scrollWheelZoom.disable();
+                this.map.boxZoom.disable();
+                this.map.keyboard.disable();
+                if (this.map.tap) this.map.tap.disable();
+              }
+            })
           } else {
             if (this.map) {
               this.map.off();

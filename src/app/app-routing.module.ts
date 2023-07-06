@@ -65,6 +65,11 @@ const routes: Routes = [
     path: 'auditory-finish-form/:auditoryId',
     loadChildren: () => import('./pages/auditory-finish-form/auditory-finish-form.module').then( m => m.AuditoryFinishFormPageModule)
   },
+  {
+    path: 'auditory-detail/:id',
+    loadChildren: () => import('./pages/auditory-detail/auditory-detail.module').then( m => m.AuditoryDetailPageModule)
+  },
+
 
 
 ];

@@ -3,6 +3,7 @@ export const environment = {
 };
 
 export const API_URL = 'http://callesmasseguras.com/api';
+export const STORAGE_URL = 'http://callesmasseguras.com/storage';
 
 export const LOCAL_DATABASE = {
   name: 'refleacciona',

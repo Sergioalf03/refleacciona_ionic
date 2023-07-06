@@ -26,3 +26,15 @@
   </div>
 
 </ion-content>
+
+<ion-footer>
+  <ion-row>
+    <ion-col >
+      <ion-button expand="full" [disabled]="!sendedList" (click)="fetchLocalList()">SIN ENVIAR</ion-button>
+    </ion-col>
+
+    <ion-col>
+      <ion-button expand="full" [disabled]="sendedList" (click)="fetchRemoteList()">ENVIADAS</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-footer>

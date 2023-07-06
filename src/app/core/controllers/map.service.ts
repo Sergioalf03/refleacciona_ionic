@@ -6,12 +6,12 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class MapService {
 
-  locationBs = new BehaviorSubject<{lat: number, lng: number}>({lat: 0, lng: 0})
+  locationBs = new BehaviorSubject<{lat: number, lng: number, static: boolean}>({lat: 0, lng: 0, static: false})
 
   constructor() { }
 
-  setCenter(lat: number, lng: number) {
-    this.locationBs.next({lat, lng});
+  setCenter(lat: number, lng: number, sttc?: boolean) {
+    this.locationBs.next({ lat, lng, static: !!sttc });
   }
 
   getCenter() {

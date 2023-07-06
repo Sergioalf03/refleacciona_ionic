@@ -11,10 +11,14 @@ export class AnswerService {
     private databaseService: DatabaseService,
   ) { }
 
+  getAnswersBySectionByAuditory(auditoryId: string) {
+    return this.databaseService
+      .executeQuery(`SELECT * FROM answers WHERE auditory_id = ${auditoryId};`)
+  }
+
   getAnswersBySection(auditoryId: string, sectionId: string) {
     return this.databaseService
-      .executeQuery(`SELECT * FROM answers JOIN questions on questions.id = answers.question_id;`)
-      // .executeQuery(`SELECT * FROM answers JOIN questions on questions.id = answers.question_id WHERE answers.auditory_id = ${auditoryId} AND questions.section_id = ${sectionId};`)
+      .executeQuery(`SELECT * FROM answers JOIN questions on questions.id = answers.question_id WHERE answers.auditory_id = ${auditoryId} AND questions.section_id = ${sectionId};`)
   }
 
   saveAnswer(questionId: string, auditoryId: string, value: any) {
@@ -26,7 +30,7 @@ export class AnswerService {
           const now = new Date().toISOString();
           if (answers.values.length === 0) {
             this.databaseService
-              .executeQuery(`INSERT INTO answers (auditory_id, question_id, value, creationDate, updateDate) VALUES (${auditoryId}, ${questionId}, "${value}", "${now}", "${now}");`)
+              .executeQuery(`INSERT INTO answers (auditory_id, question_id, value, creation_date, update_date) VALUES (${auditoryId}, ${questionId}, "${value}", "${now}", "${now}");`)
               .subscribe(rm => {
                 if (rm !== 'waiting') {
                   result.next('saved')
@@ -34,7 +38,7 @@ export class AnswerService {
               });
           } else {
             this.databaseService
-              .executeQuery(`UPDATE answers SET value="${value}", updateDate="${now}" WHERE auditory_id = ${auditoryId} AND question_id = ${questionId};`)
+              .executeQuery(`UPDATE answers SET value="${value}", update_date="${now}" WHERE auditory_id = ${auditoryId} AND question_id = ${questionId};`)
               .subscribe(rm => {
                 if (rm !== 'waiting') {
                   result.next('updated')
@@ -45,6 +49,11 @@ export class AnswerService {
       });
 
     return result.pipe(take(2));
+  }
+
+  deleteAnswersByAuditory(id: string) {
+    return this.databaseService
+      .executeQuery(`DELETE FROM answers WHERE auditory_id = ${id};`);
   }
 
 }

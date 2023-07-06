@@ -49,8 +49,9 @@ CREATE TABLE IF NOT EXISTS auditories (
   lat TEXT NOT NULL,
   lng TEXT NOT NULL,
   status INTEGER NOT NULL,
-  creationDate TEXT NOT NULL,
-  updateDate TEXT NOT NULL
+  creation_date TEXT NOT NULL,
+  update_date TEXT NOT NULL,
+  remote_id INTEGER
 );
 
 CREATE INDEX IF NOT EXISTS title ON auditories (title);
@@ -60,7 +61,8 @@ CREATE TABLE IF NOT EXISTS auditory_evidences (
   id INTEGER PRIMARY KEY NOT NULL,
   auditory_id INTEGER NOT NULL,
   dir TEXT NOT NULL,
-  creationDate TEXT NOT NULL,
+  creation_date TEXT NOT NULL,
+  uploaded INTEGER,
   FOREIGN KEY (auditory_id) REFERENCES auditories(id) ON DELETE CASCADE
 );
 
@@ -70,8 +72,8 @@ CREATE TABLE IF NOT EXISTS answers (
   question_id INTEGER NOT NULL,
   value TEXT NOT NULL,
   notes TEXT,
-  creationDate TEXT NOT NULL,
-  updateDate TEXT NOT NULL,
+  creation_date TEXT NOT NULL,
+  update_date TEXT NOT NULL,
   FOREIGN KEY (auditory_id) REFERENCES auditories(id) ON DELETE CASCADE
   FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE
 );
@@ -81,7 +83,8 @@ CREATE TABLE IF NOT EXISTS answer_evidences (
   auditory_id INTEGER NOT NULL,
   question_id INTEGER NOT NULL,
   dir TEXT NOT NULL,
-  creationDate TEXT NOT NULL,
+  uploaded INTEGER,
+  creation_date TEXT NOT NULL,
   FOREIGN KEY (auditory_id) REFERENCES auditories(id) ON DELETE CASCADE
   FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE
 );

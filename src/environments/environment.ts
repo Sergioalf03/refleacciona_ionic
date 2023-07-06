@@ -7,6 +7,7 @@ export const environment = {
 };
 
 export const API_URL = 'http://localhost:8000/api';
+export const STORAGE_URL = 'http://localhost:8000/storage';
 // export const API_URL = 'http://callesmasseguras.com/api';
 
 export const LOCAL_DATABASE = {

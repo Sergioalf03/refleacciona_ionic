@@ -19,24 +19,18 @@ export class AuditoryService {
     private sessionService: SessionService,
   ) { }
 
-  save(data: any) {
-    return this.httpService.post(`${BASE_URI}/save`, data);
+  getRemoteList() {
+    return this.httpService
+      .get(`${BASE_URI}/list`)
   }
 
-  update(id: string, data: any) {
-    return this.httpService.post(`${BASE_URI}/update/${id}`, data);
+  getRemoteDetail(id: string) {
+    return this.httpService
+      .get(`${BASE_URI}/detail/${id}`);
   }
 
-  getList() {
-    return this.httpService.get(`${BASE_URI}/list`);
-  }
-
-  getCount() {
-    return this.httpService.get(`${BASE_URI}/count`);
-  }
-
-  getForm(id: string) {
-    return this.httpService.get(`${BASE_URI}/form/${id}`);
+  upload(data: any) {
+    return this.httpService.post(`${BASE_URI}/import`, data);
   }
 
   getDetail(id: string) {
@@ -48,7 +42,7 @@ export class AuditoryService {
     const now = new Date().toISOString();
     const userId = this.sessionService.userId;
     return this.databaseService.executeQuery(`
-      INSERT INTO auditories (title, date, time, description, lat, lng, status, creationDate, updateDate, user_id)
+      INSERT INTO auditories (title, date, time, description, lat, lng, status, creation_date, update_date, user_id)
       VALUES ("${data.title}", "${data.date}", "${data.time}", "${data.description}", "${data.lat}", "${data.lng}", 1, "${now}", "${now}", ${userId});
     `);
   }
@@ -67,7 +61,7 @@ export class AuditoryService {
       .subscribe({
         next: res => {
           if (res !== 'waiting') {
-
+            console.log(res)
             const auditoryResult: any[] = [];
 
             if (res.values.length > 0) {
@@ -127,14 +121,23 @@ export class AuditoryService {
     return this.databaseService.executeQuery(`SELECT * FROM auditories WHERE id = ${id} AND (status = 1 OR status = 2);`);
   }
 
+  getUpdateData(id: string) {
+    return this.databaseService.executeQuery(`SELECT * FROM auditories WHERE id = ${id};`);
+  }
+
   updateLocal(id: string, data: any) {
     const now = new Date().toISOString();
-    return this.databaseService.executeQuery(`UPDATE auditories SET title = "${data.title}", date = "${data.date}", time = "${data.time}", description = "${data.description}", lat = "${data.lat}", lng = "${data.lng}", updateDate = "${now}" WHERE id = ${id};`);
+    return this.databaseService.executeQuery(`UPDATE auditories SET title = "${data.title}", date = "${data.date}", time = "${data.time}", description = "${data.description}", lat = "${data.lat}", lng = "${data.lng}", update_date = "${now}" WHERE id = ${id};`);
+  }
+
+  updateExternalId(localId: string, externalId: string) {
+    const now = new Date().toISOString();
+    return this.databaseService.executeQuery(`UPDATE auditories SET remote_id = ${externalId}, update_date = "${now}" WHERE id = ${localId};`);
   }
 
   closeLocal(id: string, note: string) {
     const now = new Date().toISOString();
-    return this.databaseService.executeQuery(`UPDATE auditories SET close_note = "${note}", status = 2, updateDate = "${now}" WHERE id = ${id};`);
+    return this.databaseService.executeQuery(`UPDATE auditories SET close_note = "${note}", status = 2, update_date = "${now}" WHERE id = ${id};`);
   }
 
   deleteLocal(id: string) {
@@ -189,6 +192,11 @@ export class AuditoryService {
       });
 
       return result.pipe(take(2));
+  }
+
+  finalDelete(id: string) {
+    return this.databaseService
+      .executeQuery(`DELETE FROM auditories WHERE id = ${id};`);
   }
 
   getFinalNotes(auditoryId: string) {

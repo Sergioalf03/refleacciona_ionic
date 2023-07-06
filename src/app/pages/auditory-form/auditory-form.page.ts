@@ -192,7 +192,7 @@ export class AuditoryFormPage implements OnInit {
               .subscribe({
                 next: res => {
                   if (res !== 'waiting') {
-
+                    console.log(res)
                     this.setAuditory(res.values[0]);
                   }
                 },

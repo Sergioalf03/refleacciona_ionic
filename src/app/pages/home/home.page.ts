@@ -32,7 +32,9 @@ export class HomePage {
   ) { }
 
   ionViewDidEnter() {
+    console.log(1)
     if (!this.versionService.checked) {
+      console.log(2)
       this.onFetchUpdate(false);
     }
   }
@@ -106,16 +108,20 @@ export class HomePage {
 
   onFetchUpdate(showToast: boolean) {
     this.versionService.checked = true;
-    this.loadingService.showLoading()
+    this.loadingService.showLoading();
+    console.log(3)
     this.databaseService
       .checkDatabaseVersion()
       .then((localVersion: any) => {
+        console.log(4)
         this.versionService
           .checkLastVersion()
           .subscribe({
             next: res => {
+              console.log(5)
               const localVersionLowerThanRemote = (localVersion === 'new' ? 1 : +localVersion.values[0].number) < +res.data.number;
               if (localVersionLowerThanRemote) {
+                console.log(6)
                 this.confirmDialogService.presentAlert('Hay una nueva versión del formulario de auditorías. ¿Desea actualizar?', () => {
                   this.versionService
                     .getNewVersion()
@@ -153,15 +159,22 @@ export class HomePage {
                     })
                 });
               } else {
+                console.log(7)
                 if (showToast) {
+                  console.log(8)
                   this.httpResponseService.onSuccess('La versión más reciente ya está instalada')
                 } else {
+                  console.log(9)
                   this.loadingService.dismissLoading();
                 }
               }
             },
             error: err => this.httpResponseService.onError(err, 'No se pudo recuperar'),
           });
+      })
+      .catch(err => {
+        console.log(0)
+        console.log(err)
       });
   }
 

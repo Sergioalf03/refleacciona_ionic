@@ -171,7 +171,7 @@ export class QuestionFormPage implements OnInit {
         const blob = await fetch(img).then(r => r.blob());
 
         this.photoService
-          .saveLocalAnswerEvidence(blob, this.auditoryId)
+          .saveLocalAnswerEvidence(blob, this.auditoryId, this.sectionId)
           .then(photoId => {
             this.answerEvidenceService
               .localSave({
@@ -209,7 +209,7 @@ export class QuestionFormPage implements OnInit {
       const blob = await fetch(img).then(r => r.blob());
 
       this.photoService
-        .saveLocalAnswerEvidence(blob, this.auditoryId)
+        .saveLocalAnswerEvidence(blob, this.auditoryId, this.sectionId)
         .then(photoId => {
           this.answerEvidenceService
             .localSave({
