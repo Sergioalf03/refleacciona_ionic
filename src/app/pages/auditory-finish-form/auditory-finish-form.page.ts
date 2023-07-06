@@ -106,7 +106,6 @@ export class AuditoryFinishFormPage implements OnInit {
             .subscribe({
               next: res => {
                 if (res !== 'waiting') {
-                  console.log(res);
                   this.responseService.onSuccessAndRedirect('/auditory-list', 'Auditoría finalizada correctamente');
                 }
               }

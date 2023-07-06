@@ -120,7 +120,6 @@ export class AuditoryFormPage implements OnInit {
       .subscribe({
         next: (updateRes) => {
           if (updateRes !== 'waiting') {
-            console.log(updateRes)
             this.hideMap = true;
             this.responseService.onSuccessAndRedirect('/auditory-list', 'Auditoría actualizada');
           }
@@ -192,7 +191,6 @@ export class AuditoryFormPage implements OnInit {
               .subscribe({
                 next: res => {
                   if (res !== 'waiting') {
-                    console.log(res)
                     this.setAuditory(res.values[0]);
                   }
                 },

@@ -56,7 +56,6 @@ export class AuditoryDetailPage {
             .getRemoteDetail(this.auditoryId)
             .subscribe({
               next: res => {
-                console.log(res)
                 this.setAuditory(res.data);
               },
               error: err => this.responseService.onError(err, 'No se pudo recuperar la auditoría'),
@@ -99,7 +98,6 @@ export class AuditoryDetailPage {
 
     this.mapService.setCenter(+this.auditoryLat, +this.auditoryLng, true);
     setTimeout(() => {
-      console.log(this.auditorySections)
       this.loadingService.dismissLoading();
     }, 500)
   }

@@ -61,7 +61,6 @@ export class AuditoryService {
       .subscribe({
         next: res => {
           if (res !== 'waiting') {
-            console.log(res)
             const auditoryResult: any[] = [];
 
             if (res.values.length > 0) {

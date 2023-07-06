@@ -394,7 +394,6 @@ export class AuditoryListPage implements OnInit {
       .getLocalList()
       .subscribe({
         next: res => {
-          console.log(res);
           if (res !== 'waiting') {
             this.auditories = res.map((a: any) => ({
               ...a,
@@ -418,7 +417,6 @@ export class AuditoryListPage implements OnInit {
       .getRemoteList()
       .subscribe({
         next: res => {
-          console.log(res)
           this.auditories = res.data.map((a: any) => ({
             ...a,
             statusWord: a.status === 1 ? 'En progreso' : 'Terminada',

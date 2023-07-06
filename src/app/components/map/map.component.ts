@@ -52,7 +52,6 @@ export class MapComponent implements OnInit, AfterViewInit {
         next: coords => {
           if (coords.lat !== 0 && coords.lng !== 0){
             this.map.flyTo(L.latLng(coords.lat, coords.lng), 17).on('moveend', () => {
-              console.log('end');
               if (coords.static) {
                 this.map.dragging.disable();
                 this.map.touchZoom.disable();

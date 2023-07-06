@@ -97,19 +97,15 @@ export class DatabaseService {
     await connection.open();
     connection.execute(createSchema)
       .then(result => {
-        console.log('creation', result)
         connection.execute(loadData)
           .then(async (result1) => {
-            console.log('load', result1)
             await connection.close();
           })
           .catch(async (e) => {
-            console.log('loaderror', e)
             await connection.close();
           });
       })
       .catch(async (e) => {
-        console.log('creationerror', e)
         await connection.close();
       });
   }
