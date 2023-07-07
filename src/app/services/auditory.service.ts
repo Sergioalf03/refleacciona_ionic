@@ -29,12 +29,13 @@ export class AuditoryService {
       .get(`${BASE_URI}/detail/${id}`);
   }
 
-  upload(data: any) {
-    return this.httpService.post(`${BASE_URI}/import`, data);
+  downloadPdf(id: string) {
+    return this.httpService
+      .downloadGet(`${BASE_URI}/pdf/${id}`);
   }
 
-  getDetail(id: string) {
-
+  upload(data: any) {
+    return this.httpService.post(`${BASE_URI}/import`, data);
   }
 
   // local database

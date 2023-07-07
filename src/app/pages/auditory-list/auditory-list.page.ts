@@ -275,6 +275,37 @@ export class AuditoryListPage implements OnInit {
     this.router.navigateByUrl(`/auditory-detail/${id}`);
   }
 
+  private onDownloadPdf(id: string) {
+    this.confirmDialogService
+      .presentAlert('¿Desea descargar la auditoría?', () => {
+        this.loadingService.showLoading();
+        this.auditoryService
+          .downloadPdf(id)
+          .subscribe({
+            next: res => {
+              const blob = res;
+              const filename = `auditoria.pdf`;
+              if ((window.navigator as any).msSaveOrOpenBlob) {
+                (window.navigator as any).msSaveBlob(blob, filename);
+                this.loadingService.dismissLoading();
+              } else {
+                const downloadLink = window.document.createElement('a');
+                const contentTypeHeader = 'application/pdf';
+                downloadLink.href = window.URL.createObjectURL(
+                  new Blob([blob], { type: contentTypeHeader })
+                );
+                downloadLink.download = filename;
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+                this.loadingService.dismissLoading();
+              }
+            },
+            error: err => this.responseService.onError(err, 'No se pudo descargar la auditoría')
+          })
+      })
+  }
+
   async presentActionSheetOptions(auditory: any) {
 
     const buttons = this.sendedList ?
@@ -285,7 +316,7 @@ export class AuditoryListPage implements OnInit {
       },
       {
         text: 'Descargar',
-        handler: () => this.onEditAnswers(auditory.id, 1),
+        handler: () => this.onDownloadPdf(auditory.id),
       },
       {
         text: 'Cerrar',
