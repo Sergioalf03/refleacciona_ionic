@@ -87,7 +87,7 @@
 
       <ion-row *ngIf="ImageSrc[questionIndex].url" class="mt-3">
         <ion-col>
-          <ion-img (click)="onImgClicked(questionIndex)" [src]="ImageSrc[questionIndex].url"></ion-img>
+          <img width="100%"  (click)="onImgClicked(questionIndex)" [src]="ImageSrc[questionIndex].url">
         </ion-col>
       </ion-row>
     </div>

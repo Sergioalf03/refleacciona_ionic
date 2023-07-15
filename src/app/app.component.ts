@@ -32,12 +32,13 @@ export class AppComponent implements OnInit {
       await this.storageService.init(storage);
 
       const logged = await this.sessionService.isLoggedIn();
+      console.log(logged)
       if (logged) {
         await this.sessionService.setValuesFromStorage();
-        this.sessionService
-          .validToken()
-          .subscribe({
-            next: res => {
+        // this.sessionService
+        //   .validToken()
+        //   .subscribe({
+        //     next: res => {
               this.responseService.onSuccessAndRedirect('/home','/NA');
 
               this.sessionService
@@ -46,9 +47,9 @@ export class AppComponent implements OnInit {
                   next: res => this.responseService.onSuccess('/NA'),
                   error: err => this.responseService.onError(err, 'No se pudieron recuperar los datos')
                 })
-            },
-            error: err => this.responseService.onError(err, 'No se pudo verificar'),
-          })
+          //   },
+          //   error: err => this.responseService.onError(err, 'No se pudo verificar'),
+          // })
       }
     });
 

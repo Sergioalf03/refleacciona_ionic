@@ -59,7 +59,7 @@ export class SessionService {
 
   update(body: any) {
     return this.httpService
-      .post('/update-user', {name:body.name, email:body.email,phone_number: body.phone_number, password:body.password, key: body.key})
+      .post('/update-user', {name:body.name ,phone_number: body.phone_number, password:body.password, key: body.key})
   }
 
   uploadLogo(blob: any) {

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ActionSheetController } from '@ionic/angular';
+import { Capacitor } from '@capacitor/core';
+import { ActionSheetController, isPlatform } from '@ionic/angular';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
@@ -38,6 +40,7 @@ export class QuestionFormPage implements OnInit {
     private responseService: HttpResponseService,
     private loadingService: LoadingService,
     private actionSheetCtrl: ActionSheetController,
+    private sanitization: DomSanitizer,
   ) { }
 
   ngOnInit() {
@@ -114,15 +117,29 @@ export class QuestionFormPage implements OnInit {
                       }
                     });
 
-                    this.ImageSrc.forEach((img, i) => {
-                      if (!!img.id) {
-                        this.photoService
-                          .getLocalAnswerEvidence(img.id)
-                          .then((photo: any) => {
-                            this.ImageSrc[i].url = 'data:image/jpeg;base64,' + photo.data;
-                          });
-                      }
-                    })
+                    if (isPlatform('hybrid')) {
+                      this.ImageSrc.forEach((img, i) => {
+                        if (!!img.id) {
+                          this.photoService
+                            .getLocalAnswerEvidenceUri(img.id)
+                            .then((photo: any) => {
+                              this.ImageSrc[i].url = Capacitor.convertFileSrc(photo.uri)
+                            });
+                        }
+                      })
+                    } else {
+                      this.ImageSrc.forEach((img, i) => {
+                        if (!!img.id) {
+                          this.photoService
+                            .getLocalAnswerEvidence(img.id)
+                            .then((photo: any) => {
+                              this.ImageSrc[i].url = this.sanitization.bypassSecurityTrustUrl('data:image/jpeg;base64,' + photo.data);
+                            });
+                        }
+                      })
+                    }
+
+
                     this.hideForm = false;
                     this.loadingService.dismissLoading();
                   }
@@ -168,6 +185,7 @@ export class QuestionFormPage implements OnInit {
     this.photoService.openGallery().then(async res => {
       for (let forIndex = 0; forIndex < res.photos.length; forIndex++) {
         const img = res.photos[forIndex].webPath;
+        console.log(img)
         const blob = await fetch(img).then(r => r.blob());
 
         this.photoService
@@ -187,7 +205,7 @@ export class QuestionFormPage implements OnInit {
                       .subscribe({
                         next: async (res: any) => {
                           if (res !== 'waiting') {
-                            this.ImageSrc[index].url = img;
+                            this.ImageSrc[index].url = this.sanitization.bypassSecurityTrustUrl(img);
                             this.ImageSrc[index].id = res.values[0].dir;
                           }
                         }
@@ -225,7 +243,7 @@ export class QuestionFormPage implements OnInit {
                     .subscribe({
                       next: async (res: any) => {
                         if (res !== 'waiting') {
-                          this.ImageSrc[index].url = img;
+                          this.ImageSrc[index].url = this.sanitization.bypassSecurityTrustUrl(img);
                           this.ImageSrc[index].id = res.values[0].dir;
                         }
                       }

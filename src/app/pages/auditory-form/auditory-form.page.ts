@@ -11,8 +11,10 @@ import { AuditoryEvidenceService } from 'src/app/services/auditory-evidence.serv
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { DatabaseService } from 'src/app/core/controllers/database.service';
 import { AnswerService } from 'src/app/services/answer.service';
-import { ActionSheetController } from '@ionic/angular';
+import { ActionSheetController, isPlatform } from '@ionic/angular';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
+import { DomSanitizer } from '@angular/platform-browser';
+import { Capacitor } from '@capacitor/core';
 
 @Component({
   selector: 'app-auditory-form',
@@ -29,7 +31,7 @@ export class AuditoryFormPage implements OnInit {
 
   form!: FormGroup;
 
-  ImageSrc:any[] = [];
+  ImageSrc: any[] = [];
 
   constructor(
     private auditoryService: AuditoryService,
@@ -43,6 +45,7 @@ export class AuditoryFormPage implements OnInit {
     private confirmDialogService: ConfirmDialogService,
     private actionSheetCtrl: ActionSheetController,
     private loadingService: LoadingService,
+    private sanitization: DomSanitizer
   ) { }
 
   private initForm() {
@@ -146,21 +149,40 @@ export class AuditoryFormPage implements OnInit {
       .subscribe({
         next: res => {
           if (res !== 'waiting') {
-            res.values.forEach(async (row: any) => {
-              this.photoService.getLocalAuditoryEvidence(row.dir).then(photo => {
-                this.ImageSrc.push({
-                  id: row.dir,
-                  file: 'data:image/jpeg;base64,' + photo.data
-                });
-              })
-            });
+            console.log(isPlatform('hybrid'))
+            if (isPlatform('hybrid')) {
+              res.values.forEach(async (row: any) => {
+                this.photoService.getLocalAuditoryEvidenceUri(row.dir).then(photo => {
+                  this.ImageSrc.push({
+                    id: row.dir,
+                    file: Capacitor.convertFileSrc(photo.uri),
+                    expand: {
+                      width: '25%'
+                    },
+                  });
+                })
+              });
+            } else {
+              res.values.forEach(async (row: any) => {
+                this.photoService.getLocalAuditoryEvidence(row.dir).then(photo => {
+                  this.ImageSrc.push({
+                    id: row.dir,
+                    file: this.sanitization.bypassSecurityTrustUrl('data:image/jpeg;base64,' + photo.data),
+                    expand: {
+                      width: '25%'
+                    },
+                  });
+                })
+              });
+            }
           }
         }
-      })
+      });
 
     setTimeout(() => {
       this.mapService.setCenter(auditory.lat, auditory.lng);
       this.loadingService.dismissLoading();
+      console.log(this.ImageSrc)
     }, 1000)
   }
 
@@ -287,7 +309,10 @@ export class AuditoryFormPage implements OnInit {
         for (let index = 0; index < res.photos.length; index++) {
           this.ImageSrc.push({
             id: '',
-            file: res.photos[index].webPath
+            file: this.sanitization.bypassSecurityTrustUrl(res.photos[index].webPath),
+            expand: {
+              width: '25%'
+            },
           });
         }
       } else {
@@ -311,7 +336,10 @@ export class AuditoryFormPage implements OnInit {
                               if (res2 !== 'waiting') {
                                 this.ImageSrc.push({
                                   id: res2.values[0].dir,
-                                  file: img
+                                  file: this.sanitization.bypassSecurityTrustUrl(img),
+                                  expand: {
+                                    width: '25%'
+                                  },
                                 });
                               }
                             }
@@ -334,7 +362,10 @@ export class AuditoryFormPage implements OnInit {
       if (this.auditoryId === '0') {
           this.ImageSrc.push({
             id: '',
-            file: res.webPath
+            file: this.sanitization.bypassSecurityTrustUrl(res.webPath || ''),
+            expand: {
+              width: '25%'
+            },
           });
       } else {
         const img = res.webPath || '';
@@ -356,7 +387,10 @@ export class AuditoryFormPage implements OnInit {
                             if (res2 !== 'waiting') {
                               this.ImageSrc.push({
                                 id: res2.values[0].dir,
-                                file: img
+                                file: this.sanitization.bypassSecurityTrustUrl(img),
+                                expand: {
+                                  width: '25%'
+                                },
                               });
                             }
                           }
@@ -379,7 +413,38 @@ export class AuditoryFormPage implements OnInit {
     this.form.controls['lng'].setValue(coords.lng);
   }
 
-  onImgClicked(dir: string, index: number) {
+  async onImgClicked(dir: string, index: number) {
+    const actionSheet = await this.actionSheetCtrl.create({
+      header: 'Opciones',
+      mode: 'ios',
+      buttons: [
+        {
+          text: 'Cambiar tamaño',
+          handler: () => this.onChangeSize(index),
+        },
+        {
+          text: 'Eliminar Auditoría',
+          role: 'destructive',
+          handler: () => this.onRemove(dir, index),
+        },
+        {
+          text: 'Cerrar',
+          role: 'cancel',
+          data: {
+            action: 'cancel',
+          },
+        },
+      ],
+    });
+
+    await actionSheet.present();
+  }
+
+  onChangeSize(index: number) {
+    this.ImageSrc[index].expand = this.ImageSrc[index].expand.width === '25%' ? { width: '100%' } : { width: '25%' };
+  }
+
+  onRemove(dir: string, index: number) {
     this.confirmDialogService.presentAlert('¿Desea eliminar la imagen?', () => {
       if (!!dir) {
         this.auditoryEvidenceService

@@ -18,7 +18,7 @@
 
     <p>
       <strong class="mt-2">Fotografías del entorno:</strong>
-      <ion-img *ngFor="let url of auditoyrEvidences" [src]="url"></ion-img>
+      <img width="100%" *ngFor="let url of auditoyrEvidences" class="mb-2" [src]="url">
     </p>
 
     <div *ngFor="let section of auditorySections" class="mx-2 mt-2 border-bottom">
@@ -32,7 +32,7 @@
         <p>{{ answer.formattedAnswer }}</p>
 
         <p *ngIf="answer.dir">
-          <ion-img [src]="answerEvicenceUrl(answer.dir)"></ion-img>
+          <img width="100%" [src]="answerEvicenceUrl(answer.dir)">
         </p>
       </div>
     </div>

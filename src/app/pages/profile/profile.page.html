@@ -39,15 +39,15 @@
 
 
 
-      <ion-row *ngIf="ImageSrc" class="mt-3">
+      <ion-row *ngIf="ImageSafeSrc" class="mt-3">
         <ion-col>
-          <ion-img [src]="ImageSrc"></ion-img>
+          <img width="100%"  [src]="ImageSafeSrc">
         </ion-col>
       </ion-row>
       <ion-row class="mt-3">
         <ion-col>
           <ion-button (click)="onSelectPhoto()" expand="full" type="button">
-            {{!ImageSrc ? 'SELECCIONAR LOGO' : 'CAMBIAR LOGO' }}
+            {{!ImageSafeSrc ? 'SELECCIONAR LOGO' : 'CAMBIAR LOGO' }}
           </ion-button>
         </ion-col>
       </ion-row>

@@ -27,17 +27,6 @@ export class PhotoService {
     });
   };
 
-  openFileExplore() {
-    const readSecretFile = async () => {
-      const contents = await Filesystem.readFile({
-        path: 'secrets/text.txt',
-        directory: Directory.Documents,
-        encoding: Encoding.UTF8,
-      });
-
-    };
-  }
-
   async saveLocalLogo(photo: any) {
     const base64Data = await this.readAsBase64(photo);
 
@@ -84,10 +73,24 @@ export class PhotoService {
     })
   }
 
+  getLocalAuditoryEvidenceUri(id: string) {
+    return Filesystem.getUri({
+      path: id,
+      directory: Directory.Data
+    })
+  }
+
   getLocalAnswerEvidence(id: string) {
     return Filesystem.readFile({
       path: id,
       encoding: Encoding.UTF8,
+      directory: Directory.Data
+    })
+  }
+
+  getLocalAnswerEvidenceUri(id: string) {
+    return Filesystem.getUri({
+      path: id,
       directory: Directory.Data
     })
   }
@@ -123,7 +126,13 @@ export class PhotoService {
       encoding: Encoding.UTF8,
       directory: Directory.Data
     })
+  }
 
+  getLocalLogoUri() {
+    return Filesystem.getUri({
+      path: 'logo.jpeg',
+      directory: Directory.Data
+    })
   }
 
   private async readAsBase64(blob: any) {
