@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 
@@ -10,7 +10,8 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { IonicStorageModule } from '@ionic/storage-angular';
 import { TokenInterceptorService } from './core/controllers/token-interceptor.service';
 import { ErrorInterceptorService } from './core/controllers/error-interceptor.service';
-import { Camera } from '@awesome-cordova-plugins/camera/ngx';
+
+import { SQLiteService } from './core/controllers/sqlite.service';
 
 @NgModule({
   declarations: [AppComponent],
@@ -24,9 +25,10 @@ import { Camera } from '@awesome-cordova-plugins/camera/ngx';
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptorService, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptorService, multi: true },
+    SQLiteService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    Camera
   ],
   bootstrap: [AppComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AppModule {}

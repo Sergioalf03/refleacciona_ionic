@@ -2,25 +2,25 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
+import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { ValidFormService } from 'src/app/core/controllers/valid-form.service';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-send-code-recover',
   templateUrl: './send-code-recover.page.html',
-  styleUrls: ['./send-code-recover.page.scss'],
 })
 export class SendCodeRecoverPage implements OnInit {
 
   form!: FormGroup;
 
-  submitLoading = false;
   showEmail = false;
 
   constructor(
     private authService: AuthService,
     private responseService: HttpResponseService,
     private validFormService: ValidFormService,
+    private loadingService: LoadingService,
     private router: Router,
     private route: ActivatedRoute,
   ) { }
@@ -98,8 +98,7 @@ export class SendCodeRecoverPage implements OnInit {
 
   onSubmit() {
     if (this.validFormService.isValid(this.form, [])) {
-      this.submitLoading = true;
-
+      this.loadingService.showLoading();
       const code = `${this.form.controls['code1'].value}${this.form.controls['code2'].value}${this.form.controls['code3'].value}${this.form.controls['code4'].value}${this.form.controls['code5'].value}${this.form.controls['code6'].value}`;
 
       const data = {
@@ -112,13 +111,10 @@ export class SendCodeRecoverPage implements OnInit {
         .changePassword(data)
         .subscribe({
           next: res => {
-            console.log(res.data);
             this.responseService.onSuccessAndRedirect('/login', 'Contraseña cambiada');
-            this.submitLoading = false;
           },
           error: err => {
             this.responseService.onError(err, 'No se pudo cambiar la contraseña')
-            this.submitLoading = false;
           }
         });
     }
@@ -129,7 +125,6 @@ export class SendCodeRecoverPage implements OnInit {
   }
 
   printEvent(event: any) {
-    console.log(event);
   }
 
   setInputFocus(input: any) {

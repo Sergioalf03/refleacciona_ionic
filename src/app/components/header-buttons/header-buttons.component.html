@@ -1,12 +1,17 @@
 <div class="row mt-2 mx-0">
-  <div class="col">
+  <div *ngIf="backUrl" class="col">
     <ion-button size="small" (click)="onGoingBack()">
       <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
     </ion-button>
   </div>
-  <div class="col text-end">
+  <div *ngIf="homeUrl" class="col text-end">
     <ion-button size="small" (click)="onGoingHome()">
       <ion-icon slot="icon-only" name="home-sharp"></ion-icon>
+    </ion-button>
+  </div>
+  <div *ngIf="addUrl" class="col text-end">
+    <ion-button size="small" (click)="onAddElement()">
+      <ion-icon slot="icon-only" name="add"></ion-icon>
     </ion-button>
   </div>
 </div>

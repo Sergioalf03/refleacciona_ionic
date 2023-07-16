@@ -1,35 +1,41 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { isPlatform } from '@ionic/angular';
+import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
+import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { PhotoService } from 'src/app/core/controllers/photo.service';
 import { SessionService } from 'src/app/core/controllers/session.service';
 import { ToastService } from 'src/app/core/controllers/toast.service';
 import { ValidFormService } from 'src/app/core/controllers/valid-form.service';
+import { Capacitor } from '@capacitor/core';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
 })
-export class ProfilePage implements OnInit {
+export class ProfilePage {
 
   form!: FormGroup;
 
   user: any = {};
   txtButtonEnter = 'GUARDAR';
   ImageSrc = '';
-  btnLoading: boolean = false;
+  ImageSafeSrc: SafeUrl = '';
 
   constructor(
     private sessionService: SessionService,
     private toastService: ToastService,
     private photoService: PhotoService,
+    private loadingService: LoadingService,
+    private confirmDialogService: ConfirmDialogService,
     private httpResponseService: HttpResponseService,
     private validFormService: ValidFormService,
     private router: Router,
-  ) {
-    this.btnLoading = false;
-  }
+    private sanitization: DomSanitizer
+  ) {}
 
   private initForm() {
     this.form = new FormGroup({
@@ -39,24 +45,19 @@ export class ProfilePage implements OnInit {
       phoneNumber: new FormControl('', {
         validators: [Validators.required],
       }),
-      email: new FormControl('', {
-        validators: [Validators.required],
-      }),
     })
-  }
-
-  ngOnInit() {
   }
 
   private setData(data: any) {
     this.form.setValue({
       name: data.userName,
       phoneNumber: data.userPhone,
-      email: data.userEmail,
     });
+    this.loadingService.dismissLoading();
   }
 
   ionViewWillEnter() {
+    this.loadingService.showLoading();
     this.initForm();
     this.sessionService
       .getProfileFormData()
@@ -65,64 +66,66 @@ export class ProfilePage implements OnInit {
         error: err => this.httpResponseService.onError(err, 'No se pudieron recuperar los datos'),
       })
 
-    this.photoService.getLocalLogo().then(photo => {
-      this.ImageSrc = 'data:image/jpeg;base64,' + photo.data;
-      console.log(photo);
-    });;
+    if (isPlatform('hybrid')) {
+      this.photoService.getLocalLogoUri().then(photo => {
+        this.ImageSafeSrc = Capacitor.convertFileSrc(photo.uri)
+      });
+    } else {
+      this.photoService.getLocalLogo().then(photo => {
+        this.ImageSafeSrc = this.sanitization.bypassSecurityTrustUrl('data:image/jpeg;base64,' + photo.data)
+      });
+    }
   }
 
   onSubmit() {
     if (this.validFormService.isValid(this.form, [])) {
-      this.btnLoading = true;
+      this.confirmDialogService.presentAlert('¿Desea guardar los cambios?', () => {
+        this.loadingService.showLoading();
 
-      const user = {
-        name: this.form.controls['name'].value,
-        email: this.form.controls['email'].value,
-        phone_number: this.form.controls['phoneNumber'].value,
-      };
+        const user = {
+          name: this.form.controls['name'].value,
+          phone_number: this.form.controls['phoneNumber'].value,
+        };
 
-      this.sessionService
-        .update(user)
-        .subscribe({
-          next: async (res: any) => {
-            this.toastService.showSuccessToast('Guardado exitoso')
-            if (this.ImageSrc) {
-              const blob = await fetch(this.ImageSrc).then(r => r.blob());
-              console.log(blob)
-              this.sessionService
-                .uploadLogo(blob)
-                .subscribe({
-                  next: async (res: any) => {
-                    this.photoService.saveLocalLogo(blob);
-                    this.toastService.showSuccessToast('Guardado exitoso')
-                  },
-                  error: err => {
-                    this.httpResponseService.onError(err, '');
-                  },
-              })
-            }
-          },
-          error: err => {
-            this.httpResponseService.onError(err, '');
-            this.resetForm();
-          },
-        });
+        this.sessionService
+          .update(user)
+          .subscribe({
+            next: async (res: any) => {
+              if (this.ImageSrc) {
+                const blob = await fetch(this.ImageSrc).then(r => r.blob());
+                this.sessionService
+                  .uploadLogo(blob)
+                  .subscribe({
+                    next: async (res: any) => {
+                      this.photoService.saveLocalLogo(blob);
+                      this.httpResponseService.onSuccess('Actualización exitosa')
+                    },
+                    error: err => {
+                      this.httpResponseService.onError(err, 'No se pudo guardar la imagen');
+                    },
+                })
+              } else {
+                this.httpResponseService.onSuccess('Actualización exitosa')
+              }
+            },
+            error: err => {
+              this.httpResponseService.onError(err, 'No se pudieron actualizar los datos');
+            },
+          });
+      });
+
     }
   }
 
-  resetForm() {
-    this.form.reset();
-    this.btnLoading = false;
-  }
+
 
   onGoingHome() {
     this.router.navigateByUrl('/home');
   }
 
   onSelectPhoto() {
-    let text = '';
-    this.photoService.openGallery(text).then(async res => {
-      console.log(res)
+    this.photoService.openGallery().then(async res => {
+      this.ImageSafeSrc = this.sanitization.bypassSecurityTrustUrl(res.photos[0].webPath);
       this.ImageSrc = res.photos[0].webPath;
 
     });

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Camera, CameraResultType } from '@capacitor/camera';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 
 @Injectable({
@@ -13,79 +13,19 @@ export class PhotoService {
   ) { }
 
   takePicture = async () => {
-    const image = await Camera.getPhoto({
+    return await Camera.getPhoto({
       quality: 90,
-      allowEditing: true,
+      source: CameraSource.Camera,
       resultType: CameraResultType.Uri
     });
-
-    // image.webPath will contain a path that can be set as an image src.
-    // You can access the original file using image.path, which can be
-    // passed to the Filesystem API to read the raw data of the image,
-    // if desired (or pass resultType: CameraResultType.Base64 to getPhoto)
-    var imageUrl = image.webPath;
-
-    // Can be set to the src of an image now
   };
 
-  openGallery = async (imageUrl: any) => {
+  openGallery = async () => {
     return await Camera.pickImages({
       quality: 90,
+      limit: 1,
     });
   };
-
-  openFileExplore() {
-    const readSecretFile = async () => {
-      const contents = await Filesystem.readFile({
-        path: 'secrets/text.txt',
-        directory: Directory.Documents,
-        encoding: Encoding.UTF8,
-      });
-
-    };
-  }
-
-  pickImage() {
-    // return Camera
-    //   .checkPermissions()
-    //   .then(res => {
-    //     if (res.camera !== 'granted' || res.photos !== 'granted') {
-    //       return Camera
-    //         .requestPermissions()
-    //         .then(() => {
-    //           return Camera.getPhoto({
-    //             quality: 10,
-    //             source: CameraSource.Prompt,
-    //             promptLabelHeader: 'Seleccionar Imagen',
-    //             promptLabelPhoto: 'Galería',
-    //             promptLabelPicture: 'Cámara',
-    //             promptLabelCancel: 'Cancelar',
-    //             allowEditing: false,
-
-    //             saveToGallery: false,
-    //             correctOrientation: true,
-    //             resultType: CameraResultType.DataUrl
-    //           });
-    //         })
-    //         .catch(err => console.log(err));
-    //     } else {
-    //       return Camera.getPhoto({
-    //         quality: 10,
-    //         source: CameraSource.Prompt,
-    //         promptLabelHeader: 'Seleccionar Imagen',
-    //         promptLabelPhoto: 'Galería',
-    //         promptLabelPicture: 'Cámara',
-    //         promptLabelCancel: 'Cancelar',
-    //         allowEditing: false,
-
-    //         saveToGallery: false,
-    //         correctOrientation: true,
-    //         resultType: CameraResultType.DataUrl
-    //       });
-    //     }
-    //   })
-    //   .catch(err => console.log(err));
-  }
 
   async saveLocalLogo(photo: any) {
     const base64Data = await this.readAsBase64(photo);
@@ -99,13 +39,100 @@ export class PhotoService {
     });
   }
 
+  async saveLocalAuditoryEvidence(photo: any, id: string) {
+    const base64Data = await this.readAsBase64(photo);
+
+    const fileName = `${id}-AUD${this.generateName()}`;
+    const savedFile = await Filesystem.writeFile({
+      path: fileName,
+      data: base64Data,
+      directory: Directory.Data
+    });
+
+    return fileName;
+  }
+
+  async saveLocalAnswerEvidence(photo: any, auditoryId: string, sectionId: string) {
+    const base64Data = await this.readAsBase64(photo);
+
+    const fileName = `${auditoryId}-ANS${sectionId}-${this.generateName()}`;
+    const savedFile = await Filesystem.writeFile({
+      path: fileName,
+      data: base64Data,
+      directory: Directory.Data
+    });
+
+    return fileName;
+  }
+
+  getLocalAuditoryEvidence(id: string) {
+    return Filesystem.readFile({
+      path: id,
+      encoding: Encoding.UTF8,
+      directory: Directory.Data
+    })
+  }
+
+  getLocalAuditoryEvidenceUri(id: string) {
+    return Filesystem.getUri({
+      path: id,
+      directory: Directory.Data
+    })
+  }
+
+  getLocalAnswerEvidence(id: string) {
+    return Filesystem.readFile({
+      path: id,
+      encoding: Encoding.UTF8,
+      directory: Directory.Data
+    })
+  }
+
+  getLocalAnswerEvidenceUri(id: string) {
+    return Filesystem.getUri({
+      path: id,
+      directory: Directory.Data
+    })
+  }
+
+  removeLocalAuditoryEvidence(dir: string) {
+    return Filesystem.deleteFile({
+      path: dir,
+      directory: Directory.Data
+    })
+  }
+
+  removeLocalAnswerEvidence(dir: string) {
+    return Filesystem.deleteFile({
+      path: dir,
+      directory: Directory.Data
+    })
+  }
+
+  generateName() {
+    const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_";
+    const lengthOfCode = 20;
+
+    let text = "";
+    for (let i = 0; i < lengthOfCode; i++) {
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return text;
+  }
+
   getLocalLogo() {
     return Filesystem.readFile({
       path: 'logo.jpeg',
       encoding: Encoding.UTF8,
       directory: Directory.Data
     })
+  }
 
+  getLocalLogoUri() {
+    return Filesystem.getUri({
+      path: 'logo.jpeg',
+      directory: Directory.Data
+    })
   }
 
   private async readAsBase64(blob: any) {

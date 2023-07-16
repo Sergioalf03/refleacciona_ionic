@@ -1,23 +1,40 @@
 <ion-content >
-  <div class="d-flex flex-row-reverse mt-3 me-3" >
-    <ion-button size="small" (click)="onGoingHome()">
-      <ion-icon slot="icon-only" name="home-sharp"></ion-icon>
-    </ion-button>
-  </div>
+  <app-header-buttons
+    [addUrl]="'auditory-form/00'"
+    [backUrl]="'/home'"
+  ></app-header-buttons>
 
   <div class="mx-2 mt-2">
     <h1>Auditorías</h1>
 
+    <div class="text-center" *ngIf="!loading && auditories.length === 0">
+      <h4 class="mt-2" >Sin auditorías</h4>
+      <ion-button (click)="onNewAuditory()">Iniciar una nueva</ion-button>
+    </div>
+
     <ion-item *ngFor="let aud of auditories" class="mt-2 txtInput">
       <ion-label>
-        <h2 class="text-start">Calle: {{ aud.street }}</h2>
-        <p>Fecha: {{ aud.date }}</p>
+        <h2 class="text-start">Título: {{ aud.title }}</h2>
+        <p *ngIf="aud.date">Fecha: {{ aud.date }}</p>
+        <p>Estado: {{ aud.statusWord }}</p>
       </ion-label>
 
-      <ion-button (click)="onEdit(aud.id)" slot="end" size="small">
-        <ion-icon slot="icon-only" name="create-sharp"></ion-icon>
+      <ion-button (click)="presentActionSheetOptions(aud)" slot="end" size="small">
+        <ion-icon slot="icon-only" name="menu"></ion-icon>
       </ion-button>
     </ion-item>
   </div>
 
 </ion-content>
+
+<ion-footer>
+  <ion-row>
+    <ion-col >
+      <ion-button expand="full" [disabled]="!sendedList" (click)="fetchLocalList()">SIN ENVIAR</ion-button>
+    </ion-col>
+
+    <ion-col>
+      <ion-button expand="full" [disabled]="sendedList" (click)="fetchRemoteList()">ENVIADAS</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-footer>

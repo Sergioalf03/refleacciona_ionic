@@ -1,0 +1,119 @@
+<ion-header class="ion-no-border">
+  <app-header-buttons
+    backUrl="/home"
+    homeUrl="/home"
+  ></app-header-buttons>
+
+  <div class="principal col-md-6 col-xl-12  mr-auto mb-4">
+  <!-- <form *ngIf="form" [formGroup]="form" (ngSubmit)="onSubmit()"> -->
+    <div class=" mx-2 mt-2">
+      <h5 class="text-center">{{ sectionName }}</h5>
+      <h6 class="text-center">{{ subsectionName }}</h6>
+    </div>
+  </div>
+
+  <!-- <ion-item *ngIf="loading" class="ion-text-center" lines="none"> -->
+
+  <!-- </ion-item> -->
+</ion-header>
+
+<ion-content  class="ion-padding-horizontal">
+  <!-- <ion-spinner  name="circular"></ion-spinner> -->
+  <div [hidden]="hideForm">
+    <div *ngFor="let question of questions; let questionIndex = index" class="mt-2 mb-2">
+      <div class="row">
+
+        <div [class]="question.popup || question.has_evidence ? 'col-10' : 'col' + ' ion-text-justify'">
+          {{ question.uid + '.- ' + question.sentence}}
+
+          <ion-item *ngIf="question.answers === 'FREETEXT'" class="txtInput">
+            <ion-input
+              [autofocus]="true"
+              [clearInput]="true"
+              [autocomplete]="true"
+              (ionChange)="onAnswerChange($event, question, questionIndex)"
+              [value]="question.answer"
+            ></ion-input>
+          </ion-item>
+
+
+          <ion-item *ngIf="question.answers === 'ONEDIGIT'" class="txtInput">
+            <ion-input
+              *ngIf="question.answers === 'ONEDIGIT'"
+              [autofocus]="true"
+              [clearInput]="true"
+              [autocomplete]="true"
+              [value]="question.answer"
+              maxlength="1"
+              type="number"
+              (ionChange)="onAnswerChange($event, question, questionIndex)"
+            ></ion-input>
+          </ion-item>
+
+          <ion-item *ngIf="question.answers !== 'FREETEXT' && question.answers !== 'ONEDIGIT'" lines="none">
+            <ion-radio-group
+              (ionChange)="onAnswerChange($event, question, questionIndex)"
+              class="ion-no-border"
+              [value]="+question.answer"
+            >
+              <ion-radio
+                *ngFor="let option of jsonCast(question.answers)"
+                justify="start"
+                label-placement="end"
+                mode="md"
+                [value]="option.v"
+              >{{ option.t }}</ion-radio><br />
+            </ion-radio-group>
+          </ion-item>
+        </div>
+
+        <div class="col-2">
+          <ion-button *ngIf="question.has_evidence" [disabled]="!this.ImageSrc[questionIndex].canTakePickture || !!ImageSrc[questionIndex].url" size="small" (click)="onSelectPhoto(questionIndex, question.id)">
+            <ion-icon style="font-size: 15px;" slot="icon-only" name="camera">
+          </ion-icon></ion-button>
+
+          <ion-button *ngIf="question.popup" size="small" (click)="openedPopover = question.indx">
+            <ion-icon style="font-size: 15px;" slot="icon-only" name="help"></ion-icon>
+          </ion-button>
+
+          <ion-popover [isOpen]="openedPopover === question.indx" (didDismiss)="openedPopover = 0">
+            <ng-template>
+              <ion-content class="ion-padding ion-text-justify">{{ question.popup }}</ion-content>
+            </ng-template>
+          </ion-popover>
+        </div>
+      </div>
+
+
+      <ion-row *ngIf="ImageSrc[questionIndex].url" class="mt-3">
+        <ion-col>
+          <img width="100%"  (click)="onImgClicked(questionIndex)" [src]="ImageSrc[questionIndex].url">
+        </ion-col>
+      </ion-row>
+    </div>
+  </div>
+
+</ion-content>
+
+<ion-footer >
+
+  <ion-row *ngIf="questions" class="mt-2">
+    <ion-col>
+      <p class="text-center"><strong>Sección {{sectionIndex + 1}}/{{sectionIds.length}}</strong></p>
+    </ion-col>
+    <ion-col>
+      <p class="text-center"><strong>{{answerCount}}/{{questions.length}} Respuestas</strong></p>
+    </ion-col>
+  </ion-row>
+
+  <ion-row>
+    <ion-col >
+      <ion-button *ngIf="sectionIndex !== 0" expand="full" (click)="onPrevious()">ANTERIOR</ion-button>
+    </ion-col>
+
+    <ion-col>
+      <ion-button [disabled]="!alreadyAnsweredAll()" *ngIf="sectionIndex !== sectionIds.length - 1" expand="full" (click)="onNext()">SIGUIENTE</ion-button>
+      <ion-button [disabled]="!alreadyAnsweredAll()" *ngIf="sectionIndex === sectionIds.length - 1" expand="full" (click)="onFinish()">FINALIZAR</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-footer>

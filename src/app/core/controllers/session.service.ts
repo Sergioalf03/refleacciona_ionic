@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { map, catchError, of } from 'rxjs';
-import { STORAGE_KEY_TOKEN, STORAGE_KEY_UNIQUE_DEVICE_ID, STORAGE_KEY_USER_EMAIL, STORAGE_KEY_USER_NAME } from '../constants/strings';
+import { STORAGE_KEY_TOKEN, STORAGE_KEY_UNIQUE_DEVICE_ID, STORAGE_KEY_USER_EMAIL, STORAGE_KEY_USER_ID, STORAGE_KEY_USER_NAME, STORAGE_KEY_USER_PHONE_NUMBER } from '../constants/strings';
 import { HttpRequestService } from './http-request.service';
 import { StorageService } from './storage.service';
 
@@ -13,6 +13,8 @@ export class SessionService {
   token = '';
   userEmail = '';
   userName = '';
+  userPhone = '';
+  userId = '';
 
   constructor(
     private httpService: HttpRequestService,
@@ -35,11 +37,15 @@ export class SessionService {
           this.token = data.token;
           this.userEmail = data.userEmail;
           this.userName = data.userName;
+          this.userPhone = data.userPhone;
+          this.userId = data.userId;
 
           this.storageService.set(STORAGE_KEY_UNIQUE_DEVICE_ID, deviceId);
           this.storageService.set(STORAGE_KEY_TOKEN, data.token);
           this.storageService.set(STORAGE_KEY_USER_EMAIL, data.userEmail);
           this.storageService.set(STORAGE_KEY_USER_NAME, data.userName);
+          this.storageService.set(STORAGE_KEY_USER_PHONE_NUMBER, data.userPhone);
+          this.storageService.set(STORAGE_KEY_USER_ID, data.userId);
 
           return true;
         })
@@ -53,7 +59,7 @@ export class SessionService {
 
   update(body: any) {
     return this.httpService
-      .post('/update-user', {name:body.name, email:body.email,phone_number: body.phone_number, password:body.password, key: body.key})
+      .post('/update-user', {name:body.name ,phone_number: body.phone_number, password:body.password, key: body.key})
   }
 
   uploadLogo(blob: any) {
@@ -68,6 +74,8 @@ export class SessionService {
     this.token = await this.storageService.get(STORAGE_KEY_TOKEN);
     this.userEmail = await this.storageService.get(STORAGE_KEY_USER_EMAIL);
     this.userName = await this.storageService.get(STORAGE_KEY_USER_NAME);
+    this.userPhone = await this.storageService.get(STORAGE_KEY_USER_PHONE_NUMBER);
+    this.userId = await this.storageService.get(STORAGE_KEY_USER_ID);
   }
 
   validToken() {
@@ -78,8 +86,6 @@ export class SessionService {
 
           this.clearStorage();
           this.clearVariables();
-
-          console.log(error);
 
           return of(false);
         })
@@ -119,7 +125,6 @@ export class SessionService {
       .get('/logout')
       .pipe(
         map((data) => {
-          console.log(data);
           this.clearStorage();
           this.clearVariables();
           this.router.navigateByUrl('/login');
@@ -128,9 +133,6 @@ export class SessionService {
         catchError(error => {
           this.clearStorage();
           this.clearVariables();
-
-          console.log(error);
-
           return of(false);
         })
       )
@@ -140,6 +142,8 @@ export class SessionService {
     this.storageService.remove(STORAGE_KEY_TOKEN);
     this.storageService.remove(STORAGE_KEY_USER_EMAIL);
     this.storageService.remove(STORAGE_KEY_USER_NAME);
+    this.storageService.remove(STORAGE_KEY_USER_PHONE_NUMBER);
+    this.storageService.remove(STORAGE_KEY_USER_ID);
   }
 
   clearVariables() {

@@ -4,11 +4,17 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { AuditoryFormPageRoutingModule } from './auditory-routing.module';
-
 import { AuditoryFormPage } from './auditory-form.page';
 import { MapModule } from 'src/app/components/map/map.module';
 import { HeaderButtonsModule } from 'src/app/components/header-buttons/header-buttons.module';
+import { RouterModule, Routes } from '@angular/router';
+
+const routes: Routes = [
+  {
+    path: '',
+    component: AuditoryFormPage
+  }
+];
 
 @NgModule({
   imports: [
@@ -16,7 +22,7 @@ import { HeaderButtonsModule } from 'src/app/components/header-buttons/header-bu
     ReactiveFormsModule,
     FormsModule,
     IonicModule,
-    AuditoryFormPageRoutingModule,
+    RouterModule.forChild(routes),
     MapModule,
     HeaderButtonsModule,
   ],

@@ -4,17 +4,23 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { ProfilePageRoutingModule } from './profile-routing.module';
-
 import { ProfilePage } from './profile.page';
 import { HeaderButtonsModule } from 'src/app/components/header-buttons/header-buttons.module';
+import { RouterModule, Routes } from '@angular/router';
+
+const routes: Routes = [
+  {
+    path: '',
+    component: ProfilePage
+  }
+];
 
 @NgModule({
   imports: [
     CommonModule,
     ReactiveFormsModule,
     IonicModule,
-    ProfilePageRoutingModule,
+    RouterModule.forChild(routes),
     HeaderButtonsModule,
   ],
   declarations: [ProfilePage]

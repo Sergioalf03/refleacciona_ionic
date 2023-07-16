@@ -22,7 +22,7 @@ const routes: Routes = [
   },
   {
     path: 'home',
-    loadChildren: () => import('./pages/inicio/inicio.module').then( m => m.InicioPageModule),
+    loadChildren: () => import('./pages/home/home.module').then( m => m.HomePageModule),
     canLoad: [AuthGuard]
   },
   {
@@ -41,7 +41,7 @@ const routes: Routes = [
     // canActivate: [AutoLoginGuard]
   },
   {
-    path: 'email-confirmation',
+    path: 'email-confirmation/:withMail',
     loadChildren: () => import('./pages/email-confirmation/email-confirmation.module').then( m => m.EmailConfirmationPageModule),
     // canActivate: [AutoLoginGuard]
   },
@@ -52,10 +52,25 @@ const routes: Routes = [
   {
     path: 'auditory-list',
     loadChildren: () => import('./pages/auditory-list/auditory-list.module').then( m => m.AuditoryListPageModule)
-  },  {
+  },
+  {
     path: 'profile',
     loadChildren: () => import('./pages/profile/profile.module').then( m => m.ProfilePageModule)
   },
+  {
+    path: 'question-form/:auditoryId/:sectionId',
+    loadChildren: () => import('./pages/question-form/question-form.module').then( m => m.QuestionFormPageModule)
+  },
+  {
+    path: 'auditory-finish-form/:auditoryId',
+    loadChildren: () => import('./pages/auditory-finish-form/auditory-finish-form.module').then( m => m.AuditoryFinishFormPageModule)
+  },
+  {
+    path: 'auditory-detail/:id',
+    loadChildren: () => import('./pages/auditory-detail/auditory-detail.module').then( m => m.AuditoryDetailPageModule)
+  },
+
+
 
 ];
 

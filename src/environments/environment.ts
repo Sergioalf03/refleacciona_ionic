@@ -6,7 +6,16 @@ export const environment = {
   production: false
 };
 
-export const API_URL = 'http://127.0.0.1:8000/api';
+export const API_URL = 'http://localhost:8000/api';
+export const STORAGE_URL = 'http://localhost:8000/storage';
+// export const API_URL = 'http://callesmasseguras.com/api';
+
+export const LOCAL_DATABASE = {
+  name: 'refleacciona',
+  encrypted: false,
+  mode: 'no-encryption',
+  version: 1,
+}
 
 /*
  * For easier debugging in development mode, you can import the following file

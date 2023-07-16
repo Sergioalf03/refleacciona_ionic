@@ -9,14 +9,13 @@ import { SessionService } from '../controllers/session.service';
 
 export class AuthGuard implements CanLoad  {
   constructor(
-    private sessionService: SessionService, 
+    private sessionService: SessionService,
     private router: Router
   ){}
-  
+
 
    async canLoad(): Promise<any> {
     const isAuthenticated = await this.sessionService.isLoggedIn();
-    console.log(isAuthenticated);
     if( isAuthenticated){
       return true;
     } else {

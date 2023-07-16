@@ -14,7 +14,6 @@ export class StorageService {
   async init(storage: any) {
     this._storage = await storage;
 
-    // console.log(await this._storage!.keys())
     return true;
   }
 

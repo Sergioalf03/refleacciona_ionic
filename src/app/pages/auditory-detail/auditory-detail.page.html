@@ -1,0 +1,49 @@
+<ion-content>
+
+  <app-header-buttons
+    [backUrl]="backUrl"
+    homeUrl="/home"
+  ></app-header-buttons>
+
+  <div class="mx-2 mt-4">
+    <h1>{{ auditoryTitle }}</h1>
+
+    <p class="mt-4" *ngIf="auditoryDate"><strong>Fecha:</strong> {{ auditoryDate }} {{ auditoryTime }}</p>
+    <p *ngIf="auditoryDescription"><strong>Descripción:</strong> {{ auditoryDescription }}</p>
+
+    <p>
+      <strong>Ubicación:</strong>
+      <app-map></app-map>
+    </p>
+
+    <p>
+      <strong class="mt-2">Fotografías del entorno:</strong>
+      <img width="100%" *ngFor="let url of auditoyrEvidences" class="mb-2" [src]="url">
+    </p>
+
+    <div *ngFor="let section of auditorySections" class="mx-2 mt-2 border-bottom">
+      <h5 class="text-center">{{ section.name }}</h5>
+      <h6 class="text-center">{{ section.subname }}</h6>
+
+      <div *ngFor="let answer of section.answers">
+        <p><strong>
+          {{ answer.uid + '.- ' + answer.sentence}}
+        </strong></p>
+        <p>{{ answer.formattedAnswer }}</p>
+
+        <p *ngIf="answer.dir">
+          <img width="100%" [src]="answerEvicenceUrl(answer.dir)">
+        </p>
+      </div>
+    </div>
+
+    <h1>Resultados</h1>
+
+    <p class="ion-text-justify mt-3">Con las repuestas ingresadas en la auditoría se consiguieron los siguientes acumulados:</p>
+    <h5 class="mt-2">Puntuación Si: {{yesScore}}</h5>
+    <h5>Puntuación No: {{notScore}}</h5>
+
+    <p *ngIf="auditoryCloseNote"><strong>Notas Finales:</strong> {{ auditoryCloseNote }}</p>
+  </div>
+
+</ion-content>
