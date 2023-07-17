@@ -12,7 +12,7 @@ import { STORAGE_URL } from 'src/environments/environment';
 })
 export class AuditoryDetailPage {
 
-  backUrl = 'auditory-list';
+  backUrl = 'auditory-list/remote';
   auditoryId = '0';
 
   auditoryTitle = '';
@@ -44,7 +44,7 @@ export class AuditoryDetailPage {
       .subscribe({
         next: paramMap => {
           if (!paramMap.has('id')) {
-            this.router.navigateByUrl('/auditory-list');
+            this.router.navigateByUrl(this.backUrl);
             return;
           }
 

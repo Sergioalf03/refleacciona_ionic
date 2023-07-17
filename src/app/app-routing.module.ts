@@ -50,7 +50,7 @@ const routes: Routes = [
     loadChildren: () => import('./pages/auditory-form/auditory.module').then( m => m.AuditoryFormPageModule)
   },
   {
-    path: 'auditory-list',
+    path: 'auditory-list/:origin',
     loadChildren: () => import('./pages/auditory-list/auditory-list.module').then( m => m.AuditoryListPageModule)
   },
   {

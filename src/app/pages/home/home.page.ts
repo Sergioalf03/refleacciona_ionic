@@ -101,7 +101,7 @@ export class HomePage {
   }
 
   onAuditoryList() {
-    this.router.navigateByUrl('/auditory-list')
+    this.router.navigateByUrl('/auditory-list/local')
   }
 
   onFetchUpdate(showToast: boolean) {

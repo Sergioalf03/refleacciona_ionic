@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { DatabaseService } from 'src/app/core/controllers/database.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
@@ -32,9 +32,24 @@ export class AuditoryListPage implements OnInit {
     private router: Router,
     private confirmDialogService: ConfirmDialogService,
     private actionSheetCtrl: ActionSheetController,
+    private route: ActivatedRoute,
   ) { }
 
   ngOnInit() {
+    this.route
+      .paramMap
+      .subscribe({
+        next: paramMap => {
+          if (!paramMap.has('origin')) {
+            this.router.navigateByUrl('/home')
+            return;
+          }
+
+          if (paramMap.get('origin') === 'remote') {
+            this.fetchRemoteList();
+          }
+        }
+      })
   }
 
   async ionViewWillEnter() {

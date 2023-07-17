@@ -16,7 +16,7 @@ import { QuestionService } from 'src/app/services/question.service';
 export class AuditoryFinishFormPage implements OnInit {
 
   auditoryId = '0';
-  backUrl = '/auditory-list';
+  backUrl = '/auditory-list/local';
   yesCount = 0;
   notCount = 0;
 
@@ -53,7 +53,7 @@ export class AuditoryFinishFormPage implements OnInit {
       .subscribe({
         next: paramMap => {
           if (!paramMap.has('auditoryId')) {
-            this.router.navigateByUrl('/auditory-list');
+            this.router.navigateByUrl(this.backUrl);
           }
 
           this.auditoryId = paramMap.get('auditoryId') || '0';
@@ -89,7 +89,7 @@ export class AuditoryFinishFormPage implements OnInit {
 
   ionViewWillLeave() {
     this.auditoryId = '0';
-    this.backUrl = '/auditory-list';
+    this.backUrl = '/auditory-list/local';
     this.yesCount = 0;
     this.notCount = 0;
     this.form = new FormGroup({});
@@ -106,7 +106,7 @@ export class AuditoryFinishFormPage implements OnInit {
             .subscribe({
               next: res => {
                 if (res !== 'waiting') {
-                  this.responseService.onSuccessAndRedirect('/auditory-list', 'Auditoría finalizada correctamente');
+                  this.responseService.onSuccessAndRedirect(this.backUrl, 'Auditoría finalizada correctamente');
                 }
               }
             })

@@ -134,7 +134,7 @@ export class AuditoryFormPage implements OnInit {
   }
 
   private setAuditory(auditory: any) {
-    this.backUrl = 'auditory-list';
+    this.backUrl = 'auditory-list/local';
     this.form.setValue({
       title: auditory.title,
       description: auditory.description,
@@ -200,7 +200,7 @@ export class AuditoryFormPage implements OnInit {
           this.hideMap = false;
           let id = paramMap.get('id') || '0';
           if (id === '00') {
-            this.backUrl = 'auditory-list';
+            this.backUrl = 'auditory-list/local';
             id = '0';
           }
           if (id !== '0') {
