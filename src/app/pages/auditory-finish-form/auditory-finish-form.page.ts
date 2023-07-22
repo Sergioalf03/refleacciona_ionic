@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Platform } from '@ionic/angular';
+import { URI_AUDITORY_LIST, URI_QUESTION_FORM } from 'src/app/core/constants/uris';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
@@ -16,7 +18,7 @@ import { QuestionService } from 'src/app/services/question.service';
 export class AuditoryFinishFormPage implements OnInit {
 
   auditoryId = '0';
-  backUrl = '/auditory-list/local';
+  backUrl = URI_AUDITORY_LIST('local');
   yesCount = 0;
   notCount = 0;
 
@@ -31,7 +33,16 @@ export class AuditoryFinishFormPage implements OnInit {
     private responseService: HttpResponseService,
     private route: ActivatedRoute,
     private router: Router,
-  ) { }
+    private platform: Platform,
+  ) {
+    this.platform
+      .backButton
+      .subscribeWithPriority(9999, () => {
+        this.router.navigateByUrl(this.backUrl);
+        return;
+        // processNextHandler();
+      });
+  }
 
   ngOnInit() {
 
@@ -57,6 +68,8 @@ export class AuditoryFinishFormPage implements OnInit {
           }
 
           this.auditoryId = paramMap.get('auditoryId') || '0';
+
+          this.backUrl = (paramMap.get('from') || '0') === '0' ? URI_QUESTION_FORM('0', this.auditoryId, '7') : URI_AUDITORY_LIST('local');
 
           this.auditoryService
             .getFinalNotes(this.auditoryId)
@@ -89,7 +102,6 @@ export class AuditoryFinishFormPage implements OnInit {
 
   ionViewWillLeave() {
     this.auditoryId = '0';
-    this.backUrl = '/auditory-list/local';
     this.yesCount = 0;
     this.notCount = 0;
     this.form = new FormGroup({});
@@ -115,7 +127,7 @@ export class AuditoryFinishFormPage implements OnInit {
   }
 
   onReturn() {
-    this.router.navigateByUrl(`/question-form/${this.auditoryId}/7`)
+    this.router.navigateByUrl(this.backUrl);
   }
 
 }

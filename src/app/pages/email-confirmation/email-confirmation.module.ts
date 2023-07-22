@@ -6,6 +6,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { EmailConfirmationPage } from './email-confirmation.page';
 import { RouterModule, Routes } from '@angular/router';
+import { HeaderButtonsModule } from 'src/app/components/header-buttons/header-buttons.module';
 
 const routes: Routes = [
   {
@@ -20,6 +21,7 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     ReactiveFormsModule,
     IonicModule,
+    HeaderButtonsModule
   ],
   declarations: [EmailConfirmationPage]
 })

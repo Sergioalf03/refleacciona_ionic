@@ -9,7 +9,7 @@
         <ng-template>
           <ion-content>
             <ion-list lines="none">
-              <ion-item button routerLink="/profile">
+              <ion-item button (click)="onOpenUser()">
                 <ion-label>Usuario</ion-label>
               </ion-item>
               <ion-item button (click)="onFetchUpdate(true)">

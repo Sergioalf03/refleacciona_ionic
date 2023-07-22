@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Platform } from '@ionic/angular';
+import { URI_AUDITORY_LIST } from 'src/app/core/constants/uris';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { MapService } from 'src/app/core/controllers/map.service';
@@ -12,7 +14,7 @@ import { STORAGE_URL } from 'src/environments/environment';
 })
 export class AuditoryDetailPage {
 
-  backUrl = 'auditory-list/remote';
+  backUrl = URI_AUDITORY_LIST('remote');
   auditoryId = '0';
 
   auditoryTitle = '';
@@ -35,8 +37,17 @@ export class AuditoryDetailPage {
     private responseService: HttpResponseService,
     private mapService: MapService,
     private route: ActivatedRoute,
+    private platform: Platform,
     private router: Router,
-  ) { }
+  ) {
+    this.platform
+      .backButton
+      .subscribeWithPriority(9999, () => {
+        this.router.navigateByUrl(this.backUrl);
+        return;
+        // processNextHandler();
+      });
+  }
 
   ionViewWillEnter() {
     this.route

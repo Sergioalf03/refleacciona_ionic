@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
-import { Observable } from 'rxjs';
+import { CanActivate, Router } from '@angular/router';
 import { SessionService } from '../controllers/session.service';
+import { URI_HOME, URI_LOGIN } from '../constants/uris';
 
 @Injectable({
   providedIn: 'root'
@@ -15,10 +15,10 @@ export class AutoLoginGuard implements CanActivate {
   async canActivate(): Promise<any> {
     const isAuthenticated = await this.sessionService.isLoggedIn();
     if(isAuthenticated){
-      this.router.navigateByUrl('/home');
+      this.router.navigateByUrl(URI_HOME());
       return true;
     } else {
-      this.router.navigateByUrl('/login');
+      this.router.navigateByUrl(URI_LOGIN());
       return false;
     }
   }

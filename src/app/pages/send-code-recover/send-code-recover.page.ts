@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Platform } from '@ionic/angular';
+import { URI_LOGIN } from 'src/app/core/constants/uris';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { ValidFormService } from 'src/app/core/controllers/valid-form.service';
@@ -13,6 +15,7 @@ import { AuthService } from 'src/app/services/auth.service';
 export class SendCodeRecoverPage implements OnInit {
 
   form!: FormGroup;
+  backUri = URI_LOGIN();
 
   showEmail = false;
 
@@ -23,7 +26,16 @@ export class SendCodeRecoverPage implements OnInit {
     private loadingService: LoadingService,
     private router: Router,
     private route: ActivatedRoute,
-  ) { }
+    private platform: Platform,
+  ) {
+    this.platform
+      .backButton
+      .subscribeWithPriority(9999, () => {
+        this.router.navigateByUrl(this.backUri);
+        return;
+        // processNextHandler();
+      });
+  }
 
   private initForm() {
     this.form = new FormGroup({
@@ -111,7 +123,7 @@ export class SendCodeRecoverPage implements OnInit {
         .changePassword(data)
         .subscribe({
           next: res => {
-            this.responseService.onSuccessAndRedirect('/login', 'Contraseña cambiada');
+            this.responseService.onSuccessAndRedirect(this.backUri, 'Contraseña cambiada');
           },
           error: err => {
             this.responseService.onError(err, 'No se pudo cambiar la contraseña')
@@ -121,7 +133,7 @@ export class SendCodeRecoverPage implements OnInit {
   }
 
   onGoingHome() {
-    this.router.navigateByUrl('/login');
+    this.router.navigateByUrl(this.backUri);
   }
 
   printEvent(event: any) {

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, CanLoad, Route, Router, RouterStateSnapshot, UrlSegment, UrlTree } from '@angular/router';
-import { Observable } from 'rxjs';
+import { CanLoad, Router } from '@angular/router';
 import { SessionService } from '../controllers/session.service';
+import { URI_LOGIN } from '../constants/uris';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +19,7 @@ export class AuthGuard implements CanLoad  {
     if( isAuthenticated){
       return true;
     } else {
-      this.router.navigateByUrl('/login');
+      this.router.navigateByUrl(URI_LOGIN());
       return false;
     }
   }

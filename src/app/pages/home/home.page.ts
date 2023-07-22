@@ -6,6 +6,8 @@ import { DatabaseService } from 'src/app/core/controllers/database.service';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { VersionService } from 'src/app/services/version.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
+import { URI_AUDITORY_FORM, URI_AUDITORY_LIST, URI_LOGIN, URI_PROFILE } from 'src/app/core/constants/uris';
+import { Platform } from '@ionic/angular';
 
 @Component({
   selector: 'app-home',
@@ -17,7 +19,7 @@ export class HomePage {
   auditoriesCount = 0;
 
   sqlite: any;
-  platform?: string;
+  // platform?: string;
   handlerPermissions: any;
   initPlugin: boolean = false;
 
@@ -29,7 +31,14 @@ export class HomePage {
     private versionService: VersionService,
     private confirmDialogService: ConfirmDialogService,
     private loadingService: LoadingService,
-  ) { }
+    private platform: Platform,
+  ) {
+    this.platform
+      .backButton
+      .subscribeWithPriority(9999, () => {
+        return;
+      });
+  }
 
   ionViewDidEnter() {
     if (!this.versionService.checked) {
@@ -86,7 +95,7 @@ export class HomePage {
         return await this.sessionService.logout()
         .subscribe({
           next: () => {
-            this.router.navigateByUrl('/login')
+            this.router.navigateByUrl(URI_LOGIN())
             this.loadingService.dismissLoading();
           },
           error: err => {
@@ -97,11 +106,15 @@ export class HomePage {
   }
 
   onNewAuditory() {
-    this.router.navigateByUrl('/auditory-form/0')
+    this.router.navigateByUrl(URI_AUDITORY_FORM('0'));
   }
 
   onAuditoryList() {
-    this.router.navigateByUrl('/auditory-list/local')
+    this.router.navigateByUrl(URI_AUDITORY_LIST('local'));
+  }
+
+  onOpenUser() {
+    this.router.navigateByUrl(URI_PROFILE());
   }
 
   onFetchUpdate(showToast: boolean) {

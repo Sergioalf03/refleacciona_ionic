@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Platform } from '@ionic/angular';
+import { URI_EMAIL_CONFIRMATION, URI_LOGIN } from 'src/app/core/constants/uris';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
@@ -16,6 +18,7 @@ import { AuthService } from 'src/app/services/auth.service';
 export class RegisterPage {
 
   form!: FormGroup;
+  backUri = URI_LOGIN();
 
   user: any = {};
   txtButtonEnter = 'GUARDAR';
@@ -29,7 +32,16 @@ export class RegisterPage {
     private router: Router,
     private loadingService: LoadingService,
     private confirmDialogService: ConfirmDialogService,
-  ) {}
+    private platform: Platform,
+  ) {
+    this.platform
+      .backButton
+      .subscribeWithPriority(9999, () => {
+        this.router.navigateByUrl(this.backUri);
+        return;
+        // processNextHandler();
+      });
+  }
 
   private initForm() {
     this.form = new FormGroup({
@@ -54,6 +66,10 @@ export class RegisterPage {
     this.initForm();
   }
 
+  alreadyHasCode() {
+    this.router.navigateByUrl(URI_EMAIL_CONFIRMATION('1'));
+  }
+
   onSubmit() {
     if (this.validFormService.isValid(this.form, [])) {
       this.confirmDialogService
@@ -73,7 +89,7 @@ export class RegisterPage {
             .subscribe({
               next: () => {
                 this.authService.email = user.email;
-                this.httpResponseService.onSuccessAndRedirect('/email-confirmation/0', 'Usuario registrado correctamente.');
+                this.httpResponseService.onSuccessAndRedirect(URI_EMAIL_CONFIRMATION('0'), 'Usuario registrado correctamente.');
                 this.form.reset();
               },
               error: err => {
@@ -85,7 +101,7 @@ export class RegisterPage {
   }
 
   onGoingHome() {
-    this.router.navigateByUrl('/login');
+    this.router.navigateByUrl(this.backUri);
   }
 
 }

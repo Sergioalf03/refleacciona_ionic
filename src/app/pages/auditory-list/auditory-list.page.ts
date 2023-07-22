@@ -4,12 +4,13 @@ import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.se
 import { DatabaseService } from 'src/app/core/controllers/database.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { AuditoryService } from 'src/app/services/auditory.service';
-import { ActionSheetController } from '@ionic/angular';
+import { ActionSheetController, Platform } from '@ionic/angular';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { AnswerService } from 'src/app/services/answer.service';
 import { AuditoryEvidenceService } from 'src/app/services/auditory-evidence.service';
 import { PhotoService } from 'src/app/core/controllers/photo.service';
 import { AnswerEvidenceService } from 'src/app/services/answer-evidence.service';
+import { URI_AUDITORY_DETAIL, URI_AUDITORY_FINISH_FORM, URI_AUDITORY_FORM, URI_HOME, URI_QUESTION_FORM } from 'src/app/core/constants/uris';
 
 @Component({
   selector: 'app-auditory-list',
@@ -20,6 +21,9 @@ export class AuditoryListPage implements OnInit {
   auditories: any[] = [];
   sendedList = false;
   loading = false;
+
+  backUri = URI_HOME();
+  formUri = URI_AUDITORY_FORM('00');
 
   constructor(
     private auditoryService: AuditoryService,
@@ -33,7 +37,16 @@ export class AuditoryListPage implements OnInit {
     private confirmDialogService: ConfirmDialogService,
     private actionSheetCtrl: ActionSheetController,
     private route: ActivatedRoute,
-  ) { }
+    private platform: Platform,
+  ) {
+    this.platform
+      .backButton
+      .subscribeWithPriority(9999, () => {
+        this.router.navigateByUrl(this.backUri);
+        return;
+        // processNextHandler();
+      });
+  }
 
   ngOnInit() {
     this.route
@@ -41,39 +54,41 @@ export class AuditoryListPage implements OnInit {
       .subscribe({
         next: paramMap => {
           if (!paramMap.has('origin')) {
-            this.router.navigateByUrl('/home')
+            this.router.navigateByUrl(this.backUri)
             return;
           }
 
           if (paramMap.get('origin') === 'remote') {
             this.fetchRemoteList();
+          } else {
+            this.fetchLocalList();
           }
         }
       })
   }
 
   async ionViewWillEnter() {
-    this.fetchLocalList();
+
   }
 
   onGoingHome() {
-    this.router.navigateByUrl('/home');
+    this.router.navigateByUrl(this.backUri);
   }
 
   private onEdit(id: string) {
-    this.router.navigateByUrl(`/auditory-form/${id}`);
+    this.router.navigateByUrl(URI_AUDITORY_FORM(id));
   }
 
   private onEditAnswers(id: string, lastIndex: number) {
-    this.router.navigateByUrl(`/question-form/${id}/${lastIndex}`);
+    this.router.navigateByUrl(URI_QUESTION_FORM('1', id, `${lastIndex}`));
   }
 
   private onFinish(id: string) {
-    this.router.navigateByUrl(`/auditory-finish-form/${id}`);
+    this.router.navigateByUrl(URI_AUDITORY_FINISH_FORM('1', id));
   }
 
   onNewAuditory() {
-    this.router.navigateByUrl(`/auditory-form/00`);
+    this.router.navigateByUrl(URI_AUDITORY_FORM('00'));
   }
 
   private onUpload(id: string) {
@@ -287,7 +302,7 @@ export class AuditoryListPage implements OnInit {
   }
 
   private onDetail(id: string) {
-    this.router.navigateByUrl(`/auditory-detail/${id}`);
+    this.router.navigateByUrl(URI_AUDITORY_DETAIL(id));
   }
 
   private onDownloadPdf(id: string) {
@@ -322,6 +337,7 @@ export class AuditoryListPage implements OnInit {
   }
 
   async presentActionSheetOptions(auditory: any) {
+    console.log(this.sendedList);
 
     const buttons = this.sendedList ?
     [
@@ -463,6 +479,7 @@ export class AuditoryListPage implements OnInit {
       .getRemoteList()
       .subscribe({
         next: res => {
+          this.sendedList = true;
           this.auditories = res.data.map((a: any) => ({
             ...a,
             statusWord: a.status === 1 ? 'En progreso' : 'Terminada',

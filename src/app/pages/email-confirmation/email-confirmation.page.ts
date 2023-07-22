@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Platform } from '@ionic/angular';
+import { URI_LOGIN } from 'src/app/core/constants/uris';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { ValidFormService } from 'src/app/core/controllers/valid-form.service';
@@ -13,6 +15,7 @@ import { AuthService } from 'src/app/services/auth.service';
 export class EmailConfirmationPage implements OnInit {
 
   form!: FormGroup;
+  backUri = URI_LOGIN();
 
   showEmail = false;
 
@@ -22,7 +25,17 @@ export class EmailConfirmationPage implements OnInit {
     private responseService: HttpResponseService,
     private route: ActivatedRoute,
     private loadingService: LoadingService,
-  ) { }
+    private platform: Platform,
+    private router: Router,
+  ) {
+    this.platform
+      .backButton
+      .subscribeWithPriority(9999, () => {
+        this.router.navigateByUrl(this.backUri);
+        return;
+        // processNextHandler();
+      });
+  }
 
   private initForm() {
     this.form = new FormGroup({
@@ -94,7 +107,7 @@ export class EmailConfirmationPage implements OnInit {
       this.authService
         .confirmEmail(this.form.controls['email'].value, code)
         .subscribe({
-          next: () => this.responseService.onSuccessAndRedirect('/login', 'Correo confirmado'),
+          next: () => this.responseService.onSuccessAndRedirect(this.backUri, 'Correo confirmado'),
           error: err => this.responseService.onError(err, 'No se pudo confirmar el correo'),
         });
     }

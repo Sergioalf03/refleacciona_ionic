@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Platform } from '@ionic/angular';
+import { URI_LOGIN, URI_SEND_RECOVER_CODE } from 'src/app/core/constants/uris';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
@@ -14,6 +16,7 @@ import { AuthService } from 'src/app/services/auth.service';
 export class RecoverAccountPage implements OnInit {
 
   email = '';
+  backUri = URI_LOGIN();
 
   form!: FormGroup;
 
@@ -24,7 +27,16 @@ export class RecoverAccountPage implements OnInit {
     private loadingService: LoadingService,
     private confirmDialogService: ConfirmDialogService,
     private router: Router,
-  ) { }
+    private platform: Platform,
+  ) {
+    this.platform
+      .backButton
+      .subscribeWithPriority(9999, () => {
+        this.router.navigateByUrl(this.backUri);
+        return;
+        // processNextHandler();
+      });
+  }
 
   private initForm() {
     this.form = new FormGroup({
@@ -57,7 +69,7 @@ export class RecoverAccountPage implements OnInit {
             .subscribe({
               next: () => {
                 this.authService.email = email;
-                this.responseService.onSuccessAndRedirect('/code/0', 'Solicitud recibida');
+                this.responseService.onSuccessAndRedirect(URI_SEND_RECOVER_CODE('0'), 'Solicitud recibida');
               },
               error: err => {
                 this.responseService.onError(err, 'No se pudo procesar la solicitud');
@@ -68,11 +80,11 @@ export class RecoverAccountPage implements OnInit {
   }
 
   alreadyHadCode() {
-    this.router.navigateByUrl('/code/1');
+    this.router.navigateByUrl(URI_SEND_RECOVER_CODE('1'));
   }
 
   onGoingHome() {
-    this.router.navigateByUrl('/login');
+    this.router.navigateByUrl(this.backUri);
   }
 
 }

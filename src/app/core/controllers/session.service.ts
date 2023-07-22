@@ -4,6 +4,7 @@ import { map, catchError, of } from 'rxjs';
 import { STORAGE_KEY_TOKEN, STORAGE_KEY_UNIQUE_DEVICE_ID, STORAGE_KEY_USER_EMAIL, STORAGE_KEY_USER_ID, STORAGE_KEY_USER_NAME, STORAGE_KEY_USER_PHONE_NUMBER } from '../constants/strings';
 import { HttpRequestService } from './http-request.service';
 import { StorageService } from './storage.service';
+import { URI_LOGIN } from '../constants/uris';
 
 @Injectable({
   providedIn: 'root'
@@ -127,7 +128,7 @@ export class SessionService {
         map((data) => {
           this.clearStorage();
           this.clearVariables();
-          this.router.navigateByUrl('/login');
+          this.router.navigateByUrl(URI_LOGIN());
           return true;
         }),
         catchError(error => {

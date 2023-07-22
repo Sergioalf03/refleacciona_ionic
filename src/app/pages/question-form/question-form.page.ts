@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
-import { ActionSheetController, isPlatform } from '@ionic/angular';
+import { ActionSheetController, Platform, isPlatform } from '@ionic/angular';
+import { URI_AUDITORY_FINISH_FORM, URI_AUDITORY_FORM, URI_AUDITORY_LIST, URI_HOME } from 'src/app/core/constants/uris';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
@@ -28,6 +29,7 @@ export class QuestionFormPage implements OnInit {
   hideForm = true;
   sectionIds: number[] = [];
   sectionIndex = 0;
+  backUri = URI_HOME();
 
   constructor(
     private questionService: QuestionService,
@@ -41,7 +43,16 @@ export class QuestionFormPage implements OnInit {
     private loadingService: LoadingService,
     private actionSheetCtrl: ActionSheetController,
     private sanitization: DomSanitizer,
-  ) { }
+    private platform: Platform,
+  ) {
+    this.platform
+      .backButton
+      .subscribeWithPriority(9999, () => {
+        this.router.navigateByUrl(this.backUri);
+        return;
+        // processNextHandler();
+      });
+  }
 
   ngOnInit() {
     this.route
@@ -49,11 +60,13 @@ export class QuestionFormPage implements OnInit {
       .subscribe({
         next: paramMap => {
           if (!paramMap.has('sectionId') || !paramMap.has('auditoryId')) {
-            this.router.navigateByUrl('/home');
+            this.router.navigateByUrl(this.backUri);
           }
 
           this.auditoryId = `${paramMap.get('auditoryId')}`;
           this.sectionId = `${paramMap.get('sectionId')}`;
+
+          this.backUri = (paramMap.get('from') === '0') ? URI_AUDITORY_FORM(this.auditoryId) : URI_AUDITORY_LIST('local');
 
           this.questionService
             .getSectionIds()
@@ -298,7 +311,7 @@ export class QuestionFormPage implements OnInit {
   }
 
   onFinish() {
-    this.router.navigateByUrl(`/auditory-finish-form/${this.auditoryId}`);
+    this.router.navigateByUrl(URI_AUDITORY_FINISH_FORM('0', this.auditoryId));
   }
 
 }

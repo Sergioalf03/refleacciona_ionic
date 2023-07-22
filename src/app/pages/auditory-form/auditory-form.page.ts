@@ -9,12 +9,11 @@ import { Geolocation } from '@capacitor/geolocation';
 import { MapService } from 'src/app/core/controllers/map.service';
 import { AuditoryEvidenceService } from 'src/app/services/auditory-evidence.service';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
-import { DatabaseService } from 'src/app/core/controllers/database.service';
-import { AnswerService } from 'src/app/services/answer.service';
-import { ActionSheetController, isPlatform } from '@ionic/angular';
+import { ActionSheetController, Platform, isPlatform } from '@ionic/angular';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Capacitor } from '@capacitor/core';
+import { URI_AUDITORY_LIST, URI_HOME, URI_QUESTION_FORM } from 'src/app/core/constants/uris';
 
 @Component({
   selector: 'app-auditory-form',
@@ -25,7 +24,7 @@ export class AuditoryFormPage implements OnInit {
   formActionText = 'Nueva';
   SubmitButtonText = 'Comenzar';
   auditoryId = '0';
-  backUrl = '/home';
+  backUrl = URI_HOME();
   locationAdded = false;
   hideMap = true;
 
@@ -45,8 +44,17 @@ export class AuditoryFormPage implements OnInit {
     private confirmDialogService: ConfirmDialogService,
     private actionSheetCtrl: ActionSheetController,
     private loadingService: LoadingService,
-    private sanitization: DomSanitizer
-  ) { }
+    private sanitization: DomSanitizer,
+    private platform: Platform,
+  ) {
+    this.platform
+      .backButton
+      .subscribeWithPriority(9999, () => {
+        this.router.navigateByUrl(this.backUrl);
+        return;
+        // processNextHandler();
+      });
+  }
 
   private initForm() {
     this.form = new FormGroup({
@@ -92,7 +100,7 @@ export class AuditoryFormPage implements OnInit {
                                   if (photo !== 'waiting') {
                                     count++;
                                     if (count === this.ImageSrc.length) {
-                                      this.responseService.onSuccessAndRedirect(`/question-form/${this.auditoryId}/1`, 'Auditoría guarda');
+                                      this.responseService.onSuccessAndRedirect(URI_QUESTION_FORM('0', this.auditoryId, `1`), 'Auditoría guarda');
                                     }
                                   }
                                 },
@@ -103,7 +111,7 @@ export class AuditoryFormPage implements OnInit {
                           });
                       });
                     } else {
-                      this.responseService.onSuccessAndRedirect(`/question-form/${this.auditoryId}/1`, 'Auditoría guarda');
+                      this.responseService.onSuccessAndRedirect(URI_QUESTION_FORM('0', this.auditoryId, `1`), 'Auditoría guarda');
                     }
                   }
 
@@ -124,7 +132,7 @@ export class AuditoryFormPage implements OnInit {
         next: (updateRes) => {
           if (updateRes !== 'waiting') {
             this.hideMap = true;
-            this.responseService.onSuccessAndRedirect('/auditory-list', 'Auditoría actualizada');
+            this.responseService.onSuccessAndRedirect(URI_AUDITORY_LIST('local'), 'Auditoría actualizada');
           }
         },
         error: err => {
@@ -134,7 +142,7 @@ export class AuditoryFormPage implements OnInit {
   }
 
   private setAuditory(auditory: any) {
-    this.backUrl = 'auditory-list/local';
+    this.backUrl = URI_AUDITORY_LIST('local');
     this.form.setValue({
       title: auditory.title,
       description: auditory.description,
@@ -200,7 +208,7 @@ export class AuditoryFormPage implements OnInit {
           this.hideMap = false;
           let id = paramMap.get('id') || '0';
           if (id === '00') {
-            this.backUrl = 'auditory-list/local';
+            this.backUrl = URI_AUDITORY_LIST('local');
             id = '0';
           }
           if (id !== '0') {
@@ -240,8 +248,6 @@ export class AuditoryFormPage implements OnInit {
   }
 
   onSubmit() {
-    // this.responseService.onSuccessAndRedirect(`/question-form/${this.auditoryId}/1`, 'Auditoría guarda');
-    // return;
     if (this.validFormService.isValid(this.form, [])) {
       this.confirmDialogService
         .presentAlert('¿Desea guardar los cambios?', () => {
@@ -423,7 +429,7 @@ export class AuditoryFormPage implements OnInit {
           handler: () => this.onChangeSize(index),
         },
         {
-          text: 'Eliminar Auditoría',
+          text: 'Eliminar Foto',
           role: 'destructive',
           handler: () => this.onRemove(dir, index),
         },

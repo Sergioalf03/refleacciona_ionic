@@ -6,6 +6,7 @@ import { StorageService } from './core/controllers/storage.service';
 import { Storage } from '@ionic/storage-angular';
 import { Platform } from '@ionic/angular';
 import { SQLiteService } from './core/controllers/sqlite.service';
+import { URI_HOME } from './core/constants/uris';
 
 @Component({
   selector: 'app-root',
@@ -32,14 +33,13 @@ export class AppComponent implements OnInit {
       await this.storageService.init(storage);
 
       const logged = await this.sessionService.isLoggedIn();
-      console.log(logged)
       if (logged) {
         await this.sessionService.setValuesFromStorage();
         // this.sessionService
         //   .validToken()
         //   .subscribe({
         //     next: res => {
-              this.responseService.onSuccessAndRedirect('/home','/NA');
+        this.responseService.onSuccessAndRedirect(URI_HOME(), '/NA');
 
               this.sessionService
                 .getUserData()

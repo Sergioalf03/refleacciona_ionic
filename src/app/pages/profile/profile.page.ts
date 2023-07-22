@@ -2,15 +2,15 @@ import { Component, } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { isPlatform } from '@ionic/angular';
+import { Platform, isPlatform } from '@ionic/angular';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { PhotoService } from 'src/app/core/controllers/photo.service';
 import { SessionService } from 'src/app/core/controllers/session.service';
-import { ToastService } from 'src/app/core/controllers/toast.service';
 import { ValidFormService } from 'src/app/core/controllers/valid-form.service';
 import { Capacitor } from '@capacitor/core';
+import { URI_HOME } from 'src/app/core/constants/uris';
 
 @Component({
   selector: 'app-profile',
@@ -19,6 +19,7 @@ import { Capacitor } from '@capacitor/core';
 export class ProfilePage {
 
   form!: FormGroup;
+  backUri = URI_HOME();
 
   user: any = {};
   txtButtonEnter = 'GUARDAR';
@@ -27,15 +28,23 @@ export class ProfilePage {
 
   constructor(
     private sessionService: SessionService,
-    private toastService: ToastService,
     private photoService: PhotoService,
     private loadingService: LoadingService,
     private confirmDialogService: ConfirmDialogService,
     private httpResponseService: HttpResponseService,
     private validFormService: ValidFormService,
     private router: Router,
-    private sanitization: DomSanitizer
-  ) {}
+    private sanitization: DomSanitizer,
+    private platform: Platform,
+  ) {
+    this.platform
+      .backButton
+      .subscribeWithPriority(9999, () => {
+        this.router.navigateByUrl(this.backUri);
+        return;
+        // processNextHandler();
+      });
+  }
 
   private initForm() {
     this.form = new FormGroup({
@@ -120,7 +129,7 @@ export class ProfilePage {
 
 
   onGoingHome() {
-    this.router.navigateByUrl('/home');
+    this.router.navigateByUrl(this.backUri);
   }
 
   onSelectPhoto() {

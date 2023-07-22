@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Route, Router } from '@angular/router';
+import { Router } from '@angular/router';
+import { Platform } from '@ionic/angular';
+import { URI_HOME, URI_RECOVER_ACCOUNT, URI_REGISTER } from 'src/app/core/constants/uris';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { RandomStringService } from 'src/app/core/controllers/random-string.service';
@@ -21,11 +23,19 @@ export class LoginPage {
     private sessionService: SessionService,
     private randomService: RandomStringService,
     private loadingService: LoadingService,
-    private httpResponseService: HttpResponseService
-  ) {}
+    private httpResponseService: HttpResponseService,
+    private platform: Platform,
+  ) {
+    this.platform
+      .backButton
+      .subscribeWithPriority(9999, () => {
+        return;
+        // processNextHandler();
+      });
+  }
 
   onRecuperar() {
-    this.router.navigateByUrl('/recover');
+    this.router.navigateByUrl(URI_RECOVER_ACCOUNT());
   }
 
 
@@ -38,21 +48,18 @@ export class LoginPage {
     this.sessionService.login(this.user.email,this.user.password,this.user['deviceId'])
     .subscribe({
       next: (res:any) => {
-        // this.httpResponseService.onSuccessAndRedirect('/home','Inicio de sesión correcto');
         this.loadingService.dismissLoading();
-        this.router.navigateByUrl('/home');
+        this.router.navigateByUrl(URI_HOME());
         this.resetForm(formLogin);
       },
       error: err => {
         this.httpResponseService.onError(err, 'Las credenciales no son correctas');
       },
     });
-    // formLogin.reset();
-    // this.router.navigateByUrl('/home');
   }
 
   onRegistrar() {
-    this.router.navigateByUrl('/register');
+    this.router.navigateByUrl(URI_REGISTER());
   }
 
   resetForm(form?: NgForm) {
