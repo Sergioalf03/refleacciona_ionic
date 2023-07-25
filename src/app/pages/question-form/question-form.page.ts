@@ -178,7 +178,6 @@ export class QuestionFormPage implements OnInit {
                       return q.cond && q.cond !== '' && q.cond.startsWith('E')
                     })
                     .forEach(q => {
-                      console.log(q)
                       this.answerService
                         .answerExists(q.cond.split('-')[2], this.auditoryId)
                         .subscribe({
@@ -192,7 +191,6 @@ export class QuestionFormPage implements OnInit {
                                 .subscribe({
                                   next: save => {
                                     if (save !== 'waiting') {
-                                      console.log('saved');
                                     }
                                   }
                                 })
@@ -207,26 +205,18 @@ export class QuestionFormPage implements OnInit {
                       return q.cond && q.cond !== '' && q.cond.startsWith('D')
                     })
                     .forEach(q => {
-                      console.log(q)
                       const conditionArr = q.cond.split('-');
                       this.answerService
                         .answerExists(conditionArr[2], this.auditoryId)
                         .subscribe({
                           next: result => {
                             if (result !== 'waiting') {
-                              console.log(result);
 
                               const valueArr = conditionArr[3].split(':');
                               let answer = '';
 
-                              console.log(valueArr[0]);
-
                               switch (valueArr[0]) {
                                 case '<':
-                                  console.log(+result.values[0].value)
-                                  console.log(+valueArr[1])
-                                  console.log(+result.values[0].value < +valueArr[1])
-                                  console.log(valueArr[2], valueArr[3])
                                   answer = +result.values[0].value < +valueArr[1] ? valueArr[2] : valueArr[3];
                                   break;
                                 case '<=':
@@ -246,8 +236,6 @@ export class QuestionFormPage implements OnInit {
                                   break;
                               }
 
-                              console.log(answer)
-
                               q.answer = answer;
                               // // Insertar a base de datos
 
@@ -256,7 +244,6 @@ export class QuestionFormPage implements OnInit {
                                 .subscribe({
                                   next: save => {
                                     if (save !== 'waiting') {
-                                      console.log('saved');
                                     }
                                   }
                                 })
@@ -446,7 +433,6 @@ export class QuestionFormPage implements OnInit {
   }
 
   private verifyCondition(questionUid: string, answerValue: string) {
-    console.log(questionUid, answerValue)
     const needsChange = this.questionChangeEvent.find(q => `${questionUid}` === q.uid);
 
     if (needsChange) {

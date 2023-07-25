@@ -94,14 +94,12 @@ export class AuditoryFormPage implements OnInit {
                           this.photoService
                             .saveLocalAuditoryEvidence(blob, this.auditoryId)
                             .then(photoId => {
-                              console.log(index, photoId)
                               this.auditoryEvidenceService
                                 .localSave({ auditoryId: this.auditoryId, dir: photoId })
                                 .subscribe({
                                   next: async photo => {
                                     if (photo !== 'waiting') {
                                       count++;
-                                      console.log(photo, this.ImageSrc.length, count)
                                       if (count === this.ImageSrc.length) {
                                         this.responseService.onSuccessAndRedirect(URI_QUESTION_FORM('0', this.auditoryId, `1`), 'Auditoría guarda');
                                       }
@@ -112,9 +110,7 @@ export class AuditoryFormPage implements OnInit {
                                   },
                                 })
                             })
-                            .catch(err => {
-                              console.log(index, 'error al guardar foto', err)
-                            });
+                            .catch();
                           }, 100 * index);
                         });
                     } else {
@@ -163,9 +159,7 @@ export class AuditoryFormPage implements OnInit {
       .getEvidencesByAuditory(this.auditoryId)
       .subscribe({
         next: res => {
-          console.log(res)
           if (res !== 'waiting') {
-            console.log(isPlatform('hybrid'))
             if (isPlatform('hybrid')) {
               res.values.forEach(async (row: any) => {
                 this.photoService.getLocalAuditoryEvidenceUri(row.dir).then(photo => {
@@ -183,7 +177,6 @@ export class AuditoryFormPage implements OnInit {
               res.values.forEach(async (row: any) => {
                 this.photoService.getLocalAuditoryEvidence(row.dir).then(photo => {
                   const file = 'data:image/png;base64,' + photo.data;
-                  console.log(file)
                   this.ImageSrc.push({
                     id: row.dir,
                     url: file,
@@ -202,7 +195,6 @@ export class AuditoryFormPage implements OnInit {
     setTimeout(() => {
       this.mapService.setCenter(auditory.lat, auditory.lng);
       this.loadingService.dismissLoading();
-      console.log(this.ImageSrc)
     }, 1000)
   }
 

@@ -337,7 +337,6 @@ export class AuditoryListPage implements OnInit {
   }
 
   async presentActionSheetOptions(auditory: any) {
-    console.log(this.sendedList);
 
     const buttons = this.sendedList ?
     [
