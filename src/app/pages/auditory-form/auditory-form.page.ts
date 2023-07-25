@@ -87,29 +87,36 @@ export class AuditoryFormPage implements OnInit {
                     let count = 0;
 
                     if (this.ImageSrc.length > 0) {
-                      this.ImageSrc.forEach(async (src: any) => {
-                        const blob = await fetch(src.file).then(r => r.blob());
+                      this.ImageSrc.forEach(async (src: any, index: number) => {
+                        setTimeout(async () => {
+                          const blob = await fetch(src.base64).then(r => r.blob());
 
-                        this.photoService
-                          .saveLocalAuditoryEvidence(blob, this.auditoryId)
-                          .then(photoId => {
-                            this.auditoryEvidenceService
-                              .localSave({ auditoryId: this.auditoryId, dir: photoId })
-                              .subscribe({
-                                next: async photo => {
-                                  if (photo !== 'waiting') {
-                                    count++;
-                                    if (count === this.ImageSrc.length) {
-                                      this.responseService.onSuccessAndRedirect(URI_QUESTION_FORM('0', this.auditoryId, `1`), 'Auditoría guarda');
+                          this.photoService
+                            .saveLocalAuditoryEvidence(blob, this.auditoryId)
+                            .then(photoId => {
+                              console.log(index, photoId)
+                              this.auditoryEvidenceService
+                                .localSave({ auditoryId: this.auditoryId, dir: photoId })
+                                .subscribe({
+                                  next: async photo => {
+                                    if (photo !== 'waiting') {
+                                      count++;
+                                      console.log(photo, this.ImageSrc.length, count)
+                                      if (count === this.ImageSrc.length) {
+                                        this.responseService.onSuccessAndRedirect(URI_QUESTION_FORM('0', this.auditoryId, `1`), 'Auditoría guarda');
+                                      }
                                     }
-                                  }
-                                },
-                                error: err => {
-                                  this.responseService.onError(err, 'No se pudo guardar una imagen')
-                                },
-                              })
-                          });
-                      });
+                                  },
+                                  error: err => {
+                                    this.responseService.onError(err, 'No se pudo guardar una imagen')
+                                  },
+                                })
+                            })
+                            .catch(err => {
+                              console.log(index, 'error al guardar foto', err)
+                            });
+                          }, 100 * index);
+                        });
                     } else {
                       this.responseService.onSuccessAndRedirect(URI_QUESTION_FORM('0', this.auditoryId, `1`), 'Auditoría guarda');
                     }
@@ -156,6 +163,7 @@ export class AuditoryFormPage implements OnInit {
       .getEvidencesByAuditory(this.auditoryId)
       .subscribe({
         next: res => {
+          console.log(res)
           if (res !== 'waiting') {
             console.log(isPlatform('hybrid'))
             if (isPlatform('hybrid')) {
@@ -163,7 +171,8 @@ export class AuditoryFormPage implements OnInit {
                 this.photoService.getLocalAuditoryEvidenceUri(row.dir).then(photo => {
                   this.ImageSrc.push({
                     id: row.dir,
-                    file: Capacitor.convertFileSrc(photo.uri),
+                    url: Capacitor.convertFileSrc(photo.uri),
+                    base64: '',
                     expand: {
                       width: '25%'
                     },
@@ -173,9 +182,12 @@ export class AuditoryFormPage implements OnInit {
             } else {
               res.values.forEach(async (row: any) => {
                 this.photoService.getLocalAuditoryEvidence(row.dir).then(photo => {
+                  const file = 'data:image/png;base64,' + photo.data;
+                  console.log(file)
                   this.ImageSrc.push({
                     id: row.dir,
-                    file: this.sanitization.bypassSecurityTrustUrl('data:image/jpeg;base64,' + photo.data),
+                    url: file,
+                    base64: file,
                     expand: {
                       width: '25%'
                     },
@@ -315,7 +327,8 @@ export class AuditoryFormPage implements OnInit {
         for (let index = 0; index < res.photos.length; index++) {
           this.ImageSrc.push({
             id: '',
-            file: this.sanitization.bypassSecurityTrustUrl(res.photos[index].webPath),
+            url: this.sanitization.bypassSecurityTrustUrl(res.photos[index].webPath),
+            base64: res.photos[index].webPath,
             expand: {
               width: '25%'
             },
@@ -342,7 +355,8 @@ export class AuditoryFormPage implements OnInit {
                               if (res2 !== 'waiting') {
                                 this.ImageSrc.push({
                                   id: res2.values[0].dir,
-                                  file: this.sanitization.bypassSecurityTrustUrl(img),
+                                  url: this.sanitization.bypassSecurityTrustUrl(img),
+                                  base64: img,
                                   expand: {
                                     width: '25%'
                                   },
@@ -368,7 +382,8 @@ export class AuditoryFormPage implements OnInit {
       if (this.auditoryId === '0') {
           this.ImageSrc.push({
             id: '',
-            file: this.sanitization.bypassSecurityTrustUrl(res.webPath || ''),
+            url: this.sanitization.bypassSecurityTrustUrl(res.webPath || ''),
+            base64: res.webPath || '',
             expand: {
               width: '25%'
             },
@@ -393,7 +408,8 @@ export class AuditoryFormPage implements OnInit {
                             if (res2 !== 'waiting') {
                               this.ImageSrc.push({
                                 id: res2.values[0].dir,
-                                file: this.sanitization.bypassSecurityTrustUrl(img),
+                                url: this.sanitization.bypassSecurityTrustUrl(img),
+                                base64: img,
                                 expand: {
                                   width: '25%'
                                 },

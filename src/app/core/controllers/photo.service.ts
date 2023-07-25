@@ -111,13 +111,13 @@ export class PhotoService {
 
   generateName() {
     const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_";
-    const lengthOfCode = 20;
+    const lengthOfCode = 64;
 
     let text = "";
     for (let i = 0; i < lengthOfCode; i++) {
       text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
-    return text;
+    return `${text}.png`;
   }
 
   getLocalLogo() {

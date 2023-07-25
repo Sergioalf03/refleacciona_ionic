@@ -13,6 +13,7 @@ export class AuditoryEvidenceService {
   ) { }
 
   localSave(data: any) {
+    console.log(data)
     const now = new Date().toISOString();
     return this.databaseService.executeQuery(`
       INSERT INTO auditory_evidences (auditory_id, dir, creation_date)

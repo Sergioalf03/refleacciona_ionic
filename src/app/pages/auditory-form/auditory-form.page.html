@@ -70,7 +70,7 @@
 
       <ion-row *ngIf="ImageSrc">
         <ion-col [size]="12">
-          <img *ngFor="let img of ImageSrc; let i = index;" [ngStyle]="img.expand" [src]="img.file" (click)="onImgClicked(img.id, i)">
+          <img *ngFor="let img of ImageSrc; let i = index;" [src]="img.url" [ngStyle]="img.expand" (click)="onImgClicked(img.id, i)">
           <ion-button *ngIf="ImageSrc.length < 10" class="btn-right" fill="clear" size="large" (click)="onAddPhoto()">
             <ion-icon class="icon-color" slot="icon-only" name="image-outline"></ion-icon>
           </ion-button>
