@@ -31,6 +31,14 @@ export class QuestionFormPage implements OnInit {
   sectionIndex = 0;
   backUri = URI_HOME();
 
+  hasConditionQuestions = false;
+  questionChangeEvent:any[] = [];
+  hideQuestion: any[] = [];
+  questionsWithCondition: any[] = [];
+  showedQuestions = 0;
+
+  sameAnswer: any[] = [];
+
   constructor(
     private questionService: QuestionService,
     private answerService: AnswerService,
@@ -121,7 +129,143 @@ export class QuestionFormPage implements OnInit {
               .subscribe({
                 next: res => {
                   if (res !== 'waiting') {
+
                     this.questions = res.values;
+
+
+                    // To hide answers
+                    this.hideQuestion = this.questions.map(q => {
+                      return q.cond && q.cond !== '' && q.cond.startsWith('S')
+                    });
+
+                    this.showedQuestions = this.hideQuestion.filter(q => q !== true).length;
+                    this.hasConditionQuestions = !!this.questions.find(q => q.cond && q.cond !== '');
+
+                    this.questionsWithCondition = this.questions.map((q, i)=> {
+                      if (q.cond) {
+                        const cond = q.cond.split('-');
+                        return { questionId: q.id, questionIndex: i, type: cond[0], section: cond[1], question: cond[2], answer: cond[3] }
+                      } else {
+                        return null;
+                      }
+                    }).filter(q => q !== null);
+
+                    this.questionChangeEvent = this.questionsWithCondition
+                    .map(q => ({
+                      uid: q.question,
+                      affectedIndexes: this.questionsWithCondition.filter(qwc => qwc.question === q.question).map(qwc => qwc.questionIndex),
+                    }))
+                    .filter((q, i, arr) => arr.findIndex(qaux => qaux.uid === q.uid) === i)
+
+                    this.questionChangeEvent.forEach(q => {
+                      this.answerService
+                        .answerExists(q.uid, this.auditoryId)
+                        .subscribe({
+                          next: result => {
+                            if (result !== 'waiting') {
+                              if (result.values.length > 0) {
+                                const answer = result.values[0].value
+                                this.verifyCondition(q.uid, answer)
+                              }
+                            }
+                          }
+                        })
+                    });
+                    // End to hide answers
+
+                    // To answer the same like another answer
+                    this.questions.filter(q => {
+                      return q.cond && q.cond !== '' && q.cond.startsWith('E')
+                    })
+                    .forEach(q => {
+                      console.log(q)
+                      this.answerService
+                        .answerExists(q.cond.split('-')[2], this.auditoryId)
+                        .subscribe({
+                          next: result => {
+                            if (result !== 'waiting') {
+                              q.answer = result.values[0].value;
+                              // Insertar a base de datos
+
+                              this.answerService
+                                .saveAnswer(q.id, this.auditoryId, q.answer)
+                                .subscribe({
+                                  next: save => {
+                                    if (save !== 'waiting') {
+                                      console.log('saved');
+                                    }
+                                  }
+                                })
+                            }
+                          }
+                        })
+                    });
+                    // End to answer the same like another answer
+
+                    // To answer by some answer
+                    this.questions.filter(q => {
+                      return q.cond && q.cond !== '' && q.cond.startsWith('D')
+                    })
+                    .forEach(q => {
+                      console.log(q)
+                      const conditionArr = q.cond.split('-');
+                      this.answerService
+                        .answerExists(conditionArr[2], this.auditoryId)
+                        .subscribe({
+                          next: result => {
+                            if (result !== 'waiting') {
+                              console.log(result);
+
+                              const valueArr = conditionArr[3].split(':');
+                              let answer = '';
+
+                              console.log(valueArr[0]);
+
+                              switch (valueArr[0]) {
+                                case '<':
+                                  console.log(+result.values[0].value)
+                                  console.log(+valueArr[1])
+                                  console.log(+result.values[0].value < +valueArr[1])
+                                  console.log(valueArr[2], valueArr[3])
+                                  answer = +result.values[0].value < +valueArr[1] ? valueArr[2] : valueArr[3];
+                                  break;
+                                case '<=':
+                                  answer = +result.values[0].value <= +valueArr[1] ? valueArr[2] : valueArr[3];
+                                  break;
+                                case '>':
+                                  answer = +result.values[0].value > +valueArr[1] ? valueArr[2] : valueArr[3];
+                                  break;
+                                case '>=':
+                                  answer = +result.values[0].value >= +valueArr[1] ? valueArr[2] : valueArr[3];
+                                  break;
+                                case '=':
+                                  answer = +result.values[0].value === +valueArr[1] ? valueArr[2] : valueArr[3];
+                                  break;
+                                case '!=':
+                                  answer = +result.values[0].value !== +valueArr[1] ? valueArr[2] : valueArr[3];
+                                  break;
+                              }
+
+                              console.log(answer)
+
+                              q.answer = answer;
+                              // // Insertar a base de datos
+
+                              this.answerService
+                                .saveAnswer(q.id, this.auditoryId, answer)
+                                .subscribe({
+                                  next: save => {
+                                    if (save !== 'waiting') {
+                                      console.log('saved');
+                                    }
+                                  }
+                                })
+                            }
+                          }
+                        })
+                    });
+                    // End to answer by some answer
+
                     this.ImageSrc = this.questions.map(q => {
                       return {
                         canTakePickture: !!q.answer,
@@ -198,7 +342,6 @@ export class QuestionFormPage implements OnInit {
     this.photoService.openGallery().then(async res => {
       for (let forIndex = 0; forIndex < res.photos.length; forIndex++) {
         const img = res.photos[forIndex].webPath;
-        console.log(img)
         const blob = await fetch(img).then(r => r.blob());
 
         this.photoService
@@ -298,16 +441,47 @@ export class QuestionFormPage implements OnInit {
     } else {
       this.ImageSrc[index].canTakePickture = false;
     }
+
+    this.verifyCondition(question.uid, `${event.detail.value}`);
+  }
+
+  private verifyCondition(questionUid: string, answerValue: string) {
+    console.log(questionUid, answerValue)
+    const needsChange = this.questionChangeEvent.find(q => `${questionUid}` === q.uid);
+
+    if (needsChange) {
+
+      needsChange.affectedIndexes.forEach((i: number) => {
+        this.hideQuestion[i] = this.questionsWithCondition.find(qwc => qwc.type === 'S' && qwc.questionIndex === i).answer !== answerValue;
+
+        if (this.hideQuestion[i]) {
+          this.answerService
+            .deleteAnswer(this.questions[i].id, this.auditoryId)
+            .subscribe({
+              next: (dlt) => {
+                if(dlt !== 'waiting') {
+                  this.questions[i].answer = undefined;
+                  this.showedQuestions = this.hideQuestion.filter(q => q !== true).length;
+                }
+              }
+            });
+        } else {
+          this.showedQuestions = this.hideQuestion.filter(q => q !== true).length;
+        }
+      })
+    }
   }
 
   alreadyAnsweredAll() {
     this.answerCount = 0;
-    return this.ImageSrc.every(src => {
+    this.ImageSrc.every(src => {
       if (src.canTakePickture) {
         this.answerCount++;
       }
       return src.canTakePickture;
     });
+
+    return this.answerCount === this.showedQuestions;
   }
 
   onFinish() {
