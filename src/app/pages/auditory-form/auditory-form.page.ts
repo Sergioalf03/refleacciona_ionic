@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
@@ -20,6 +20,11 @@ import { URI_AUDITORY_LIST, URI_HOME, URI_QUESTION_FORM } from 'src/app/core/con
   templateUrl: './auditory-form.page.html',
 })
 export class AuditoryFormPage implements OnInit {
+
+  @HostListener('unloaded')
+  ngOnDestroy() {
+    console.log('Items destroyed');
+  }
 
   formActionText = 'Nueva';
   SubmitButtonText = 'Comenzar';
@@ -101,6 +106,7 @@ export class AuditoryFormPage implements OnInit {
                                     if (photo !== 'waiting') {
                                       count++;
                                       if (count === this.ImageSrc.length) {
+                                        window.location.reload();
                                         this.responseService.onSuccessAndRedirect(URI_QUESTION_FORM('0', this.auditoryId, `1`), 'Auditoría guarda');
                                       }
                                     }
@@ -203,13 +209,14 @@ export class AuditoryFormPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.hideMap = true;
+    // this.mapService.removeMap();
     this.initForm();
     this.route
       .paramMap
       .subscribe({
         next: paramMap => {
-          this.hideMap = false;
+          // this.hideMap = false;
+          console.log(this.hideMap)
           let id = paramMap.get('id') || '0';
           if (id === '00') {
             this.backUrl = URI_AUDITORY_LIST('local');
@@ -243,12 +250,13 @@ export class AuditoryFormPage implements OnInit {
     this.auditoryId = '0';
 
     this.locationAdded = false;
-    this.hideMap = true;
 
     this.form = new FormGroup({});
 
     this.ImageSrc = [];
     this.hideMap = true;
+
+
   }
 
   onSubmit() {
@@ -278,7 +286,8 @@ export class AuditoryFormPage implements OnInit {
 
 
   async onAddLocation() {
-    const coordinates = await Geolocation.getCurrentPosition();
+    this.hideMap = false;
+    const coordinates = await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
     this.mapService.setCenter(coordinates.coords.latitude, coordinates.coords.longitude);
   }
 

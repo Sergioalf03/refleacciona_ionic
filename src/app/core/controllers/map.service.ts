@@ -7,6 +7,7 @@ import { BehaviorSubject } from 'rxjs';
 export class MapService {
 
   locationBs = new BehaviorSubject<{lat: number, lng: number, static: boolean}>({lat: 0, lng: 0, static: false})
+  removeMapBS = new BehaviorSubject<string>('no');
 
   constructor() { }
 
@@ -17,4 +18,14 @@ export class MapService {
   getCenter() {
     return this.locationBs.asObservable();
   }
+
+  removeMap() {
+    this.removeMapBS.next('yes');
+    this.removeMapBS.next('no');
+  }
+
+  getRemovemap() {
+    return this.removeMapBS.asObservable();
+  }
+
 }

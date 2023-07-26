@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, OnDestroy, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import * as L from 'leaflet';
 import { Subscription } from 'rxjs';
 import { MapService } from 'src/app/core/controllers/map.service';
@@ -13,12 +13,16 @@ export class MapComponent implements OnInit, AfterViewInit {
 
   @Output() centerEvent = new EventEmitter<any>();
 
+  @ViewChild('map')
+  private mapElement!: ElementRef;
+
   private map!: L.Map;
 
-  private async initMap(): Promise<any> {
-    const coordinates = await Geolocation.getCurrentPosition();
 
-    this.map = L.map('map', {
+  private async initMap(): Promise<any> {
+    const coordinates = await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
+
+    this.map = L.map(this.mapElement.nativeElement, {
       center: [coordinates.coords.latitude, coordinates.coords.longitude],
       zoom: 16
     });
@@ -30,26 +34,29 @@ export class MapComponent implements OnInit, AfterViewInit {
     });
 
     this.map
-    .on('dblclick', () => this.setCoords())
-    .on('moveend', () => this.setCoords())
-    .on('zoomend', () => this.setCoords());
+      .on('dblclick', () => this.setCoords())
+      .on('moveend', () => this.setCoords())
+      .on('zoomend', () => this.setCoords());
 
     tiles.addTo(this.map);
+
     this.setCoords();
   }
 
   centerSubscription!: Subscription;
+  removeMapSubscription!: Subscription;
 
   constructor(
     private mapService: MapService,
+    private renderer: Renderer2,
   ) { }
 
   ngOnInit() {
-    // this.map.remove();
     this.centerSubscription = this.mapService
       .getCenter()
       .subscribe({
         next: coords => {
+          console.log(this.map);
           if (coords.lat !== 0 && coords.lng !== 0){
             this.map.flyTo(L.latLng(coords.lat, coords.lng), 17).on('moveend', () => {
               if (coords.static) {
@@ -63,13 +70,23 @@ export class MapComponent implements OnInit, AfterViewInit {
               }
             })
           } else {
-            if (this.map) {
-              this.map.off();
-              this.map.remove();
-            }
+            this.removeMap();
           }
         }
       });
+  }
+
+  private removeMap() {
+    console.log('here');
+    if (this.map) {
+      this.map.off();
+      this.map.remove();
+    }
+  }
+
+  ionviewWillLeave() {
+    console.log('leave')
+    this.centerSubscription.unsubscribe();
   }
 
   ngAfterViewInit(): void {
