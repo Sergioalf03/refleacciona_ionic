@@ -56,7 +56,6 @@ export class MapComponent implements OnInit, AfterViewInit {
       .getCenter()
       .subscribe({
         next: coords => {
-          console.log(this.map);
           if (coords.lat !== 0 && coords.lng !== 0){
             this.map.flyTo(L.latLng(coords.lat, coords.lng), 17).on('moveend', () => {
               if (coords.static) {
@@ -77,7 +76,6 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   private removeMap() {
-    console.log('here');
     if (this.map) {
       this.map.off();
       this.map.remove();
@@ -85,7 +83,6 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   ionviewWillLeave() {
-    console.log('leave')
     this.centerSubscription.unsubscribe();
   }
 

@@ -114,8 +114,8 @@
     </ion-col>
 
     <ion-col>
-      <ion-button [disabled]="!alreadyAnsweredAll()" *ngIf="sectionIndex !== sectionIds.length - 1" expand="full" (click)="onNext()">SIGUIENTE</ion-button>
-      <ion-button [disabled]="!alreadyAnsweredAll()" *ngIf="sectionIndex === sectionIds.length - 1" expand="full" (click)="onFinish()">FINALIZAR</ion-button>
+      <ion-button [disabled]="!canNext" *ngIf="sectionIndex !== sectionIds.length - 1" expand="full" (click)="onNext()">SIGUIENTE</ion-button>
+      <ion-button [disabled]="!canNext" *ngIf="sectionIndex === sectionIds.length - 1" expand="full" (click)="onFinish()">FINALIZAR</ion-button>
     </ion-col>
   </ion-row>
 </ion-footer>

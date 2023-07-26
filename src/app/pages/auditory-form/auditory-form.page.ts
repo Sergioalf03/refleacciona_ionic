@@ -66,8 +66,12 @@ export class AuditoryFormPage implements OnInit {
         validators: [ Validators.required ]
       }),
       description: new FormControl(''),
-      date: new FormControl(''),
-      time: new FormControl(''),
+      date: new FormControl('', {
+        validators: [Validators.required, Validators.minLength(1)]
+      }),
+      time: new FormControl('', {
+        validators: [Validators.required, Validators.minLength(1)]
+      }),
       lat: new FormControl(''),
       lng: new FormControl(''),
     });

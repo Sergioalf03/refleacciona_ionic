@@ -38,6 +38,7 @@ export class QuestionFormPage implements OnInit {
   showedQuestions = 0;
 
   sameAnswer: any[] = [];
+  canNext = false;
 
   constructor(
     private questionService: QuestionService,
@@ -191,6 +192,9 @@ export class QuestionFormPage implements OnInit {
                                 .subscribe({
                                   next: save => {
                                     if (save !== 'waiting') {
+                                      const originalIndex = this.questions.findIndex(question => question.id === q.id);
+                                      this.ImageSrc[originalIndex].canTakePickture = true;
+                                      this.alreadyAnsweredAll();
                                     }
                                   }
                                 })
@@ -244,6 +248,9 @@ export class QuestionFormPage implements OnInit {
                                 .subscribe({
                                   next: save => {
                                     if (save !== 'waiting') {
+                                      const  originalIndex = this.questions.findIndex(question => question.id === q.id);
+                                      this.ImageSrc[originalIndex].canTakePickture = true;
+                                      this.alreadyAnsweredAll();
                                     }
                                   }
                                 })
@@ -283,7 +290,7 @@ export class QuestionFormPage implements OnInit {
                       })
                     }
 
-
+                    this.alreadyAnsweredAll()
                     this.hideForm = false;
                     this.loadingService.dismissLoading();
                   }
@@ -422,11 +429,15 @@ export class QuestionFormPage implements OnInit {
         .saveAnswer(question.id, this.auditoryId, event.detail.value)
         .subscribe({
           next: (save) => {
-            this.ImageSrc[index].canTakePickture = true;
+            if (save !== 'waiting') {
+              this.ImageSrc[index].canTakePickture = true;
+              this.alreadyAnsweredAll();
+            }
           }
         });
     } else {
       this.ImageSrc[index].canTakePickture = false;
+      this.alreadyAnsweredAll();
     }
 
     this.verifyCondition(question.uid, `${event.detail.value}`);
@@ -441,11 +452,13 @@ export class QuestionFormPage implements OnInit {
         this.hideQuestion[i] = this.questionsWithCondition.find(qwc => qwc.type === 'S' && qwc.questionIndex === i).answer !== answerValue;
 
         if (this.hideQuestion[i]) {
+          // pendiente; eliminar fotografía
           this.answerService
             .deleteAnswer(this.questions[i].id, this.auditoryId)
             .subscribe({
               next: (dlt) => {
                 if(dlt !== 'waiting') {
+                  this.ImageSrc[i].canTakePickture = false;
                   this.questions[i].answer = undefined;
                   this.showedQuestions = this.hideQuestion.filter(q => q !== true).length;
                 }
@@ -454,20 +467,20 @@ export class QuestionFormPage implements OnInit {
         } else {
           this.showedQuestions = this.hideQuestion.filter(q => q !== true).length;
         }
+        this.alreadyAnsweredAll();
       })
     }
   }
 
   alreadyAnsweredAll() {
     this.answerCount = 0;
-    this.ImageSrc.every(src => {
-      if (src.canTakePickture) {
+    this.ImageSrc.forEach(src => {
+      if (src.canTakePickture === true) {
         this.answerCount++;
       }
       return src.canTakePickture;
     });
-
-    return this.answerCount === this.showedQuestions;
+    this.canNext = this.answerCount === this.showedQuestions;
   }
 
   onFinish() {
