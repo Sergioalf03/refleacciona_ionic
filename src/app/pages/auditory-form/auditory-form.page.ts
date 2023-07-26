@@ -23,7 +23,6 @@ export class AuditoryFormPage implements OnInit {
 
   @HostListener('unloaded')
   ngOnDestroy() {
-    console.log('Items destroyed');
   }
 
   formActionText = 'Nueva';
@@ -216,7 +215,6 @@ export class AuditoryFormPage implements OnInit {
       .subscribe({
         next: paramMap => {
           // this.hideMap = false;
-          console.log(this.hideMap)
           let id = paramMap.get('id') || '0';
           if (id === '00') {
             this.backUrl = URI_AUDITORY_LIST('local');
