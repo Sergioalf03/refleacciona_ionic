@@ -22,6 +22,11 @@ export class AuditoryListPage implements OnInit {
   sendedList = false;
   loading = false;
 
+  customButton = {
+    click: () => this.router.navigateByUrl(this.formUri),
+    icon: 'add',
+  }
+
   backUri = URI_HOME();
   formUri = URI_AUDITORY_FORM('00');
 
@@ -64,7 +69,7 @@ export class AuditoryListPage implements OnInit {
             this.fetchLocalList();
           }
         }
-      })
+      }).unsubscribe();
   }
 
   async ionViewWillEnter() {

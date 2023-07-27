@@ -9,7 +9,7 @@ export class HeaderButtonsComponent implements OnInit {
 
   @Input() homeUrl!: string;
   @Input() backUrl!: string;
-  @Input() addUrl!: string;
+  @Input() customButton!: any;
 
   constructor(
     private router: Router,
@@ -19,10 +19,6 @@ export class HeaderButtonsComponent implements OnInit {
 
   onGoingHome() {
     this.router.navigateByUrl(this.homeUrl);
-  }
-
-  onAddElement() {
-    this.router.navigateByUrl(this.addUrl);
   }
 
   onGoingBack() {

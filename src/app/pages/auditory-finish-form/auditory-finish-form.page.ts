@@ -97,7 +97,7 @@ export class AuditoryFinishFormPage implements OnInit {
               }
             });
         }
-      })
+      }).unsubscribe();
   }
 
   ionViewWillLeave() {

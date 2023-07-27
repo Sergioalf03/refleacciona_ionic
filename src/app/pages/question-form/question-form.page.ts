@@ -91,7 +91,7 @@ export class QuestionFormPage implements OnInit {
               }
             });
         }
-      })
+      }).unsubscribe();
   }
 
   ionViewWillEnter() {

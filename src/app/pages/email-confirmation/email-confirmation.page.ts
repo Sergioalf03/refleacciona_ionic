@@ -91,7 +91,7 @@ export class EmailConfirmationPage implements OnInit {
         next: paramMap => {
           this.showEmail = paramMap.get('withMail') === '1';
         },
-      })
+      }).unsubscribe();
   }
 
   ionViewWillEnter() {

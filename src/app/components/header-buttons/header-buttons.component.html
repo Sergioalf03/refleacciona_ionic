@@ -9,9 +9,9 @@
       <ion-icon slot="icon-only" name="home-sharp"></ion-icon>
     </ion-button>
   </div>
-  <div *ngIf="addUrl" class="col text-end">
-    <ion-button size="small" (click)="onAddElement()">
-      <ion-icon slot="icon-only" name="add"></ion-icon>
+  <div *ngIf="customButton" class="col text-end">
+    <ion-button size="small" (click)="customButton.click()">
+      <ion-icon slot="icon-only" [name]="customButton.icon"></ion-icon>
     </ion-button>
   </div>
 </div>

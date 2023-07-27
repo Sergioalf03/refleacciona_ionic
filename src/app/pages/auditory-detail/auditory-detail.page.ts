@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Platform } from '@ionic/angular';
 import { URI_AUDITORY_LIST } from 'src/app/core/constants/uris';
+import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { MapService } from 'src/app/core/controllers/map.service';
@@ -15,6 +16,41 @@ import { STORAGE_URL } from 'src/environments/environment';
 export class AuditoryDetailPage {
 
   backUrl = URI_AUDITORY_LIST('remote');
+
+  customButton = {
+    click: () => {
+      this.confirmDialogService
+        .presentAlert('¿Desea descargar la auditoría?', () => {
+          this.loadingService.showLoading();
+          this.auditoryService
+            .downloadPdf(this.auditoryId)
+            .subscribe({
+              next: res => {
+                const blob = res;
+                const filename = `auditoria.pdf`;
+                if ((window.navigator as any).msSaveOrOpenBlob) {
+                  (window.navigator as any).msSaveBlob(blob, filename);
+                  this.loadingService.dismissLoading();
+                } else {
+                  const downloadLink = window.document.createElement('a');
+                  const contentTypeHeader = 'application/pdf';
+                  downloadLink.href = window.URL.createObjectURL(
+                    new Blob([blob], { type: contentTypeHeader })
+                  );
+                  downloadLink.download = filename;
+                  document.body.appendChild(downloadLink);
+                  downloadLink.click();
+                  document.body.removeChild(downloadLink);
+                  this.loadingService.dismissLoading();
+                }
+              },
+              error: err => this.responseService.onError(err, 'No se pudo descargar la auditoría')
+            })
+        })
+    },
+    icon: 'cloud-download',
+  }
+
   auditoryId = '0';
 
   auditoryTitle = '';
@@ -39,6 +75,7 @@ export class AuditoryDetailPage {
     private route: ActivatedRoute,
     private platform: Platform,
     private router: Router,
+    private confirmDialogService: ConfirmDialogService,
   ) {
     this.platform
       .backButton
@@ -72,7 +109,7 @@ export class AuditoryDetailPage {
               error: err => this.responseService.onError(err, 'No se pudo recuperar la auditoría'),
             })
         }
-      })
+      }).unsubscribe();
   }
 
   private setAuditory(data: any) {
