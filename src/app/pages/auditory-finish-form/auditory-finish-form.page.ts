@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Platform } from '@ionic/angular';
+import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
 import { URI_AUDITORY_LIST, URI_QUESTION_FORM } from 'src/app/core/constants/uris';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
@@ -75,24 +76,26 @@ export class AuditoryFinishFormPage implements OnInit {
             .getFinalNotes(this.auditoryId)
             .subscribe({
               next: note => {
-                if (note !== 'waiting') {
+                if (note !== DATABASE_WAITING_MESSAGE) {
                   this.form.controls['notes'].setValue(note.values[0] ? note.values[0].close_note : '');
 
-                  this.questionService
-                    .getPointsResume(this.auditoryId)
-                    .subscribe({
-                      next: answers => {
-                        if (answers !== 'waiting') {
-                          answers.values.forEach((answer: any) => {
-                            if (answer.answer === '1') {
-                              this.yesCount++;
-                            } else {
-                              this.notCount++;
-                            }
-                          });
+                  setTimeout(() => {
+                    this.questionService
+                      .getPointsResume(this.auditoryId)
+                      .subscribe({
+                        next: answers => {
+                          if (answers !== DATABASE_WAITING_MESSAGE) {
+                            answers.values.forEach((answer: any) => {
+                              if (answer.answer === '1') {
+                                this.yesCount++;
+                              } else {
+                                this.notCount++;
+                              }
+                            });
+                          }
                         }
-                      }
-                    });
+                      });
+                  }, 20);
                 }
               }
             });
@@ -117,7 +120,7 @@ export class AuditoryFinishFormPage implements OnInit {
             .closeLocal(this.auditoryId, this.form.controls['notes'].value)
             .subscribe({
               next: res => {
-                if (res !== 'waiting') {
+                if (res !== DATABASE_WAITING_MESSAGE) {
                   this.responseService.onSuccessAndRedirect(URI_AUDITORY_LIST('local'), 'Auditoría finalizada correctamente');
                 }
               }

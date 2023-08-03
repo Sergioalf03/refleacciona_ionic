@@ -8,6 +8,10 @@ import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { MapService } from 'src/app/core/controllers/map.service';
 import { AuditoryService } from 'src/app/services/auditory.service';
 import { STORAGE_URL } from 'src/environments/environment';
+import { Filesystem, Directory } from '@capacitor/filesystem';
+import { FileOpener } from '@capacitor-community/file-opener';
+import { Share } from '@capacitor/share';
+
 
 @Component({
   selector: 'app-auditory-detail',
@@ -18,30 +22,50 @@ export class AuditoryDetailPage {
   backUrl = URI_AUDITORY_LIST('remote');
 
   customButton = {
-    click: () => {
+    click: async () => {
       this.confirmDialogService
         .presentAlert('¿Desea descargar la auditoría?', () => {
           this.loadingService.showLoading();
           this.auditoryService
             .downloadPdf(this.auditoryId)
             .subscribe({
-              next: res => {
+              next: async res => {
                 const blob = res;
-                const filename = `auditoria.pdf`;
-                if ((window.navigator as any).msSaveOrOpenBlob) {
-                  (window.navigator as any).msSaveBlob(blob, filename);
-                  this.loadingService.dismissLoading();
-                } else {
-                  const downloadLink = window.document.createElement('a');
-                  const contentTypeHeader = 'application/pdf';
-                  downloadLink.href = window.URL.createObjectURL(
-                    new Blob([blob], { type: contentTypeHeader })
-                  );
-                  downloadLink.download = filename;
-                  document.body.appendChild(downloadLink);
-                  downloadLink.click();
-                  document.body.removeChild(downloadLink);
-                  this.loadingService.dismissLoading();
+
+                const find = ' ';
+                const re = new RegExp(find, 'g');
+                const filePath = `${this.auditoryTitle.replace(re, '-')}.pdf`;
+
+                const fileReader = new FileReader();
+
+                fileReader.readAsDataURL(blob);
+
+                fileReader.onloadend = async () => {
+                  const base64Data: any = fileReader.result;
+
+                  Filesystem.writeFile({
+                    path: filePath,
+                    data: base64Data,
+                    directory: Directory.Cache,
+                  }).then(() => {
+                    return Filesystem.getUri({
+                      directory: Directory.Cache,
+                      path: filePath
+                    });
+                  })
+                  .then((uriResult) => {
+                    return Share.share({
+                      title: filePath,
+                      text: filePath,
+                      url: uriResult.uri,
+                    });
+                  }).then(() => {
+                    this.loadingService.dismissLoading();
+                  })
+                  .catch(err => {
+                    console.log(err)
+                    this.loadingService.dismissLoading();
+                  });
                 }
               },
               error: err => this.responseService.onError(err, 'No se pudo descargar la auditoría')

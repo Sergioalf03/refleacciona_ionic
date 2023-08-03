@@ -75,15 +75,12 @@ export class ProfilePage {
         error: err => this.httpResponseService.onError(err, 'No se pudieron recuperar los datos'),
       })
 
-    if (isPlatform('hybrid')) {
-      this.photoService.getLocalLogoUri().then(photo => {
-        this.ImageSafeSrc = Capacitor.convertFileSrc(photo.uri)
-      });
-    } else {
-      this.photoService.getLocalLogo().then(photo => {
-        this.ImageSafeSrc = this.sanitization.bypassSecurityTrustUrl('data:image/jpeg;base64,' + photo.data)
-      });
-    }
+
+    this.photoService.getLocalLogoUri().then(photo => {
+      console.log(photo);
+      this.ImageSafeSrc = Capacitor.convertFileSrc(photo.uri)
+    });
+
   }
 
   onSubmit() {

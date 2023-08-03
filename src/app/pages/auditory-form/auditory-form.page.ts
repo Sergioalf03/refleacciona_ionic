@@ -14,6 +14,7 @@ import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Capacitor } from '@capacitor/core';
 import { URI_AUDITORY_LIST, URI_HOME, URI_QUESTION_FORM } from 'src/app/core/constants/uris';
+import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
 
 @Component({
   selector: 'app-auditory-form',
@@ -82,53 +83,66 @@ export class AuditoryFormPage implements OnInit {
       .localSave(auditory)
       .subscribe({
         next: (save) => {
-          if (save !== 'waiting') {
+          if (save !== DATABASE_WAITING_MESSAGE) {
 
-            this.auditoryService
-              .getLastSavedId()
-              .subscribe({
-                next: async res => {
-                  if (res !== 'waiting') {
-                    this.hideMap = true;
-                    this.auditoryId = res.values[0].id;
+            setTimeout(() => {
+              this.auditoryService
+                .getLastSavedId()
+                .subscribe({
+                  next: async res => {
+                    if (res !== DATABASE_WAITING_MESSAGE) {
 
-                    let count = 0;
+                      setTimeout(() => {
+                        this.hideMap = true;
+                        this.auditoryId = res.values[0].id;
 
-                    if (this.ImageSrc.length > 0) {
-                      this.ImageSrc.forEach(async (src: any, index: number) => {
-                        setTimeout(async () => {
-                          const blob = await fetch(src.base64).then(r => r.blob());
+                        let count = 0;
 
-                          this.photoService
-                            .saveLocalAuditoryEvidence(blob, this.auditoryId)
-                            .then(photoId => {
-                              this.auditoryEvidenceService
-                                .localSave({ auditoryId: this.auditoryId, dir: photoId })
-                                .subscribe({
-                                  next: async photo => {
-                                    if (photo !== 'waiting') {
-                                      count++;
-                                      if (count === this.ImageSrc.length) {
-                                        window.location.reload();
-                                        this.responseService.onSuccessAndRedirect(URI_QUESTION_FORM('0', this.auditoryId, `1`), 'Auditoría guarda');
-                                      }
-                                    }
-                                  },
-                                  error: err => {
-                                    this.responseService.onError(err, 'No se pudo guardar una imagen')
-                                  },
-                                })
-                            })
-                            .catch();
-                          }, 100 * index);
-                        });
-                    } else {
-                      this.responseService.onSuccessAndRedirect(URI_QUESTION_FORM('0', this.auditoryId, `1`), 'Auditoría guarda');
+                        if (this.ImageSrc.length > 0) {
+                          this.ImageSrc.forEach(async (src: any, index: number) => {
+                            console.log('i', index)
+
+                              const blob = await fetch(src.base64).then(r => r.blob());
+
+                              this.photoService
+                                .saveLocalAuditoryEvidence(blob, this.auditoryId)
+                                .then(photoId => {
+
+                                  setTimeout(async () => {
+                                    console.log('j', index)
+                                    this.auditoryEvidenceService
+                                      .localSave({ auditoryId: this.auditoryId, dir: photoId })
+                                      .subscribe({
+                                        next: async photo => {
+                                          console.log('saved', photo)
+                                          if (photo !== DATABASE_WAITING_MESSAGE) {
+                                            console.log('saved')
+                                            count++;
+                                            console.log(count, this.ImageSrc.length);
+                                            if (count === this.ImageSrc.length) {
+                                              this.responseService.onSuccessAndRedirect(URI_QUESTION_FORM('0', this.auditoryId, `1`), 'Auditoría guarda');
+                                            }
+                                          }
+                                        },
+                                        error: err => {
+                                          this.responseService.onError(err, 'No se pudo guardar una imagen')
+                                        },
+                                      })
+
+                                    }, 50 * index);
+                                  })
+                                  .catch(err => console.log(err));
+
+                            });
+                        } else {
+                          this.responseService.onSuccessAndRedirect(URI_QUESTION_FORM('0', this.auditoryId, `1`), 'Auditoría guarda');
+                        }
+                      }, 20)
                     }
-                  }
 
-                }
-              });
+                  }
+                });
+            }, 20);
           }
         },
         error: err => {
@@ -142,7 +156,7 @@ export class AuditoryFormPage implements OnInit {
       .updateLocal(this.auditoryId, auditory)
       .subscribe({
         next: (updateRes) => {
-          if (updateRes !== 'waiting') {
+          if (updateRes !== DATABASE_WAITING_MESSAGE) {
             this.hideMap = true;
             this.responseService.onSuccessAndRedirect(URI_AUDITORY_LIST('local'), 'Auditoría actualizada');
           }
@@ -168,7 +182,7 @@ export class AuditoryFormPage implements OnInit {
       .getEvidencesByAuditory(this.auditoryId)
       .subscribe({
         next: res => {
-          if (res !== 'waiting') {
+          if (res !== DATABASE_WAITING_MESSAGE) {
             if (isPlatform('hybrid')) {
               res.values.forEach(async (row: any) => {
                 this.photoService.getLocalAuditoryEvidenceUri(row.dir).then(photo => {
@@ -233,8 +247,10 @@ export class AuditoryFormPage implements OnInit {
               .getLocalForm(this.auditoryId)
               .subscribe({
                 next: res => {
-                  if (res !== 'waiting') {
-                    this.setAuditory(res.values[0]);
+                  if (res !== DATABASE_WAITING_MESSAGE) {
+                    setTimeout(() => {
+                      this.setAuditory(res.values[0]);
+                    }, 20);
                   }
                 },
                 error: err => {
@@ -345,17 +361,20 @@ export class AuditoryFormPage implements OnInit {
           this.photoService
             .saveLocalAuditoryEvidence(blob, this.auditoryId)
             .then(photoId => {
-              if (photoId !== 'waiting') {
+              if (photoId !== DATABASE_WAITING_MESSAGE) {
                 this.auditoryEvidenceService
                 .localSave({ auditoryId: this.auditoryId, dir: photoId })
                 .subscribe({
                   next: async save => {
-                    if (save !== 'waiting') {
+                    if (save !== DATABASE_WAITING_MESSAGE) {
+
+                      setTimeout(() => {
+
                         this.auditoryEvidenceService
                           .getLastInsertedDir()
                           .subscribe({
                             next: async (res2: any) => {
-                              if (res2 !== 'waiting') {
+                              if (res2 !== DATABASE_WAITING_MESSAGE) {
                                 this.ImageSrc.push({
                                   id: res2.values[0].dir,
                                   url: this.sanitization.bypassSecurityTrustUrl(img),
@@ -367,6 +386,7 @@ export class AuditoryFormPage implements OnInit {
                               }
                             }
                           });
+                      }, 20);
                       }
                     },
                     error: err => {
@@ -398,28 +418,31 @@ export class AuditoryFormPage implements OnInit {
         this.photoService
           .saveLocalAuditoryEvidence(blob, this.auditoryId)
           .then(photoId => {
-            if (photoId !== 'waiting') {
+            if (photoId !== DATABASE_WAITING_MESSAGE) {
               this.auditoryEvidenceService
                 .localSave({ auditoryId: this.auditoryId, dir: photoId })
                 .subscribe({
                   next: async save => {
-                    if (save !== 'waiting') {
-                      this.auditoryEvidenceService
-                        .getLastInsertedDir()
-                        .subscribe({
-                          next: async (res2: any) => {
-                            if (res2 !== 'waiting') {
-                              this.ImageSrc.push({
-                                id: res2.values[0].dir,
-                                url: this.sanitization.bypassSecurityTrustUrl(img),
-                                base64: img,
-                                expand: {
-                                  width: '25%'
-                                },
-                              });
+                    if (save !== DATABASE_WAITING_MESSAGE) {
+
+                      setTimeout(() => {
+                        this.auditoryEvidenceService
+                          .getLastInsertedDir()
+                          .subscribe({
+                            next: async (res2: any) => {
+                              if (res2 !== DATABASE_WAITING_MESSAGE) {
+                                this.ImageSrc.push({
+                                  id: res2.values[0].dir,
+                                  url: this.sanitization.bypassSecurityTrustUrl(img),
+                                  base64: img,
+                                  expand: {
+                                    width: '25%'
+                                  },
+                                });
+                              }
                             }
-                          }
-                        });
+                          });
+                      }, 20);
                     }
                   },
                   error: err => {
