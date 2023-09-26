@@ -1,0 +1,103 @@
+<ion-content >
+  <app-header-buttons
+    [backUrl]="backUrl"
+    homeUrl="/home"
+  ></app-header-buttons>
+
+  <div class="mx-2 mt-4">
+    <h1>Ingrese su registro</h1>
+  </div>
+
+  <div class="mx-2 mt-4 ion-text-center ion-text-center">
+    <h3>Dirección</h3>
+  </div>
+
+  <div class="row">
+    <div class="col-6 p-4 pt-0 pe-2">
+      <div class="card ion-button bg-primary">
+        <div (click)="originSelector.open()" class="ion-text-center mt-4 mb-2">
+          <ion-icon color="light" size="large" name="log-out"></ion-icon>
+          <p class="text-light">{{ originDirection }}</p>
+        </div>
+      </div>
+
+      <ion-select #originSelector [hidden]="true" [mode]="'ios'" (ionChange)="onOriginDismiss($event)" interface="action-sheet">
+        <ion-select-option *ngFor="let direction of directions" [value]="direction.id">{{ direction.text }}</ion-select-option>
+      </ion-select>
+    </div>
+    <div class="col-6 p-4 pt-0 pt-0 ps-2">
+      <div class="card button bg-primary">
+        <div (click)="destinationSelector.open()" class="ion-text-center mt-4 mb-2">
+          <ion-icon color="light" size="large" name="log-in"></ion-icon>
+          <p class="text-light">{{ destinationDirection }}</p>
+        </div>
+      </div>
+
+      <ion-select #destinationSelector [hidden]="true" [mode]="'ios'" (ionChange)="onDestinationDismiss($event)" interface="action-sheet">
+        <ion-select-option *ngFor="let direction of directions" [value]="direction.id">{{ direction.text }}</ion-select-option>
+      </ion-select>
+    </div>
+  </div>
+
+  <div class="mx-2 mt-1 ion-text-center">
+    <h3>Usuarios: {{ userCount }}</h3>
+  </div>
+
+  <div class="row">
+    <div class="col-6 p-4 pt-0 pe-2">
+      <div [ngClass]="{ 'bg-secondary': disableUserDecrease, 'bg-primary': !disableUserDecrease }" class="card ion-button">
+        <div (click)="decreaseUsers()" class="ion-text-center mt-4 mb-2">
+          <ion-icon color="light" size="large" name="remove"></ion-icon>
+          <p class="text-light">Decrementar</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 p-4 pt-0 ps-2">
+      <div class="card button bg-primary">
+        <div (click)="increaseUsers()" class="ion-text-center mt-4 mb-2">
+          <ion-icon color="light" size="large" name="add"></ion-icon>
+          <p class="text-light">Incrementar</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mx-2 mt-1 ion-text-center">
+    <h3>Cascos: {{ helmetCount }} </h3>
+  </div>
+
+  <div class="row">
+    <div class="col-6 p-4 pt-0 pe-2">
+      <div [ngClass]="{ 'bg-secondary': disableHelmetDecrease, 'bg-primary': !disableHelmetDecrease }" class="card ion-button">
+        <div (click)="decreaseHelmets()" class="ion-text-center mt-4 mb-2">
+          <ion-icon color="light" size="large" name="remove"></ion-icon>
+          <p class="text-light">Decrementar</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 p-4 pt-0 ps-2">
+      <div [ngClass]="{ 'bg-secondary': disableHelmetIncrease, 'bg-primary': !disableHelmetIncrease }" class="card button bg-primary">
+        <div (click)="increaseHelmets()" class="ion-text-center mt-4 mb-2">
+          <ion-icon color="light" size="large" name="add"></ion-icon>
+          <p class="text-light">Incrementar</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</ion-content>
+
+<ion-footer>
+  <div class="row p-2">
+    <div class="col">
+      <ion-button color="danger" expand="block" (click)="onCancel()">
+        CANCELAR
+      </ion-button>
+    </div>
+    <div class="col">
+      <ion-button [disabled]="!canSubmit" expand="block"type="submit">
+        {{submitButtonText}}
+      </ion-button>
+    </div>
+  </div>
+</ion-footer>

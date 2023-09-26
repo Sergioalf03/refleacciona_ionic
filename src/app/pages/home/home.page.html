@@ -40,7 +40,6 @@
     </ion-card> -->
     <ion-card>
       <ion-card-header>
-        <ion-card-subtitle>Nuevo módulo</ion-card-subtitle>
 
         <div class="row">
           <div class="col">
@@ -59,6 +58,27 @@
         </div>
 
 
+      </ion-card-header>
+      <!-- <ion-card-content>
+        Esta encuesta contiene información de primera mano
+      </ion-card-content> -->
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-subtitle>Nuevo módulo</ion-card-subtitle>
+        <div class="row">
+          <div class="col">
+            <ion-card-title><strong>Cascos</strong></ion-card-title>
+          </div>
+
+          <div class="col text-end">
+            <ion-button class="btn-right" fill="outline" >Ver</ion-button>
+            <ion-button class="btn-right" (click)="onNewHelmet()">
+              <ion-icon name="add-outline"></ion-icon>
+            </ion-button>
+          </div>
+        </div>
       </ion-card-header>
       <!-- <ion-card-content>
         Esta encuesta contiene información de primera mano
@@ -87,26 +107,7 @@
       </ion-card-content> -->
     </ion-card>
 
-    <ion-card>
-      <ion-card-header>
-        <ion-card-subtitle>Próximamente</ion-card-subtitle>
-        <div class="row">
-          <div class="col">
-            <ion-card-title><strong>Cascos</strong></ion-card-title>
-          </div>
 
-          <div class="col text-end">
-            <ion-button disabled class="btn-right" fill="outline" >Ver</ion-button>
-            <ion-button disabled class="btn-right">
-              <ion-icon name="add-outline"></ion-icon>
-            </ion-button>
-          </div>
-        </div>
-      </ion-card-header>
-      <!-- <ion-card-content>
-        Esta encuesta contiene información de primera mano
-      </ion-card-content> -->
-    </ion-card>
 
   </div>
 </ion-content>

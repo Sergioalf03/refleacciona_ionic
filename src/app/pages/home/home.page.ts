@@ -6,7 +6,7 @@ import { DatabaseService } from 'src/app/core/controllers/database.service';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { VersionService } from 'src/app/services/version.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
-import { URI_AUDITORY_FORM, URI_AUDITORY_LIST, URI_LOGIN, URI_PROFILE } from 'src/app/core/constants/uris';
+import { URI_AUDITORY_FORM, URI_AUDITORY_LIST, URI_HELMET_LIST, URI_LOGIN, URI_PROFILE } from 'src/app/core/constants/uris';
 import { Platform } from '@ionic/angular';
 
 @Component({
@@ -107,6 +107,10 @@ export class HomePage {
 
   onNewAuditory() {
     this.router.navigateByUrl(URI_AUDITORY_FORM('0'));
+  }
+
+  onNewHelmet() {
+    this.router.navigateByUrl(URI_HELMET_LIST('local'));
   }
 
   onAuditoryList() {
