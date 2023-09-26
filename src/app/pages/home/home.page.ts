@@ -8,6 +8,11 @@ import { VersionService } from 'src/app/services/version.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { URI_AUDITORY_FORM, URI_AUDITORY_LIST, URI_HELMET_LIST, URI_LOGIN, URI_PROFILE } from 'src/app/core/constants/uris';
 import { Platform } from '@ionic/angular';
+import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
+// import { Camera } from '@capacitor/camera';
+// import { Filesystem } from '@capacitor/filesystem';
+// import { Geolocation } from '@capacitor/geolocation';
+// import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 
 @Component({
   selector: 'app-home',
@@ -32,6 +37,7 @@ export class HomePage {
     private confirmDialogService: ConfirmDialogService,
     private loadingService: LoadingService,
     private platform: Platform,
+    // private androidPermissions: AndroidPermissions,
   ) {
     this.platform
       .backButton
@@ -40,7 +46,25 @@ export class HomePage {
       });
   }
 
+  private checkPermissions() {
+          // this.androidPermissions
+          //   .checkPermission(this.androidPermissions.PERMISSION.CAMERA)
+          //   .then(
+          //     result => console.log('Has permission?', result.hasPermission),
+          //     err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.CAMERA)
+          //   );
+
+          // this.androidPermissions.requestPermissions([
+          //   this.androidPermissions.PERMISSION.GEOLOCATION,
+          //   this.androidPermissions.PERMISSION.CAMERA,
+          //   this.androidPermissions.PERMISSION.FILESYSTEM
+          // ]);
+
+  }
+
   ionViewDidEnter() {
+    // this.checkPermissions();
+
     if (!this.versionService.checked) {
       this.onFetchUpdate(false);
     }
@@ -54,24 +78,27 @@ export class HomePage {
 
     if (questions.length > 0) {
       questions.forEach((q: any, i: number, arr: any[]) => {
-        this.databaseService
-          .executeQuery(`SELECT * FROM questions WHERE uid = "${q.uid}"`)
-          .subscribe({
-            next: questionExists => {
-              if (questionExists !== 'waiting') {
-                if (questionExists.values.length === 0) {
-                  query += `INSERT INTO questions (section_id, uid, score, cond, has_evidence, indx, status, sentence, answers, popup) VALUES (${q.section_id}, "${q.uid}", ${q.score}, "${q.cond}", ${q.has_evidence}, ${q.indx}, ${q.status}, "${q.sentence}", '${q.answers}', "${q.popup}"); `
-                } else {
-                  query += `UPDATE questions SET uid = "${q.uid}", score = ${q.score}, cond = "${q.cond}", has_evidence = ${q.has_evidence}, indx = ${q.indx}, status = ${q.status}, sentence = "${q.sentence}", answers = '${q.answers}', popup = "${q.popup}" WHERE uid = "${q.uid}"; `
-                }
+        setTimeout(() => {
 
-                count++;
-                if (count === arr.length) {
-                  this.updateAuditories(sectionsQuery + query + updateVersionQuery);
+          this.databaseService
+            .executeQuery(`SELECT * FROM questions WHERE uid = "${q.uid}"`)
+            .subscribe({
+              next: questionExists => {
+                if (questionExists !== DATABASE_WAITING_MESSAGE) {
+                  if (questionExists.values.length === 0) {
+                    query += `INSERT INTO questions (section_id, uid, score, cond, has_evidence, indx, status, sentence, answers, popup) VALUES (${q.section_id}, "${q.uid}", ${q.score}, "${q.cond}", ${q.has_evidence}, ${q.indx}, ${q.status}, "${q.sentence}", '${q.answers}', "${q.popup}"); `
+                  } else {
+                    query += `UPDATE questions SET uid = "${q.uid}", score = ${q.score}, cond = "${q.cond}", has_evidence = ${q.has_evidence}, indx = ${q.indx}, status = ${q.status}, sentence = "${q.sentence}", answers = '${q.answers}', popup = "${q.popup}" WHERE uid = "${q.uid}"; `
+                  }
+
+                  count++;
+                  if (count === arr.length) {
+                    this.updateAuditories(sectionsQuery + query + updateVersionQuery);
+                  }
                 }
               }
-            }
-          })
+            })
+        }, 50 * i)
       });
     } else {
       this.updateAuditories(sectionsQuery + query + updateVersionQuery);
@@ -143,24 +170,26 @@ export class HomePage {
 
                         if (newVersionRes.data.sections.length > 0) {
                           newVersionRes.data.sections.forEach((s: any, i: number, arr: any[]) => {
-                            this.databaseService
-                              .executeQuery(`SELECT * FROM sections WHERE uid = "${s.uid}"`)
-                              .subscribe({
-                                next: questionExists => {
-                                  if (questionExists !== 'waiting') {
-                                    if (questionExists.values.length === 0) {
-                                      query += `INSERT INTO sections (uid, name, subname, page, indx, status) VALUES ("${s.uid}", "${s.name}", "${s.subname}", ${s.page}, ${s.indx}, ${s.status}); `
-                                    } else {
-                                      query += `UPDATE sections SET uid = "${s.uid}", name = "${s.name}", subname = "${s.subname}", page = ${s.page}, indx = ${s.indx}, status = ${s.status} WHERE uid = "${s.uid}"; `
-                                    }
+                            setTimeout(() => {
+                              this.databaseService
+                                .executeQuery(`SELECT * FROM sections WHERE uid = "${s.uid}"`)
+                                .subscribe({
+                                  next: questionExists => {
+                                    if (questionExists !== DATABASE_WAITING_MESSAGE) {
+                                      if (questionExists.values.length === 0) {
+                                        query += `INSERT INTO sections (uid, name, subname, page, indx, status) VALUES ("${s.uid}", "${s.name}", "${s.subname}", ${s.page}, ${s.indx}, ${s.status}); `
+                                      } else {
+                                        query += `UPDATE sections SET uid = "${s.uid}", name = "${s.name}", subname = "${s.subname}", page = ${s.page}, indx = ${s.indx}, status = ${s.status} WHERE uid = "${s.uid}"; `
+                                      }
 
-                                    count++;
-                                    if (count === arr.length) {
-                                      this.importQuestions(newVersionRes.data.questions, query, +res.data.number);
+                                      count++;
+                                      if (count === arr.length) {
+                                        this.importQuestions(newVersionRes.data.questions, query, +res.data.number);
+                                      }
                                     }
                                   }
-                                }
-                              })
+                                })
+                            }, 50 * i);
                           });
                         } else {
                           this.importQuestions(newVersionRes.data.questions, query, +res.data.number);

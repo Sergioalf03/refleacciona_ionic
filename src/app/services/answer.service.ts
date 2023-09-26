@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, take } from 'rxjs';
 import { DatabaseService } from '../core/controllers/database.service';
+import { DATABASE_WAITING_MESSAGE } from '../core/constants/message-code';
 
 @Injectable({
   providedIn: 'root'
@@ -22,29 +23,31 @@ export class AnswerService {
   }
 
   saveAnswer(questionId: string, auditoryId: string, value: any) {
-    const result = new BehaviorSubject<any>('waiting');
+    const result = new BehaviorSubject<any>(DATABASE_WAITING_MESSAGE);
     this.databaseService
       .executeQuery(`SELECT * FROM answers WHERE auditory_id = ${auditoryId} AND question_id = ${questionId};`)
       .subscribe(answers => {
-        if (answers !== 'waiting') {
-          const now = new Date().toISOString();
-          if (answers.values.length === 0) {
-            this.databaseService
-              .executeQuery(`INSERT INTO answers (auditory_id, question_id, value, creation_date, update_date) VALUES (${auditoryId}, ${questionId}, "${value}", "${now}", "${now}");`)
-              .subscribe(rm => {
-                if (rm !== 'waiting') {
-                  result.next('saved')
-                }
-              });
-          } else {
-            this.databaseService
-              .executeQuery(`UPDATE answers SET value="${value}", update_date="${now}" WHERE auditory_id = ${auditoryId} AND question_id = ${questionId};`)
-              .subscribe(rm => {
-                if (rm !== 'waiting') {
-                  result.next('updated')
-                }
-              });
-          }
+        if (answers !== DATABASE_WAITING_MESSAGE) {
+          setTimeout(() => {
+            const now = new Date().toISOString();
+            if (answers.values.length === 0) {
+              this.databaseService
+                .executeQuery(`INSERT INTO answers (auditory_id, question_id, value, creation_date, update_date) VALUES (${auditoryId}, ${questionId}, "${value}", "${now}", "${now}");`)
+                .subscribe(rm => {
+                  if (rm !== DATABASE_WAITING_MESSAGE) {
+                    result.next('saved')
+                  }
+                });
+            } else {
+              this.databaseService
+                .executeQuery(`UPDATE answers SET value="${value}", update_date="${now}" WHERE auditory_id = ${auditoryId} AND question_id = ${questionId};`)
+                .subscribe(rm => {
+                  if (rm !== DATABASE_WAITING_MESSAGE) {
+                    result.next('updated')
+                  }
+                });
+            }
+          }, 20);
         }
       });
 

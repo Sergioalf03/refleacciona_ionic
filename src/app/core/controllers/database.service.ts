@@ -4,7 +4,8 @@ import { LOCAL_DATABASE } from 'src/environments/environment';
 import { SQLiteDBConnection } from '@capacitor-community/sqlite';
 import { createSchema, loadData } from 'src/app/utils/database.util';
 import { BehaviorSubject, Observable, from, } from 'rxjs';
-import { map, take, tap, } from 'rxjs/operators';
+import { take, } from 'rxjs/operators';
+import { DATABASE_WAITING_MESSAGE } from '../constants/message-code';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,7 @@ export class DatabaseService {
     const result = new Promise((res, rej) => {
       this.executeQuery('SELECT * FROM versions ORDER BY id DESC ;')
         .subscribe(result => {
-          if (result !== 'waiting') {
+          if (result !== DATABASE_WAITING_MESSAGE) {
             if (result.includes && result.includes('no such table: versions')) {
               this.createDatabase();
               res('new')
@@ -34,7 +35,8 @@ export class DatabaseService {
   }
 
   executeQuery(query: string): Observable<any> {
-    const data = new BehaviorSubject<any>('waiting');
+    console.log(query);
+    const data = new BehaviorSubject<any>(DATABASE_WAITING_MESSAGE);
     this._sqlite
       .createConnection(LOCAL_DATABASE.name, LOCAL_DATABASE.encrypted, LOCAL_DATABASE.mode, LOCAL_DATABASE.version)
       .then(async connection => {
@@ -63,18 +65,18 @@ export class DatabaseService {
 
     connection?.query(query)
       .then(async (result) => {
-        connection
+        await connection.isExists() ? connection
           .close()
           .then(async () => {
             data.next(result);
-          });
+          }).catch(e => console.log(e)) : true;
       })
       .catch(async (e) => {
-        connection
+        await connection.isExists() ? connection
           .close()
           .then(async () => {
             data.next(`error: ${e.message}`);
-          });
+          }).catch(e => console.log(e)) : true;
       });
   }
 
@@ -99,14 +101,14 @@ export class DatabaseService {
       .then(result => {
         connection.execute(loadData)
           .then(async (result1) => {
-            await connection.close();
+            await connection.close().catch(e => console.log(e));
           })
           .catch(async (e) => {
-            await connection.close();
+            await connection.close().catch(e => console.log(e));
           });
       })
       .catch(async (e) => {
-        await connection.close();
+        await connection.close().catch(e => console.log(e));
       });
   }
 }

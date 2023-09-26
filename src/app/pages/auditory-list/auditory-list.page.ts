@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
-import { DatabaseService } from 'src/app/core/controllers/database.service';
+import { Capacitor } from '@capacitor/core';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { AuditoryService } from 'src/app/services/auditory.service';
 import { ActionSheetController, Platform } from '@ionic/angular';
@@ -11,6 +11,9 @@ import { AuditoryEvidenceService } from 'src/app/services/auditory-evidence.serv
 import { PhotoService } from 'src/app/core/controllers/photo.service';
 import { AnswerEvidenceService } from 'src/app/services/answer-evidence.service';
 import { URI_AUDITORY_DETAIL, URI_AUDITORY_FINISH_FORM, URI_AUDITORY_FORM, URI_HOME, URI_QUESTION_FORM } from 'src/app/core/constants/uris';
+import { Directory, Filesystem } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
+import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
 
 @Component({
   selector: 'app-auditory-list',
@@ -105,60 +108,66 @@ export class AuditoryListPage implements OnInit {
           .getUpdateData(id)
           .subscribe({
             next: auditory => {
-              if (auditory !== 'waiting') {
-                this.answerService
-                  .getAnswersBySectionByAuditory(id)
-                  .subscribe({
-                    next: answers => {
-                      if (answers !== 'waiting') {
-                        const formattedAuditory = {
-                          title: auditory.values[0].title,
-                          description: auditory.values[0].description,
-                          close_note: auditory.values[0].close_note,
-                          date: auditory.values[0].date,
-                          time: auditory.values[0].time,
-                          lat: auditory.values[0].lat,
-                          lng: auditory.values[0].lng,
-                          status: auditory.values[0].status,
-                          creation_date: auditory.values[0].creation_date,
-                          update_date: auditory.values[0].update_date,
-                          external_id: auditory.values[0].id,
-                          user_id: auditory.values[0].user_id,
-                        }
+              if (auditory !== DATABASE_WAITING_MESSAGE) {
 
-                        const formattedAnswers = answers.values.map((answer: any) => ({
-                          value: answer.value,
-                          notes: answer.notes,
-                          creation_date: answer.creation_date,
-                          update_date: answer.update_date,
-                          question_id: answer.question_id,
-                        }));
+                setTimeout(() => {
+                  this.answerService
+                    .getAnswersBySectionByAuditory(id)
+                    .subscribe({
+                      next: answers => {
+                        if (answers !== DATABASE_WAITING_MESSAGE) {
 
-                        const data = {
-                          auditory: formattedAuditory,
-                          answers: formattedAnswers,
-                        }
+                          const formattedAuditory = {
+                            title: auditory.values[0].title,
+                            description: auditory.values[0].description,
+                            close_note: auditory.values[0].close_note,
+                            date: auditory.values[0].date,
+                            time: auditory.values[0].time,
+                            lat: auditory.values[0].lat,
+                            lng: auditory.values[0].lng,
+                            status: auditory.values[0].status,
+                            creation_date: auditory.values[0].creation_date,
+                            update_date: auditory.values[0].update_date,
+                            external_id: auditory.values[0].id,
+                            user_id: auditory.values[0].user_id,
+                          }
 
-                        this.auditoryService
-                          .upload(data)
-                          .subscribe({
-                            next: res => {
-                              const externalId = res.data.id;
-                              this.auditoryService
-                                .updateExternalId(id, externalId)
-                                .subscribe({
-                                  next: updated => {
-                                    if (updated !== 'waiting') {
-                                      this.uploadAuditoryPhotos(id, externalId);
+                          const formattedAnswers = answers.values.map((answer: any) => ({
+                            value: answer.value,
+                            notes: answer.notes,
+                            creation_date: answer.creation_date,
+                            update_date: answer.update_date,
+                            question_id: answer.question_id,
+                          }));
+
+                          const data = {
+                            auditory: formattedAuditory,
+                            answers: formattedAnswers,
+                          }
+
+                          this.auditoryService
+                            .upload(data)
+                            .subscribe({
+                              next: res => {
+                                const externalId = res.data.id;
+                                this.auditoryService
+                                  .updateExternalId(id, externalId)
+                                  .subscribe({
+                                    next: updated => {
+                                      if (updated !== DATABASE_WAITING_MESSAGE) {
+                                        setTimeout(() => {
+                                          this.uploadAuditoryPhotos(id, externalId);
+                                        }, 20);
+                                      }
                                     }
-                                  }
-                                })
-                            },
-                            error: err => this.responseService.onError(err, 'No se pudo subir la auditoría'),
-                          })
+                                  })
+                              },
+                              error: err => this.responseService.onError(err, 'No se pudo subir la auditoría'),
+                            })
+                        }
                       }
-                    }
-                  })
+                    })
+                }, 20)
 
               }
             }
@@ -171,7 +180,7 @@ export class AuditoryListPage implements OnInit {
       .getEvidencesByAuditory(localId)
       .subscribe({
         next: async evidences => {
-          if (evidences !== 'waiting') {
+          if (evidences !== DATABASE_WAITING_MESSAGE) {
             this.uploadAuditoryEvidence(evidences.values, 0, extenalId)
               .then(result => {
                 this.uploadAnswerPhotos(localId, extenalId);
@@ -187,8 +196,8 @@ export class AuditoryListPage implements OnInit {
         return res(true);
       }
 
-      const ImageSrc = 'data:image/jpeg;base64,' + await this.photoService.getLocalAuditoryEvidence(arr[index].dir).then(photo => photo.data);
-      const blob = await fetch(ImageSrc).then(r => r.blob());
+      const ImageSrc = await this.photoService.getLocalAuditoryEvidenceUri(arr[index].dir).then(photo => photo.uri);
+      const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => r.blob());
 
       this.auditoryEvidenceService
         .uploadImage(blob, externalId, arr[index].creation_date, arr[index].dir)
@@ -201,7 +210,7 @@ export class AuditoryListPage implements OnInit {
                   .localRemove(arr[index].dir)
                   .subscribe({
                     next: dlt => {
-                      if (dlt !== 'waiting') {
+                      if (dlt !== DATABASE_WAITING_MESSAGE) {
                         this.uploadAuditoryEvidence(arr, index + 1, externalId).then(r => res(r))
                       }
                     }
@@ -220,31 +229,37 @@ export class AuditoryListPage implements OnInit {
       .getEvidencesByAuditory(id)
       .subscribe({
         next: async evidences => {
-          if (evidences !== 'waiting') {
-            this.uploadAnswersEvidence(evidences.values, 0, extenalId)
-              .then(result => {
+          if (evidences !== DATABASE_WAITING_MESSAGE) {
 
-                this.answerService
-                  .deleteAnswersByAuditory(id)
-                  .subscribe({
-                    next: answerDelete => {
-                      if (answerDelete !== 'waiting') {
-                        this.auditoryService
-                          .finalDelete(id)
-                          .subscribe({
-                            next: auditoryDelete => {
-                              if (auditoryDelete !== 'waiting') {
-                                this.responseService.onSuccess('Auditoría enviada exitósamente');
-                                setTimeout(() => {
-                                  this.fetchLocalList();
-                                }, 100)
-                              }
-                            },
-                          });
+            setTimeout(() => {
+              this.uploadAnswersEvidence(evidences.values, 0, extenalId)
+                .then(result => {
+
+                  this.answerService
+                    .deleteAnswersByAuditory(id)
+                    .subscribe({
+                      next: answerDelete => {
+                        if (answerDelete !== DATABASE_WAITING_MESSAGE) {
+
+                          setTimeout(() => {
+                            this.auditoryService
+                              .finalDelete(id)
+                              .subscribe({
+                                next: auditoryDelete => {
+                                  if (auditoryDelete !== DATABASE_WAITING_MESSAGE) {
+                                    this.responseService.onSuccess('Auditoría enviada exitósamente');
+                                    setTimeout(() => {
+                                      this.fetchLocalList();
+                                    }, 100)
+                                  }
+                                },
+                              });
+                          }, 20);
+                        }
                       }
-                    }
-                  });
-              })
+                    });
+                })
+            }, 20);
           }
         }
       });
@@ -256,8 +271,8 @@ export class AuditoryListPage implements OnInit {
         return res(true);
       }
 
-      const ImageSrc = 'data:image/jpeg;base64,' + await this.photoService.getLocalAnswerEvidence(arr[index].dir).then(photo => photo.data);
-      const blob = await fetch(ImageSrc).then(r => r.blob());
+      const ImageSrc = await this.photoService.getLocalAnswerEvidenceUri(arr[index].dir).then(photo => photo.uri);
+      const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => r.blob());
 
       this.answerEvidenceService
         .uploadImage(blob, extenalId, arr[index].question_id, arr[index].creation_date, arr[index].dir)
@@ -271,8 +286,11 @@ export class AuditoryListPage implements OnInit {
                   .localRemove(arr[index].dir)
                   .subscribe({
                     next: dlt => {
-                      if (dlt !== 'waiting') {
-                        this.uploadAnswersEvidence(arr, index + 1, extenalId).then(r => res(r));
+                      if (dlt !== DATABASE_WAITING_MESSAGE) {
+
+                        setTimeout(() => {
+                          this.uploadAnswersEvidence(arr, index + 1, extenalId).then(r => res(r));
+                        }, 20);
                       }
                     }
                   });
@@ -292,7 +310,7 @@ export class AuditoryListPage implements OnInit {
         .deleteLocal(id)
         .subscribe({
           next: (rm) => {
-            if (rm !== 'waiting') {
+            if (rm !== DATABASE_WAITING_MESSAGE) {
               this.responseService.onSuccess('Auditoría eliminada');
               setTimeout(() => {
                 this.fetchLocalList();
@@ -310,7 +328,7 @@ export class AuditoryListPage implements OnInit {
     this.router.navigateByUrl(URI_AUDITORY_DETAIL(id));
   }
 
-  private onDownloadPdf(id: string) {
+  private onDownloadPdf(id: string, title: string) {
     this.confirmDialogService
       .presentAlert('¿Desea descargar la auditoría?', () => {
         this.loadingService.showLoading();
@@ -319,22 +337,41 @@ export class AuditoryListPage implements OnInit {
           .subscribe({
             next: res => {
               const blob = res;
-              const filename = `auditoria.pdf`;
-              if ((window.navigator as any).msSaveOrOpenBlob) {
-                (window.navigator as any).msSaveBlob(blob, filename);
-                this.loadingService.dismissLoading();
-              } else {
-                const downloadLink = window.document.createElement('a');
-                const contentTypeHeader = 'application/pdf';
-                downloadLink.href = window.URL.createObjectURL(
-                  new Blob([blob], { type: contentTypeHeader })
-                );
-                downloadLink.download = filename;
-                document.body.appendChild(downloadLink);
-                downloadLink.click();
-                document.body.removeChild(downloadLink);
-                this.loadingService.dismissLoading();
-              }
+              const find = ' ';
+                const re = new RegExp(find, 'g');
+                const filePath = `${title.replace(re, '-')}.pdf`;
+
+                const fileReader = new FileReader();
+
+                fileReader.readAsDataURL(blob);
+
+                fileReader.onloadend = async () => {
+                  const base64Data: any = fileReader.result;
+
+                  Filesystem.writeFile({
+                    path: filePath,
+                    data: base64Data,
+                    directory: Directory.Cache,
+                  }).then(() => {
+                    return Filesystem.getUri({
+                      directory: Directory.Cache,
+                      path: filePath
+                    });
+                  })
+                  .then((uriResult) => {
+                    return Share.share({
+                      title: filePath,
+                      text: filePath,
+                      url: uriResult.uri,
+                    });
+                  }).then(() => {
+                    this.loadingService.dismissLoading();
+                  })
+                  .catch(err => {
+                    console.log(err)
+                    this.loadingService.dismissLoading();
+                  });
+                }
             },
             error: err => this.responseService.onError(err, 'No se pudo descargar la auditoría')
           })
@@ -351,7 +388,7 @@ export class AuditoryListPage implements OnInit {
       },
       {
         text: 'Descargar',
-        handler: () => this.onDownloadPdf(auditory.id),
+        handler: () => this.onDownloadPdf(auditory.id, auditory.title),
       },
       {
         text: 'Cerrar',
@@ -460,7 +497,7 @@ export class AuditoryListPage implements OnInit {
       .getLocalList()
       .subscribe({
         next: res => {
-          if (res !== 'waiting') {
+          if (res !== DATABASE_WAITING_MESSAGE) {
             this.auditories = res.map((a: any) => ({
               ...a,
               statusWord: a.status === 1 ? 'En progreso' : 'Terminada',
