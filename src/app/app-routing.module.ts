@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './core/guards/auth.guard';
 import { AutoLoginGuard } from './core/guards/auto-login.guard';
-import { URI_AUDITORY_DETAIL, URI_AUDITORY_FINISH_FORM, URI_AUDITORY_FORM, URI_AUDITORY_LIST, URI_EMAIL_CONFIRMATION, URI_HELMET_COLLECION_DETAIL, URI_HELMET_COUNT_FORM, URI_HELMET_LIST, URI_HOME, URI_LOGIN, URI_PROFILE, URI_QUESTION_FORM, URI_RECOVER_ACCOUNT, URI_REGISTER, URI_SEND_RECOVER_CODE } from './core/constants/uris';
+import { URI_AUDITORY_DETAIL, URI_AUDITORY_FINISH_FORM, URI_AUDITORY_FORM, URI_AUDITORY_LIST, URI_EMAIL_CONFIRMATION, URI_HELMET_COLLECION_DETAIL, URI_HELMET_COUNT_FORM, URI_HELMET_COUNT_LIST, URI_HELMET_LIST, URI_HOME, URI_LOGIN, URI_PROFILE, URI_QUESTION_FORM, URI_RECOVER_ACCOUNT, URI_REGISTER, URI_SEND_RECOVER_CODE } from './core/constants/uris';
 
 const routes: Routes = [
   {
@@ -76,6 +76,11 @@ const routes: Routes = [
     path: URI_HELMET_COUNT_FORM(':id'),
     loadChildren: () => import('./pages/helmet-count-form/helmet-count-form.module').then( m => m.HelmetCountFormPageModule)
   },
+  {
+    path: URI_HELMET_COUNT_LIST(':id'),
+    loadChildren: () => import('./pages/helmet-count-list/helmet-count-list.module').then( m => m.HelmetCountListPageModule)
+  },
+
 
 
 

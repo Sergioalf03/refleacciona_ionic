@@ -1,0 +1,34 @@
+<ion-content >
+  <app-header-buttons
+    [backUrl]="backUrl"
+    homeUrl="/home"
+  ></app-header-buttons>
+
+  <div class="mx-2 mt-4">
+    <h1>Listado de registros</h1>
+  </div>
+
+  <div class="mx-2 mt-4">
+  </div>
+
+  <div class="text-center" *ngIf="!loading && counts.length === 0">
+    <h4 class="mt-2" >Sin Conteos</h4>
+    <ion-button (click)="onNewCount()">Iniciar uno</ion-button>
+  </div>
+
+  <div class="row">
+    <div class="col-12 p-4">
+
+     <ion-item *ngFor="let count of counts" class="mt-2 txtInput ion-no-padding ion-no-margin">
+      <ion-label>
+        <h2 class="text-start ps-2">{{ count.originText }} <ion-icon name="arrow-forward"></ion-icon> {{ count.destinationText }} <span class="mx-1"></span> Usuarios: {{ count.userCount }} <span class="mx-1"></span> Cascos: {{ count.helmetCount }}</h2>
+      </ion-label>
+
+      <ion-button (click)="presentActionSheetOptions(count)" slot="end" size="small">
+        <ion-icon slot="icon-only" name="menu"></ion-icon>
+      </ion-button>
+    </ion-item>
+    </div>
+  </div>
+
+</ion-content>

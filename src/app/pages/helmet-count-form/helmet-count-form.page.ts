@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ModalController } from '@ionic/angular';
 import { URI_HELMET_COLLECION_DETAIL } from 'src/app/core/constants/uris';
+import { HelmetCollectionService } from 'src/app/services/helmet-collection.service';
 
 @Component({
   selector: 'app-helmet-count-form',
@@ -34,13 +36,24 @@ export class HelmetCountFormPage implements OnInit {
   originId = -1;
   destinationId = -1;
   canSubmit = false;
-
+  auditoryId = '0';
 
   constructor(
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
+    private helmetCollectionService: HelmetCollectionService,
   ) { }
 
   ngOnInit() {
+    this.activatedRoute
+      .paramMap
+      .subscribe({
+        next: paramMap => {
+          this.auditoryId = paramMap.get('id') || '0';
+          this.backUrl = URI_HELMET_COLLECION_DETAIL(this.auditoryId);
+        }
+      });
   }
 
   onOriginDismiss(evt: any) {
@@ -98,8 +111,18 @@ export class HelmetCountFormPage implements OnInit {
     }
   }
 
+  onSubmit() {
+    this.helmetCollectionService.list.push({
+      origin: this.originId,
+      destination: this.destinationId,
+      userCount: this.userCount,
+      helmetCount: this.helmetCount,
+    });
+    this.router.navigateByUrl(URI_HELMET_COLLECION_DETAIL(this.auditoryId));
+  }
+
   onCancel() {
-    // this.}
+    this.router.navigateByUrl(URI_HELMET_COLLECION_DETAIL(this.auditoryId));
   }
 
 

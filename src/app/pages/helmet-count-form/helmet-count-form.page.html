@@ -95,7 +95,7 @@
       </ion-button>
     </div>
     <div class="col">
-      <ion-button [disabled]="!canSubmit" expand="block"type="submit">
+      <ion-button [disabled]="!canSubmit" expand="block" (click)="onSubmit()">
         {{submitButtonText}}
       </ion-button>
     </div>

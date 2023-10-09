@@ -94,7 +94,8 @@ export class HelmetInitialFormPage implements OnInit {
     //                                   count++;
     //                                   if (count === this.ImageSrc.length) {
     //                                     window.location.reload();
-                                        this.responseService.onSuccessAndRedirect(URI_HELMET_COLLECION_DETAIL('0'), 'Auditoría guarda');
+                                        this.auditoryId = '1';
+                                        this.responseService.onSuccessAndRedirect(URI_HELMET_COLLECION_DETAIL(this.auditoryId), 'Auditoría guarda');
     //                                   }
     //                                 }
     //                               },
