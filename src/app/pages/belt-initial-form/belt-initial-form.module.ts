@@ -1,17 +1,17 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
-
-import { HelmetCountFormPage } from '../helmet-count-form/helmet-count-form.page';
+import { BeltInitialFormPage } from './belt-initial-form.page';
 import { RouterModule, Routes } from '@angular/router';
+import { MapModule } from 'src/app/components/map/map.module';
 import { HeaderButtonsModule } from 'src/app/components/header-buttons/header-buttons.module';
 
 const routes: Routes = [
   {
     path: '',
-    component: HelmetCountFormPage
+    component: BeltInitialFormPage
   }
 ];
 
@@ -19,10 +19,12 @@ const routes: Routes = [
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     IonicModule,
     RouterModule.forChild(routes),
+    MapModule,
     HeaderButtonsModule,
   ],
-  declarations: [HelmetCountFormPage]
+  declarations: [BeltInitialFormPage]
 })
-export class HelmetCountFormPageModule {}
+export class BeltInitialFormPageModule {}

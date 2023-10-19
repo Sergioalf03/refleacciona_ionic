@@ -3,15 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
-
-import { HelmetCountFormPage } from '../helmet-count-form/helmet-count-form.page';
+import { BeltCountFormPage } from './belt-count-form.page';
 import { RouterModule, Routes } from '@angular/router';
 import { HeaderButtonsModule } from 'src/app/components/header-buttons/header-buttons.module';
 
 const routes: Routes = [
   {
     path: '',
-    component: HelmetCountFormPage
+    component: BeltCountFormPage
   }
 ];
 
@@ -23,6 +22,6 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     HeaderButtonsModule,
   ],
-  declarations: [HelmetCountFormPage]
+  declarations: [BeltCountFormPage]
 })
-export class HelmetCountFormPageModule {}
+export class BeltCountFormPageModule {}

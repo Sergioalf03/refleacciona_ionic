@@ -66,14 +66,13 @@
 
     <ion-card>
       <ion-card-header>
-        <ion-card-subtitle>Nuevo módulo</ion-card-subtitle>
         <div class="row">
           <div class="col">
-            <ion-card-title><strong>Cascos</strong></ion-card-title>
+            <ion-card-title class="mt-2"><strong>Cascos</strong></ion-card-title>
           </div>
 
           <div class="col text-end">
-            <ion-button class="btn-right" fill="outline" >Ver</ion-button>
+            <ion-button class="btn-right" fill="outline" (click)="onHelmetList()">Ver</ion-button>
             <ion-button class="btn-right" (click)="onNewHelmet()">
               <ion-icon name="add-outline"></ion-icon>
             </ion-button>
@@ -88,15 +87,14 @@
 
     <ion-card>
       <ion-card-header>
-        <ion-card-subtitle>Próximamente</ion-card-subtitle>
         <div class="row">
           <div class="col">
             <ion-card-title class="mt-2"><strong>Cinturones</strong></ion-card-title>
           </div>
 
           <div class="col text-end">
-            <ion-button disabled class="btn-right" fill="outline" >Ver</ion-button>
-            <ion-button disabled class="btn-right">
+            <ion-button class="btn-right" fill="outline" >Ver</ion-button>
+            <ion-button class="btn-right" (click)="onNewBelt()">
               <ion-icon name="add-outline"></ion-icon>
             </ion-button>
           </div>

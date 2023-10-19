@@ -2,29 +2,27 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ModalController } from '@ionic/angular';
 import { DIRECTIONS } from 'src/app/core/constants/directions';
-import { URI_HELMET_COLLECION_DETAIL } from 'src/app/core/constants/uris';
+import { URI_BELT_COLLECION_DETAIL } from 'src/app/core/constants/uris';
+import { VEHICLE_TYPES } from 'src/app/core/constants/vehicle-types';
 import { HelmetCollectionService } from 'src/app/services/helmet-collection.service';
-import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
-import { ToastService } from 'src/app/core/controllers/toast.service';
-import { LoadingService } from 'src/app/core/controllers/loading.service';
-import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
-import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 
 @Component({
-  selector: 'app-helmet-count-form',
-  templateUrl: './helmet-count-form.page.html',
+  selector: 'app-belt-count-form',
+  templateUrl: './belt-count-form.page.html',
 })
-export class HelmetCountFormPage implements OnInit {
+export class BeltCountFormPage implements OnInit {
 
-  backUrl = URI_HELMET_COLLECION_DETAIL('0', '0');
+  backUrl = URI_BELT_COLLECION_DETAIL('0', '0');
 
   originDirection = 'Origen';
   destinationDirection = 'Destino';
+  vehicleType = 'Tipo Vehículo';
 
   userCount = 1;
   helmetCount = 0;
 
   directions = DIRECTIONS;
+  vehicleTypes = VEHICLE_TYPES;
 
   disableUserDecrease = true;
   disableHelmetDecrease = true;
@@ -40,10 +38,6 @@ export class HelmetCountFormPage implements OnInit {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private helmetCollectionService: HelmetCollectionService,
-    private confirmDialogService: ConfirmDialogService,
-    private toastService: ToastService,
-    private loadingService: LoadingService,
-    private responseService: HttpResponseService,
   ) { }
 
   ngOnInit() {
@@ -52,7 +46,7 @@ export class HelmetCountFormPage implements OnInit {
       .subscribe({
         next: paramMap => {
           this.auditoryId = paramMap.get('id') || '0';
-          this.backUrl = URI_HELMET_COLLECION_DETAIL('0', this.auditoryId);
+          this.backUrl = URI_BELT_COLLECION_DETAIL('0' ,this.auditoryId);
         }
       });
   }
@@ -113,45 +107,17 @@ export class HelmetCountFormPage implements OnInit {
   }
 
   onSubmit() {
-    if (this.originId === -1) {
-      this.toastService.showErrorToast('Seleccione un origen');
-    }
-    if (this.destinationId === -1) {
-      this.toastService.showErrorToast('Seleccione un destino');
-    }
-    this.confirmDialogService.presentAlert('¿Desea guardar el conteo?', () => {
-      this.loadingService.showLoading();
-
-      const data = {
-        helmet_auditory_id: this.auditoryId,
-        origin: this.originId,
-        destination: this.destinationId,
-        userCount: this.userCount,
-        helmetCount: this.helmetCount,
-      };
-
-      this.helmetCollectionService
-        .save(data)
-        .subscribe({
-          next: res => {
-            console.log(res);
-            if (res !== DATABASE_WAITING_MESSAGE) {
-
-              this.loadingService.dismissLoading();
-              this.router.navigateByUrl(URI_HELMET_COLLECION_DETAIL('0', this.auditoryId));
-            }
-          },
-          error: err => {
-            this.responseService.onError(err, 'No se pudo guardar el conteo');
-          }
-        });
-    })
+    this.helmetCollectionService.list.push({
+      origin: this.originId,
+      destination: this.destinationId,
+      userCount: this.userCount,
+      helmetCount: this.helmetCount,
+    });
+    this.router.navigateByUrl(URI_BELT_COLLECION_DETAIL('0', this.auditoryId));
   }
 
   onCancel() {
-    this.router.navigateByUrl(URI_HELMET_COLLECION_DETAIL('0', this.auditoryId));
+    this.router.navigateByUrl(URI_BELT_COLLECION_DETAIL('0', this.auditoryId));
   }
-
-
 
 }

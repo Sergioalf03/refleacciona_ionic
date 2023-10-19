@@ -1,20 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ActionSheetController } from '@ionic/angular';
+import { DIRECTIONS } from 'src/app/core/constants/directions';
+import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
 import { URI_HELMET_COLLECION_DETAIL, URI_HELMET_COUNT_FORM } from 'src/app/core/constants/uris';
+import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
+import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { HelmetCollectionService } from 'src/app/services/helmet-collection.service';
 
-const directions = [
-  { id: 1, text: 'NE' },
-  { id: 2, text: 'N' },
-  { id: 3, text: 'NO' },
-  { id: 4, text: 'E' },
-  { id: 5, text: 'O' },
-  { id: 6, text: 'SE' },
-  { id: 7, text: 'S' },
-  { id: 8, text: 'SO' },
-];
+const directions = DIRECTIONS;
 
 @Component({
   selector: 'app-helmet-count-list',
@@ -22,7 +17,7 @@ const directions = [
 })
 export class HelmetCountListPage implements OnInit {
 
-  backUrl = URI_HELMET_COLLECION_DETAIL('0');
+  backUrl = URI_HELMET_COLLECION_DETAIL('0', '0');
   counts: any[] = [];
   loading = true;
   auditoryId = '0';
@@ -33,6 +28,8 @@ export class HelmetCountListPage implements OnInit {
     private loadingSerivice: LoadingService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
+    private responseService: HttpResponseService,
+    private confirmDialog: ConfirmDialogService,
   ) { }
 
   ngOnInit() {
@@ -47,20 +44,35 @@ export class HelmetCountListPage implements OnInit {
           this.loading = true;
 
           this.auditoryId = paramMap.get('id') || '0';
+          this.backUrl = URI_HELMET_COLLECION_DETAIL('0', this.auditoryId);
 
-          this.counts = this.helmetCollectionService.list.map(c => {
+          this.loadList();
+        }
+      });
+  }
 
-            return {
-              originText: directions.find(d => +d.id === +c.origin)!.text,
-              destinationText: directions.find(d => +d.id === +c.destination)!.text,
-              ...c,
-            };
-          });
+  private loadList() {
+    this.helmetCollectionService
+      .getList(this.auditoryId)
+      .subscribe({
+        next: res => {
+          if (res !== DATABASE_WAITING_MESSAGE) {
 
-          this.loading = false;
-          setTimeout(() => {
+            this.counts = res.values.map((c: any) => {
+
+              return {
+                originText: directions.find(d => +d.id === +c.origin)!.short,
+                destinationText: directions.find(d => +d.id === +c.destination)!.short,
+                ...c,
+              };
+            });
+
+            this.loading = false;
             this.loadingSerivice.dismissLoading();
-          }, 500);
+          }
+        },
+        error: err => {
+          this.responseService.onError(err, 'No se pudo guardar el conteo');
         }
       });
   }
@@ -91,20 +103,19 @@ export class HelmetCountListPage implements OnInit {
   }
 
   private onDelete(id: string) {
-    const index = this.helmetCollectionService.list.findIndex((count) => count.id === id);
-
-    if (index > -1) {
-      this.helmetCollectionService.list.splice(index, 1);
-
-      this.counts = this.helmetCollectionService.list.map(c => {
-
-        return {
-          originText: directions.find(d => +d.id === +c.origin)!.text,
-          destinationText: directions.find(d => +d.id === +c.destination)!.text,
-          ...c,
-        };
-      });
-    }
+    this.confirmDialog.presentAlert('¿Desea eliminar el conteo?', () =>  {
+      this.loadingSerivice.showLoading();
+      this.helmetCollectionService
+        .delete(id)
+        .subscribe({
+          next: res => {
+            this.loadList();
+          },
+          error: err => {
+            this.responseService.onError(err, 'No se pudo guardar el conteo');
+          }
+        });
+    });
   }
 
   onNewCount() {

@@ -88,6 +88,46 @@ CREATE TABLE IF NOT EXISTS answer_evidences (
   FOREIGN KEY (auditory_id) REFERENCES auditories(id) ON DELETE CASCADE
   FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS helmet_auditory (
+  id INTEGER PRIMARY KEY NOT NULL,
+  user_id INTEGER NOT NULL,
+  title TEXT NOT NULL,
+  description TEXT,
+  close_note TEXT,
+  date TEXT NOT NULL,
+  time TEXT NOT NULL,
+  lat TEXT NOT NULL,
+  lng TEXT NOT NULL,
+  status INTEGER NOT NULL,
+  creation_date TEXT NOT NULL,
+  update_date TEXT NOT NULL,
+  remote_id INTEGER
+);
+
+CREATE INDEX IF NOT EXISTS title ON helmet_auditory (title);
+CREATE INDEX IF NOT EXISTS date ON helmet_auditory (date);
+
+CREATE TABLE IF NOT EXISTS helmet_auditory_evidences (
+  id INTEGER PRIMARY KEY NOT NULL,
+  helmet_auditory_id INTEGER NOT NULL,
+  dir TEXT NOT NULL,
+  creation_date TEXT NOT NULL,
+  uploaded INTEGER,
+  FOREIGN KEY (helmet_auditory_id) REFERENCES helmet_auditory(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS helmet_auditory_count (
+  id INTEGER PRIMARY KEY NOT NULL,
+  helmet_auditory_id INTEGER NOT NULL,
+  origin INTEGER NOT NULL,
+  destination INTEGER NOT NULL,
+  users_count INTEGER NOT NULL,
+  helmets_count INTEGER NOT NULL,
+  creation_date TEXT NOT NULL,
+  update_date TEXT NOT NULL,
+  FOREIGN KEY (helmet_auditory_id) REFERENCES helmet_auditory(id) ON DELETE CASCADE
+);
 `;
 
 const SECTION_ROWS: Array<Array<any>> = [

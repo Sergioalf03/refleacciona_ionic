@@ -21,7 +21,7 @@
 
      <ion-item *ngFor="let count of counts" class="mt-2 txtInput ion-no-padding ion-no-margin">
       <ion-label>
-        <h2 class="text-start ps-2">{{ count.originText }} <ion-icon name="arrow-forward"></ion-icon> {{ count.destinationText }} <span class="mx-1"></span> Usuarios: {{ count.userCount }} <span class="mx-1"></span> Cascos: {{ count.helmetCount }}</h2>
+        <h2 class="text-start ps-2">{{ count.originText }} <ion-icon name="arrow-forward"></ion-icon> {{ count.destinationText }} <span class="mx-1"></span> {{ count.users_count }} Usuarios, <span class="mx-1"></span> {{ count.helmets_count }} Cascos </h2>
       </ion-label>
 
       <ion-button (click)="presentActionSheetOptions(count)" slot="end" size="small">

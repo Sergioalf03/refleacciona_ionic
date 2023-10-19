@@ -1,17 +1,15 @@
 import { Injectable } from '@angular/core';
-import { HttpRequestService } from '../core/controllers/http-request.service';
-import { DatabaseService } from '../core/controllers/database.service';
-import { BehaviorSubject, take } from 'rxjs';
-import { PhotoService } from '../core/controllers/photo.service';
 import { SessionService } from '../core/controllers/session.service';
+import { PhotoService } from '../core/controllers/photo.service';
+import { DatabaseService } from '../core/controllers/database.service';
+import { HttpRequestService } from '../core/controllers/http-request.service';
 import { DATABASE_WAITING_MESSAGE } from '../core/constants/message-code';
-
-const BASE_URI = '/auditory';
+import { BehaviorSubject, take } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuditoryService {
+export class HelmetAuditoryService {
 
   constructor(
     private httpService: HttpRequestService,
@@ -20,38 +18,18 @@ export class AuditoryService {
     private sessionService: SessionService,
   ) { }
 
-  getRemoteList() {
-    return this.httpService
-      .get(`${BASE_URI}/list`)
-  }
-
-  getRemoteDetail(id: string) {
-    return this.httpService
-      .get(`${BASE_URI}/detail/${id}`);
-  }
-
-  downloadPdf(id: string) {
-    return this.httpService
-      .downloadGet(`${BASE_URI}/pdf/${id}`);
-  }
-
-  upload(data: any) {
-    return this.httpService.post(`${BASE_URI}/import`, data);
-  }
-
-  // local database
   localSave(data: any) {
     const now = new Date().toISOString();
     const userId = this.sessionService.userId;
     return this.databaseService.executeQuery(`
-      INSERT INTO auditories (title, date, time, description, lat, lng, status, creation_date, update_date, user_id)
+      INSERT INTO helmet_auditory (title, date, time, description, lat, lng, status, creation_date, update_date, user_id)
       VALUES ("${data.title}", "${data.date}", "${data.time}", "${data.description}", "${data.lat}", "${data.lng}", 1, "${now}", "${now}", ${userId});
     `);
   }
 
   getLastSavedId() {
     const userId = this.sessionService.userId;
-    return this.databaseService.executeQuery(`SELECT MAX(id) AS id FROM auditories WHERE status = 1 AND user_id = ${userId} LIMIT 1;`);
+    return this.databaseService.executeQuery(`SELECT MAX(id) AS id FROM helmet_auditory WHERE status = 1 AND user_id = ${userId} LIMIT 1;`);
   }
 
   getLocalList() {
@@ -59,12 +37,12 @@ export class AuditoryService {
     const result = new BehaviorSubject<any>(DATABASE_WAITING_MESSAGE);
 
     this.databaseService
-      .executeQuery(`SELECT id, title, date, status FROM auditories WHERE (status = 1 OR status = 2) AND user_id = ${userId};`)
+      .executeQuery(`SELECT id, title, date, status FROM helmet_auditory ;`)
       .subscribe({
         next: res => {
+          console.log(res)
           if (res !== DATABASE_WAITING_MESSAGE) {
             const auditoryResult: any[] = [];
-
             if (res.values.length > 0) {
               res.values.forEach((auditory: any, i: number, arr: any[]) => {
                 setTimeout(() => {
@@ -124,26 +102,31 @@ export class AuditoryService {
   }
 
   getLocalForm(id: string) {
-    return this.databaseService.executeQuery(`SELECT * FROM auditories WHERE id = ${id} AND (status = 1 OR status = 2);`);
+    return this.databaseService.executeQuery(`SELECT * FROM helmet_auditory WHERE id = ${id} AND (status = 1 OR status = 2);`);
   }
 
   getUpdateData(id: string) {
-    return this.databaseService.executeQuery(`SELECT * FROM auditories WHERE id = ${id};`);
+    return this.databaseService.executeQuery(`SELECT * FROM helmet_auditory WHERE id = ${id};`);
   }
 
   updateLocal(id: string, data: any) {
     const now = new Date().toISOString();
-    return this.databaseService.executeQuery(`UPDATE auditories SET title = "${data.title}", date = "${data.date}", time = "${data.time}", description = "${data.description}", lat = "${data.lat}", lng = "${data.lng}", update_date = "${now}" WHERE id = ${id};`);
+    return this.databaseService.executeQuery(`UPDATE helmet_auditory SET title = "${data.title}", date = "${data.date}", time = "${data.time}", description = "${data.description}", lat = "${data.lat}", lng = "${data.lng}", update_date = "${now}" WHERE id = ${id};`);
+  }
+
+  finishAuditory(id: string) {
+    const now = new Date().toISOString();
+    return this.databaseService.executeQuery(`UPDATE helmet_auditory SET status = 2, update_date = "${now}" WHERE id = ${id};`);
   }
 
   updateExternalId(localId: string, externalId: string) {
     const now = new Date().toISOString();
-    return this.databaseService.executeQuery(`UPDATE auditories SET remote_id = ${externalId}, update_date = "${now}" WHERE id = ${localId};`);
+    return this.databaseService.executeQuery(`UPDATE helmet_auditory SET remote_id = ${externalId}, update_date = "${now}" WHERE id = ${localId};`);
   }
 
   closeLocal(id: string, note: string) {
     const now = new Date().toISOString();
-    return this.databaseService.executeQuery(`UPDATE auditories SET close_note = "${note}", status = 2, update_date = "${now}" WHERE id = ${id};`);
+    return this.databaseService.executeQuery(`UPDATE helmet_auditory SET close_note = "${note}", status = 2, update_date = "${now}" WHERE id = ${id};`);
   }
 
   deleteLocal(id: string) {
@@ -183,12 +166,12 @@ export class AuditoryService {
 
                                         setTimeout(() => {
                                           this.databaseService.executeQuery(`
-                                            DELETE FROM auditories
+                                            DELETE FROM helmet_auditory
                                             WHERE id = ${id};
                                           `)
-                                          .subscribe({
-                                            next: () => result.next('deleted')
-                                          });
+                                            .subscribe({
+                                              next: () => result.next('deleted')
+                                            });
                                         }, 20);
 
                                       }
@@ -206,17 +189,17 @@ export class AuditoryService {
         }
       });
 
-      return result.pipe(take(2));
+    return result.pipe(take(2));
   }
 
   finalDelete(id: string) {
     return this.databaseService
-      .executeQuery(`DELETE FROM auditories WHERE id = ${id};`);
+      .executeQuery(`DELETE FROM helmet_auditory WHERE id = ${id};`);
   }
 
   getFinalNotes(auditoryId: string) {
     return this.databaseService
-      .executeQuery(`SELECT close_note FROM auditories WHERE id = ${auditoryId}`);
+      .executeQuery(`SELECT close_note FROM helmet_auditory WHERE id = ${auditoryId}`);
   }
 
 }
