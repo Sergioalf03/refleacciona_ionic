@@ -15,6 +15,7 @@ export const URI_AUDITORY_DETAIL = (id: string) => `auditory-detail/${id}`;
 
 export const URI_HELMET_LIST = (type: string) => `helmet-collecion-list/${type}`;
 export const URI_HELMET_FORM = (id: string) => `helmet-collecion-form/${id}`;
+export const URI_HELMET_DETAIL = (id: string) => `helmet-auditory-detail/${id}`;
 export const URI_HELMET_COLLECION_DETAIL = (from: string, auditoryId: string) => `helmet-collection-detail/${from}/${auditoryId}`;
 export const URI_HELMET_COUNT_FORM = (id: string) => `helmet-count-form/${id}`;
 export const URI_HELMET_COUNT_LIST = (id: string) => `helmet-count-list/${id}`;

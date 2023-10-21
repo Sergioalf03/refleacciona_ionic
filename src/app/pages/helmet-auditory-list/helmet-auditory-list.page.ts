@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ActionSheetController, Platform } from '@ionic/angular';
 import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
-import { URI_BELT_FORM, URI_HELMET_COLLECION_DETAIL, URI_HELMET_FORM, URI_HOME } from 'src/app/core/constants/uris';
+import { URI_BELT_FORM, URI_HELMET_COLLECION_DETAIL, URI_HELMET_DETAIL, URI_HELMET_FORM, URI_HOME } from 'src/app/core/constants/uris';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
@@ -11,6 +11,8 @@ import { HelmetAuditoryEvidenceService } from 'src/app/services/helmet-auditory-
 import { HelmetAuditoryService } from 'src/app/services/helmet-auditory.service';
 import { HelmetCollectionService } from 'src/app/services/helmet-collection.service';
 import { Capacitor } from '@capacitor/core';
+import { Directory, Filesystem } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
 
 @Component({
   selector: 'app-helmet-auditory-list',
@@ -129,7 +131,6 @@ export class HelmetAuditoryListPage implements OnInit {
                             users_count: c.users_count,
                             helmets_count: c.helmets_count,
                             creation_date: c.creation_date,
-                            update_date: c.update_date,
                           }));
 
                           const data = {
@@ -139,25 +140,25 @@ export class HelmetAuditoryListPage implements OnInit {
 
                           console.log(data);
 
-                          // this.auditoryService
-                          //   .upload(data)
-                          //   .subscribe({
-                          //     next: res => {
-                          //       const externalId = res.data.id;
-                          //       this.auditoryService
-                          //         .updateExternalId(id, externalId)
-                          //         .subscribe({
-                          //           next: updated => {
-                          //             if (updated !== DATABASE_WAITING_MESSAGE) {
-                          //               setTimeout(() => {
-                          //                 this.uploadAuditoryPhotos(id, externalId);
-                          //               }, 20);
-                          //             }
-                          //           }
-                          //         })
-                          //     },
-                          //     error: err => this.responseService.onError(err, 'No se pudo subir la auditoría'),
-                          //   })
+                          this.auditoryService
+                            .upload(data)
+                            .subscribe({
+                              next: res => {
+                                const externalId = res.data.id;
+                                this.auditoryService
+                                  .updateExternalId(id, externalId)
+                                  .subscribe({
+                                    next: updated => {
+                                      if (updated !== DATABASE_WAITING_MESSAGE) {
+                                        setTimeout(() => {
+                                          this.uploadAuditoryPhotos(id, externalId);
+                                        }, 20);
+                                      }
+                                    }
+                                  })
+                              },
+                              error: err => this.responseService.onError(err, 'No se pudo subir la auditoría'),
+                            })
                         }
                       }
                     })
@@ -254,76 +255,95 @@ export class HelmetAuditoryListPage implements OnInit {
     this.router.navigateByUrl(URI_HELMET_COLLECION_DETAIL('0', id));
   }
 
-  // private onDownloadPdf(id: string, title: string) {
-  //   this.confirmDialogService
-  //     .presentAlert('¿Desea descargar la auditoría?', () => {
-  //       this.loadingService.showLoading();
-  //       this.auditoryService
-  //         .downloadPdf(id)
-  //         .subscribe({
-  //           next: res => {
-  //             const blob = res;
-  //             const find = ' ';
-  //             const re = new RegExp(find, 'g');
-  //             const filePath = `${title.replace(re, '-')}.pdf`;
+  private onRemoteDetail(id: string) {
+    this.router.navigateByUrl(URI_HELMET_DETAIL(id));
+  }
 
-  //             const fileReader = new FileReader();
+  private onDownloadPdf(id: string, title: string) {
+    this.confirmDialogService
+      .presentAlert('¿Desea descargar el levantamiento?', () => {
+        this.loadingService.showLoading();
+        this.auditoryService
+          .downloadPdf(id)
+          .subscribe({
+            next: res => {
+              // const blob = res;
+              // const filename = `data.pdf`;
+              // if ((window.navigator as any).msSaveOrOpenBlob) {
+              //   (window.navigator as any).msSaveBlob(blob, filename);
+              // } else {
+              //   const downloadLink = window.document.createElement('a');
+              //   const contentTypeHeader = 'application/pdf';
+              //   downloadLink.href = window.URL.createObjectURL(
+              //     new Blob([blob], { type: contentTypeHeader })
+              //   );
+              //   downloadLink.download = filename;
+              //   document.body.appendChild(downloadLink);
+              //   downloadLink.click();
+              //   document.body.removeChild(downloadLink);
+              // }
+              const blob = res;
+              const find = ' ';
+              const re = new RegExp(find, 'g');
+              const filePath = `${title.replace(re, '-')}.pdf`;
 
-  //             fileReader.readAsDataURL(blob);
+              const fileReader = new FileReader();
 
-  //             fileReader.onloadend = async () => {
-  //               const base64Data: any = fileReader.result;
+              fileReader.readAsDataURL(blob);
 
-  //               Filesystem.writeFile({
-  //                 path: filePath,
-  //                 data: base64Data,
-  //                 directory: Directory.Cache,
-  //               }).then(() => {
-  //                 return Filesystem.getUri({
-  //                   directory: Directory.Cache,
-  //                   path: filePath
-  //                 });
-  //               })
-  //                 .then((uriResult) => {
-  //                   return Share.share({
-  //                     title: filePath,
-  //                     text: filePath,
-  //                     url: uriResult.uri,
-  //                   });
-  //                 }).then(() => {
-  //                   this.loadingService.dismissLoading();
-  //                 })
-  //                 .catch(err => {
-  //                   console.log(err)
-  //                   this.loadingService.dismissLoading();
-  //                 });
-  //             }
-  //           },
-  //           error: err => this.responseService.onError(err, 'No se pudo descargar la auditoría')
-  //         })
-  //     })
-  // }
+              fileReader.onloadend = async () => {
+                const base64Data: any = fileReader.result;
+
+                Filesystem.writeFile({
+                  path: filePath,
+                  data: base64Data,
+                  directory: Directory.Cache,
+                }).then(() => {
+                  return Filesystem.getUri({
+                    directory: Directory.Cache,
+                    path: filePath
+                  });
+                })
+                  .then((uriResult) => {
+                    return Share.share({
+                      title: filePath,
+                      text: filePath,
+                      url: uriResult.uri,
+                    });
+                  }).then(() => {
+                    this.loadingService.dismissLoading();
+                  })
+                  .catch(err => {
+                    console.log(err)
+                    this.loadingService.dismissLoading();
+                  });
+              }
+            },
+            error: err => this.responseService.onError(err, 'No se pudo descargar la auditoría')
+          })
+      })
+  }
 
   async presentActionSheetOptions(auditory: any) {
 
-    const buttons = // this.sendedList ?
-  //     [
-  //       {
-  //         text: 'Ver',
-  //         handler: () => this.onDetail(auditory.id),
-  //       },
-  //       {
-  //         text: 'Descargar',
-  //         handler: () => this.onDownloadPdf(auditory.id, auditory.title),
-  //       },
-  //       {
-  //         text: 'Cerrar',
-  //         role: 'cancel',
-  //         data: {
-  //           action: 'cancel',
-  //         },
-  //       },
-  //     ] :
+    const buttons = this.sendedList ?
+      [
+        {
+          text: 'Ver',
+          handler: () => this.onRemoteDetail(auditory.id),
+        },
+        {
+          text: 'Descargar',
+          handler: () => this.onDownloadPdf(auditory.id, auditory.title),
+        },
+        {
+          text: 'Cerrar',
+          role: 'cancel',
+          data: {
+            action: 'cancel',
+          },
+        },
+      ] :
       auditory.status === 1 ?
         [
           {
@@ -409,25 +429,25 @@ export class HelmetAuditoryListPage implements OnInit {
   }
 
   fetchRemoteList() {
-  //   this.sendedList = true;
-  //   this.loadingService.showLoading();
+    this.sendedList = true;
+    this.loadingService.showLoading();
 
-  //   this.auditoryService
-  //     .getRemoteList()
-  //     .subscribe({
-  //       next: res => {
-  //         this.sendedList = true;
-  //         this.auditories = res.data.map((a: any) => ({
-  //           ...a,
-  //           statusWord: a.status === 1 ? 'En progreso' : 'Terminada',
-  //         }));
-  //         this.loadingService.dismissLoading();
-  //       },
-  //       error: err => {
-  //         this.responseService.onError(err, 'No se pudieron recuperar las auditorías');
-  //         this.fetchLocalList();
-  //       },
-  //     })
+    this.auditoryService
+      .getRemoteList()
+      .subscribe({
+        next: res => {
+          this.sendedList = true;
+          this.auditories = res.data.map((a: any) => ({
+            ...a,
+            statusWord: a.status === 1 ? 'En progreso' : 'Terminada',
+          }));
+          this.loadingService.dismissLoading();
+        },
+        error: err => {
+          this.responseService.onError(err, 'No se pudieron recuperar las auditorías');
+          this.fetchLocalList();
+        },
+      })
   }
 
 }

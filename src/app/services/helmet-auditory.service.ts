@@ -6,6 +6,8 @@ import { HttpRequestService } from '../core/controllers/http-request.service';
 import { DATABASE_WAITING_MESSAGE } from '../core/constants/message-code';
 import { BehaviorSubject, take } from 'rxjs';
 
+const BASE_URI = '/helmet-auditory';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -200,6 +202,27 @@ export class HelmetAuditoryService {
   getFinalNotes(auditoryId: string) {
     return this.databaseService
       .executeQuery(`SELECT close_note FROM helmet_auditory WHERE id = ${auditoryId}`);
+  }
+
+  // Remote
+
+  getRemoteList() {
+    return this.httpService
+      .get(`${BASE_URI}/list`)
+  }
+
+  getRemoteDetail(id: string) {
+    return this.httpService
+      .get(`${BASE_URI}/detail/${id}`);
+  }
+
+  downloadPdf(id: string) {
+    return this.httpService
+      .downloadGet(`${BASE_URI}/pdf/${id}`);
+  }
+
+  upload(data: any) {
+    return this.httpService.post(`${BASE_URI}/import`, data);
   }
 
 }
