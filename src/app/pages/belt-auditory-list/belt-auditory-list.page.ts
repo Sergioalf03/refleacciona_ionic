@@ -2,23 +2,23 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ActionSheetController, Platform } from '@ionic/angular';
 import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
-import { URI_HELMET_COLLECION_DETAIL, URI_HELMET_DETAIL, URI_HELMET_FORM, URI_HOME } from 'src/app/core/constants/uris';
+import { URI_BELT_COLLECION_DETAIL, URI_BELT_DETAIL, URI_BELT_FORM, URI_HOME } from 'src/app/core/constants/uris';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { PhotoService } from 'src/app/core/controllers/photo.service';
-import { HelmetAuditoryEvidenceService } from 'src/app/services/helmet-auditory-evidence.service';
-import { HelmetAuditoryService } from 'src/app/services/helmet-auditory.service';
-import { HelmetCollectionService } from 'src/app/services/helmet-collection.service';
+import { BeltAuditoryEvidenceService } from 'src/app/services/belt-auditory-evidence.service';
+import { BeltAuditoryService } from 'src/app/services/belt-auditory.service';
+import { BeltCollectionService } from 'src/app/services/belt-collection.service';
 import { Capacitor } from '@capacitor/core';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 
 @Component({
-  selector: 'app-helmet-auditory-list',
-  templateUrl: './helmet-auditory-list.page.html',
+  selector: 'app-belt-auditory-list',
+  templateUrl: './belt-auditory-list.page.html',
 })
-export class HelmetAuditoryListPage implements OnInit {
+export class BeltAuditoryListPage implements OnInit {
 
   auditories: any[] = [];
   sendedList = false;
@@ -30,12 +30,12 @@ export class HelmetAuditoryListPage implements OnInit {
   }
 
   backUri = URI_HOME();
-  formUri = URI_HELMET_FORM('00');
+  formUri = URI_BELT_FORM('00');
 
   constructor(
-    private auditoryService: HelmetAuditoryService,
-    private auditoryEvidenceService: HelmetAuditoryEvidenceService,
-    private helmetCollectionService: HelmetCollectionService,
+    private auditoryService: BeltAuditoryService,
+    private auditoryEvidenceService: BeltAuditoryEvidenceService,
+    private helmetCollectionService: BeltCollectionService,
     // private answerService: AnswerService,
     // private answerEvidenceService: AnswerEvidenceService,
     private photoService: PhotoService,
@@ -84,11 +84,11 @@ export class HelmetAuditoryListPage implements OnInit {
   }
 
   private onEdit(id: string) {
-    this.router.navigateByUrl(URI_HELMET_FORM(id));
+    this.router.navigateByUrl(URI_BELT_FORM(id));
   }
 
   onNewAuditory() {
-    this.router.navigateByUrl(URI_HELMET_FORM('00'));
+    this.router.navigateByUrl(URI_BELT_FORM('00'));
   }
 
   private onUpload(id: string) {
@@ -252,11 +252,11 @@ export class HelmetAuditoryListPage implements OnInit {
   }
 
   private onDetail(id: string) {
-    this.router.navigateByUrl(URI_HELMET_COLLECION_DETAIL('0', id));
+    this.router.navigateByUrl(URI_BELT_COLLECION_DETAIL('0', id));
   }
 
   private onRemoteDetail(id: string) {
-    this.router.navigateByUrl(URI_HELMET_DETAIL(id));
+    this.router.navigateByUrl(URI_BELT_DETAIL(id));
   }
 
   private onDownloadPdf(id: string, title: string) {

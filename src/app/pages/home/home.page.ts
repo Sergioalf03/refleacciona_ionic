@@ -6,9 +6,10 @@ import { DatabaseService } from 'src/app/core/controllers/database.service';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { VersionService } from 'src/app/services/version.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
-import { URI_AUDITORY_FORM, URI_AUDITORY_LIST, URI_BELT_FORM, URI_HELMET_FORM, URI_HELMET_LIST, URI_LOGIN, URI_PROFILE } from 'src/app/core/constants/uris';
+import { URI_AUDITORY_FORM, URI_AUDITORY_LIST, URI_BELT_FORM, URI_BELT_LIST, URI_HELMET_FORM, URI_HELMET_LIST, URI_LOGIN, URI_PROFILE } from 'src/app/core/constants/uris';
 import { Platform } from '@ionic/angular';
 import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
+import { createSchema } from 'src/app/utils/database.util';
 // import { Camera } from '@capacitor/camera';
 // import { Filesystem } from '@capacitor/filesystem';
 // import { Geolocation } from '@capacitor/geolocation';
@@ -39,6 +40,7 @@ export class HomePage {
     private platform: Platform,
     // private androidPermissions: AndroidPermissions,
   ) {
+
     this.platform
       .backButton
       .subscribeWithPriority(9999, () => {
@@ -68,6 +70,10 @@ export class HomePage {
     if (!this.versionService.checked) {
       this.onFetchUpdate(false);
     }
+
+    // this.databaseService.executeQuery(createSchema).subscribe({
+    //   next: (rr: any) => console.log(rr),
+    // });
   }
 
   private importQuestions(questions: any[], sectionsQuery: string, version: number) {
@@ -136,6 +142,10 @@ export class HomePage {
     this.router.navigateByUrl(URI_AUDITORY_FORM('0'));
   }
 
+  onAuditoryList() {
+    this.router.navigateByUrl(URI_AUDITORY_LIST('local'));
+  }
+
   onNewHelmet() {
     this.router.navigateByUrl(URI_HELMET_FORM('0'));
   }
@@ -148,8 +158,8 @@ export class HomePage {
     this.router.navigateByUrl(URI_BELT_FORM('0'));
   }
 
-  onAuditoryList() {
-    this.router.navigateByUrl(URI_AUDITORY_LIST('local'));
+  onBeltList() {
+    this.router.navigateByUrl(URI_BELT_LIST('local'));
   }
 
   onOpenUser() {
@@ -166,53 +176,53 @@ export class HomePage {
           .checkLastVersion()
           .subscribe({
             next: res => {
-              const localVersionLowerThanRemote = (localVersion === 'new' ? 1 : +localVersion.values[0].number) < +res.data.number;
-              if (localVersionLowerThanRemote) {
-                this.confirmDialogService.presentAlert('Hay una nueva versión del formulario de auditorías. ¿Desea actualizar?', () => {
-                  this.versionService
-                    .getNewVersion()
-                    .subscribe({
-                      next: newVersionRes => {
-                        let query = '';
-                        let count = 0;
+              // const localVersionLowerThanRemote = (localVersion === 'new' ? 1 : +localVersion.values[0].number) < +res.data.number;
+              // if (localVersionLowerThanRemote) {
+              //   this.confirmDialogService.presentAlert('Hay una nueva versión del formulario de auditorías. ¿Desea actualizar?', () => {
+              //     this.versionService
+              //       .getNewVersion()
+              //       .subscribe({
+              //         next: newVersionRes => {
+              //           let query = '';
+              //           let count = 0;
 
-                        if (newVersionRes.data.sections.length > 0) {
-                          newVersionRes.data.sections.forEach((s: any, i: number, arr: any[]) => {
-                            setTimeout(() => {
-                              this.databaseService
-                                .executeQuery(`SELECT * FROM sections WHERE uid = "${s.uid}"`)
-                                .subscribe({
-                                  next: questionExists => {
-                                    if (questionExists !== DATABASE_WAITING_MESSAGE) {
-                                      if (questionExists.values.length === 0) {
-                                        query += `INSERT INTO sections (uid, name, subname, page, indx, status) VALUES ("${s.uid}", "${s.name}", "${s.subname}", ${s.page}, ${s.indx}, ${s.status}); `
-                                      } else {
-                                        query += `UPDATE sections SET uid = "${s.uid}", name = "${s.name}", subname = "${s.subname}", page = ${s.page}, indx = ${s.indx}, status = ${s.status} WHERE uid = "${s.uid}"; `
-                                      }
+              //           if (newVersionRes.data.sections.length > 0) {
+              //             newVersionRes.data.sections.forEach((s: any, i: number, arr: any[]) => {
+              //               setTimeout(() => {
+              //                 this.databaseService
+              //                   .executeQuery(`SELECT * FROM sections WHERE uid = "${s.uid}"`)
+              //                   .subscribe({
+              //                     next: questionExists => {
+              //                       if (questionExists !== DATABASE_WAITING_MESSAGE) {
+              //                         if (questionExists.values.length === 0) {
+              //                           query += `INSERT INTO sections (uid, name, subname, page, indx, status) VALUES ("${s.uid}", "${s.name}", "${s.subname}", ${s.page}, ${s.indx}, ${s.status}); `
+              //                         } else {
+              //                           query += `UPDATE sections SET uid = "${s.uid}", name = "${s.name}", subname = "${s.subname}", page = ${s.page}, indx = ${s.indx}, status = ${s.status} WHERE uid = "${s.uid}"; `
+              //                         }
 
-                                      count++;
-                                      if (count === arr.length) {
-                                        this.importQuestions(newVersionRes.data.questions, query, +res.data.number);
-                                      }
-                                    }
-                                  }
-                                })
-                            }, 50 * i);
-                          });
-                        } else {
-                          this.importQuestions(newVersionRes.data.questions, query, +res.data.number);
-                        }
-                      },
-                      error: err => this.httpResponseService.onError(err, 'No se pudo recuperar la actualización'),
-                    })
-                });
-              } else {
-                if (showToast) {
-                  this.httpResponseService.onSuccess('La versión más reciente ya está instalada')
-                } else {
-                  this.loadingService.dismissLoading();
-                }
-              }
+              //                         count++;
+              //                         if (count === arr.length) {
+              //                           this.importQuestions(newVersionRes.data.questions, query, +res.data.number);
+              //                         }
+              //                       }
+              //                     }
+              //                   })
+              //               }, 50 * i);
+              //             });
+              //           } else {
+              //             this.importQuestions(newVersionRes.data.questions, query, +res.data.number);
+              //           }
+              //         },
+              //         error: err => this.httpResponseService.onError(err, 'No se pudo recuperar la actualización'),
+              //       })
+              //   });
+              // } else {
+              //   if (showToast) {
+              //     this.httpResponseService.onSuccess('La versión más reciente ya está instalada')
+              //   } else {
+              //     this.loadingService.dismissLoading();
+              //   }
+              // }
             },
             error: err => this.httpResponseService.onError(err, 'No se pudo recuperar'),
           });

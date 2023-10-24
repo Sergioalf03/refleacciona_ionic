@@ -48,50 +48,22 @@ export class HelmetAuditoryService {
             if (res.values.length > 0) {
               res.values.forEach((auditory: any, i: number, arr: any[]) => {
                 setTimeout(() => {
-                  this.databaseService
-                    .executeQuery(`SELECT questions.section_id FROM answers JOIN questions ON questions.id = answers.question_id WHERE answers.auditory_id = ${auditory.id} ORDER BY answers.id DESC LIMIT 1`)
-                    .subscribe({
-                      next: lastAnswer => {
-                        if (lastAnswer !== DATABASE_WAITING_MESSAGE) {
-                          setTimeout(() => {
-                            this.databaseService
-                              .executeQuery(`SELECT count(*) as answers FROM answers WHERE auditory_id = ${auditory.id};`)
-                              .subscribe({
-                                next: answerCount => {
-                                  if (answerCount !== DATABASE_WAITING_MESSAGE) {
-                                    setTimeout(() => {
-                                      this.databaseService
-                                        .executeQuery('SELECT count(*) as questions FROM questions WHERE status = 1')
-                                        .subscribe({
-                                          next: questionCount => {
-                                            if (questionCount !== DATABASE_WAITING_MESSAGE) {
 
-                                              auditoryResult.push({
-                                                id: auditory.id,
-                                                title: auditory.title,
-                                                date: auditory.date,
-                                                status: auditory.status,
-                                                lastIndex: lastAnswer.values[0] ? lastAnswer.values[0].section_id : 1,
-                                                answersCompleted: answerCount.values[0].answers === questionCount.values[0].questions,
-                                              });
 
-                                              if (auditoryResult.length === arr.length) {
-                                                result.next(auditoryResult);
-                                              }
-                                            }
-                                          }
-                                        });
-                                    }, (60 * i) - 20)
+                  auditoryResult.push({
+                    id: auditory.id,
+                    title: auditory.title,
+                    date: auditory.date,
+                    status: auditory.status,
+                  });
 
-                                  }
-                                }
-                              })
-                          }, (60 * i) - 40)
-                        }
-                      }
-                    });
-                }, 60 * i);
+                  if (auditoryResult.length === arr.length) {
+                    result.next(auditoryResult);
+                  }
+
+                })
               });
+
             } else {
               result.next(auditoryResult);
             }

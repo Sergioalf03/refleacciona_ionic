@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { URI_BELT_COUNT_FORM, URI_BELT_COUNT_LIST, URI_BELT_FORM } from 'src/app/core/constants/uris';
+import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
+import { URI_BELT_COUNT_FORM, URI_BELT_COUNT_LIST, URI_BELT_FORM, URI_BELT_LIST } from 'src/app/core/constants/uris';
+import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
+import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
+import { LoadingService } from 'src/app/core/controllers/loading.service';
+import { BeltAuditoryService } from 'src/app/services/belt-auditory.service';
 import { BeltCollectionService } from 'src/app/services/belt-collection.service';
-import { HelmetCollectionService } from 'src/app/services/helmet-collection.service';
 
 @Component({
   selector: 'app-belt-collection-data',
@@ -18,6 +22,10 @@ export class BeltCollectionDataPage implements OnInit {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private beltCollectionService: BeltCollectionService,
+    private beltAuditoryService: BeltAuditoryService,
+    private responseService: HttpResponseService,
+    private confirmDialogService: ConfirmDialogService,
+    private loadingService: LoadingService,
   ) { }
 
   ngOnInit() {
@@ -29,10 +37,21 @@ export class BeltCollectionDataPage implements OnInit {
       .subscribe({
         next: paramMap => {
           this.auditoryId = paramMap.get('id') || '0';
+
+          this.beltCollectionService
+            .getCount(this.auditoryId)
+            .subscribe({
+              next: res => {
+                if (res !== DATABASE_WAITING_MESSAGE) {
+                  this.registrationCount = res.values[0].total;
+                }
+              },
+              error: err => {
+                this.responseService.onError(err, 'No se pudo guardar el conteo');
+              }
+            });
         }
       });
-
-    this.registrationCount = this.beltCollectionService.list.length;
   }
 
   openCountForm() {
@@ -45,6 +64,26 @@ export class BeltCollectionDataPage implements OnInit {
 
   onReturn() {
     this.router.navigateByUrl(URI_BELT_FORM(this.auditoryId));
+  }
+
+  onFinish() {
+    this.confirmDialogService
+      .presentAlert('Desea terminar el levantamiento', () => {
+        this.loadingService.showLoading();
+        this.beltAuditoryService
+          .finishAuditory(this.auditoryId)
+          .subscribe({
+            next: (updateRes) => {
+              if (updateRes !== DATABASE_WAITING_MESSAGE) {
+                this.loadingService.dismissLoading();
+                this.responseService.onSuccessAndRedirect(URI_BELT_LIST('local'), 'Levantamiento actualizado');
+              }
+            },
+            error: err => {
+              this.responseService.onError(err, 'No se pudo actualizar')
+            },
+          })
+      })
   }
 
 }

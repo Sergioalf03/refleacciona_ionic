@@ -1,25 +1,27 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
 
-import { HelmetAuditoryListPage } from './helmet-auditory-list.page';
+import { IonicModule } from '@ionic/angular';
+import { BeltCountListPage } from './belt-count-list.page';
 import { RouterModule, Routes } from '@angular/router';
 import { HeaderButtonsModule } from 'src/app/components/header-buttons/header-buttons.module';
 
 const routes: Routes = [
   {
     path: '',
-    component: HelmetAuditoryListPage
+    component: BeltCountListPage
   }
 ];
 
 @NgModule({
   imports: [
     CommonModule,
+    FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
     HeaderButtonsModule,
   ],
-  declarations: [HelmetAuditoryListPage]
+  declarations: [BeltCountListPage]
 })
-export class HelmetAuditoryListPageModule {}
+export class BeltCountListPageModule {}

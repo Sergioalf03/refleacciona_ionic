@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './core/guards/auth.guard';
 import { AutoLoginGuard } from './core/guards/auto-login.guard';
-import { URI_AUDITORY_DETAIL, URI_AUDITORY_FINISH_FORM, URI_AUDITORY_FORM, URI_AUDITORY_LIST, URI_BELT_COLLECION_DETAIL, URI_BELT_COUNT_FORM, URI_BELT_FORM, URI_EMAIL_CONFIRMATION, URI_HELMET_COLLECION_DETAIL, URI_HELMET_COUNT_FORM, URI_HELMET_COUNT_LIST, URI_HELMET_DETAIL, URI_HELMET_FORM, URI_HELMET_LIST, URI_HOME, URI_LOGIN, URI_PROFILE, URI_QUESTION_FORM, URI_RECOVER_ACCOUNT, URI_REGISTER, URI_SEND_RECOVER_CODE } from './core/constants/uris';
+import { URI_AUDITORY_DETAIL, URI_AUDITORY_FINISH_FORM, URI_AUDITORY_FORM, URI_AUDITORY_LIST, URI_BELT_COLLECION_DETAIL, URI_BELT_COUNT_FORM, URI_BELT_COUNT_LIST, URI_BELT_DETAIL, URI_BELT_FORM, URI_BELT_LIST, URI_EMAIL_CONFIRMATION, URI_HELMET_COLLECION_DETAIL, URI_HELMET_COUNT_FORM, URI_HELMET_COUNT_LIST, URI_HELMET_DETAIL, URI_HELMET_FORM, URI_HELMET_LIST, URI_HOME, URI_LOGIN, URI_PROFILE, URI_QUESTION_FORM, URI_RECOVER_ACCOUNT, URI_REGISTER, URI_SEND_RECOVER_CODE } from './core/constants/uris';
 
 const routes: Routes = [
   {
@@ -81,6 +81,14 @@ const routes: Routes = [
     loadChildren: () => import('./pages/helmet-count-list/helmet-count-list.module').then( m => m.HelmetCountListPageModule)
   },
   {
+    path: URI_HELMET_LIST(':origin'),
+    loadChildren: () => import('./pages/helmet-auditory-list/helmet-auditory-list.module').then( m => m.HelmetAuditoryListPageModule)
+  },
+  {
+    path: URI_HELMET_DETAIL(':id'),
+    loadChildren: () => import('./pages/helmet-auditory-detail/helmet-auditory-detail.module').then( m => m.HelmetAuditoryDetailPageModule)
+  },
+  {
     path: URI_BELT_FORM(':id'),
     loadChildren: () => import('./pages/belt-initial-form/belt-initial-form.module').then( m => m.BeltInitialFormPageModule)
   },
@@ -93,16 +101,17 @@ const routes: Routes = [
     loadChildren: () => import('./pages/belt-count-form/belt-count-form.module').then( m => m.BeltCountFormPageModule)
   },
   {
-    path: URI_HELMET_LIST(':origin'),
-    loadChildren: () => import('./pages/helmet-auditory-list/helmet-auditory-list.module').then( m => m.HelmetAuditoryListPageModule)
+    path: URI_BELT_DETAIL(':id'),
+    loadChildren: () => import('./pages/belt-auditory-detail/belt-auditory-detail.module').then( m => m.BeltAuditoryDetailPageModule)
   },
   {
-    path: URI_HELMET_DETAIL(':id'),
-    loadChildren: () => import('./pages/helmet-auditory-detail/helmet-auditory-detail.module').then( m => m.HelmetAuditoryDetailPageModule)
+    path: URI_BELT_LIST(':origin'),
+    loadChildren: () => import('./pages/belt-auditory-list/belt-auditory-list.module').then( m => m.BeltAuditoryListPageModule)
   },
-
-
-
+  {
+    path: URI_BELT_COUNT_LIST(':id'),
+    loadChildren: () => import('./pages/belt-count-list/belt-count-list.module').then( m => m.BeltCountListPageModule)
+  },
 ];
 
 @NgModule({

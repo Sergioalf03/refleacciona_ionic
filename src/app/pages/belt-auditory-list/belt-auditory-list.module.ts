@@ -1,15 +1,15 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
 
-import { HelmetAuditoryListPage } from './helmet-auditory-list.page';
+import { IonicModule } from '@ionic/angular';
+import { BeltAuditoryListPage } from './belt-auditory-list.page';
 import { RouterModule, Routes } from '@angular/router';
 import { HeaderButtonsModule } from 'src/app/components/header-buttons/header-buttons.module';
 
 const routes: Routes = [
   {
     path: '',
-    component: HelmetAuditoryListPage
+    component: BeltAuditoryListPage
   }
 ];
 
@@ -20,6 +20,6 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     HeaderButtonsModule,
   ],
-  declarations: [HelmetAuditoryListPage]
+  declarations: [BeltAuditoryListPage]
 })
-export class HelmetAuditoryListPageModule {}
+export class BeltAuditoryListPageModule {}

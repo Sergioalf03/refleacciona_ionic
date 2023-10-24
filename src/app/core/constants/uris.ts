@@ -22,6 +22,7 @@ export const URI_HELMET_COUNT_LIST = (id: string) => `helmet-count-list/${id}`;
 
 export const URI_BELT_LIST = (type: string) => `belt-collecion-list/${type}`;
 export const URI_BELT_FORM = (id: string) => `belt-collecion-form/${id}`;
+export const URI_BELT_DETAIL = (id: string) => `belt-auditory-detail/${id}`;
 export const URI_BELT_COLLECION_DETAIL = (from: string, auditoryId: string) => `belt-collection-detail/${from}/${auditoryId}`;
 export const URI_BELT_COUNT_FORM = (id: string) => `belt-count-form/${id}`;
 export const URI_BELT_COUNT_LIST = (id: string) => `belt-count-list/${id}`;

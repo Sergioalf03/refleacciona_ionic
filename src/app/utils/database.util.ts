@@ -128,6 +128,50 @@ CREATE TABLE IF NOT EXISTS helmet_auditory_count (
   update_date TEXT NOT NULL,
   FOREIGN KEY (helmet_auditory_id) REFERENCES helmet_auditory(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS belt_auditory (
+  id INTEGER PRIMARY KEY NOT NULL,
+  user_id INTEGER NOT NULL,
+  title TEXT NOT NULL,
+  description TEXT,
+  close_note TEXT,
+  date TEXT NOT NULL,
+  time TEXT NOT NULL,
+  lat TEXT NOT NULL,
+  lng TEXT NOT NULL,
+  status INTEGER NOT NULL,
+  creation_date TEXT NOT NULL,
+  update_date TEXT NOT NULL,
+  remote_id INTEGER
+);
+
+CREATE INDEX IF NOT EXISTS title ON belt_auditory (title);
+CREATE INDEX IF NOT EXISTS date ON belt_auditory (date);
+
+CREATE TABLE IF NOT EXISTS belt_auditory_evidences (
+  id INTEGER PRIMARY KEY NOT NULL,
+  belt_auditory_id INTEGER NOT NULL,
+  dir TEXT NOT NULL,
+  creation_date TEXT NOT NULL,
+  uploaded INTEGER,
+  FOREIGN KEY (belt_auditory_id) REFERENCES belt_auditory(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS belt_auditory_count (
+  id INTEGER PRIMARY KEY NOT NULL,
+  belt_auditory_id INTEGER NOT NULL,
+  origin INTEGER NOT NULL,
+  destination INTEGER NOT NULL,
+  adults_count INTEGER NOT NULL,
+  belts_count INTEGER NOT NULL,
+  child_count INTEGER NOT NULL,
+  chairs_count INTEGER NOT NULL,
+  coopilot INTEGER NOT NULL,
+  overuse_count INTEGER NOT NULL,
+  creation_date TEXT NOT NULL,
+  update_date TEXT NOT NULL,
+  FOREIGN KEY (belt_auditory_id) REFERENCES belt_auditory(id) ON DELETE CASCADE
+);
 `;
 
 const SECTION_ROWS: Array<Array<any>> = [

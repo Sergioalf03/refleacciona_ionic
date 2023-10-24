@@ -46,7 +46,6 @@ export class HelmetInitialFormPage implements OnInit {
     private actionSheetCtrl: ActionSheetController,
     private loadingService: LoadingService,
     private sanitization: DomSanitizer,
-    private platform: Platform,
   ) { }
 
 

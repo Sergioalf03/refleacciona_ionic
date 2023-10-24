@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ActionSheetController, Platform } from '@ionic/angular';
+import { ActionSheetController, isPlatform } from '@ionic/angular';
 import { URI_BELT_COLLECION_DETAIL, URI_BELT_LIST, URI_HOME } from 'src/app/core/constants/uris';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
@@ -11,6 +11,10 @@ import { MapService } from 'src/app/core/controllers/map.service';
 import { PhotoService } from 'src/app/core/controllers/photo.service';
 import { ValidFormService } from 'src/app/core/controllers/valid-form.service';
 import { Geolocation } from '@capacitor/geolocation';
+import { BeltAuditoryService } from 'src/app/services/belt-auditory.service';
+import { BeltAuditoryEvidenceService } from 'src/app/services/belt-auditory-evidence.service';
+import { Capacitor } from '@capacitor/core';
+import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
 
 @Component({
   selector: 'app-belt-initial-form',
@@ -30,6 +34,8 @@ export class BeltInitialFormPage implements OnInit {
   ImageSrc: any[] = [];
 
   constructor(
+    private auditoryService: BeltAuditoryService,
+    private auditoryEvidenceService: BeltAuditoryEvidenceService,
     private router: Router,
     private route: ActivatedRoute,
     private validFormService: ValidFormService,
@@ -40,7 +46,6 @@ export class BeltInitialFormPage implements OnInit {
     private actionSheetCtrl: ActionSheetController,
     private loadingService: LoadingService,
     private sanitization: DomSanitizer,
-    private platform: Platform,
   ) { }
 
 
@@ -62,80 +67,81 @@ export class BeltInitialFormPage implements OnInit {
   }
 
   private async createAuditory(auditory: any) {
-    // this.auditoryService
-    //   .localSave(auditory)
-    //   .subscribe({
-    //     next: (save) => {
-    //       if (save !== 'waiting') {
+    this.auditoryService
+      .localSave(auditory)
+      .subscribe({
+        next: (save) => {
+          if (save !== DATABASE_WAITING_MESSAGE) {
 
-    //         this.auditoryService
-    //           .getLastSavedId()
-    //           .subscribe({
-    //             next: async res => {
-    //               if (res !== 'waiting') {
-    //                 this.hideMap = true;
-    //                 this.auditoryId = res.values[0].id;
+            this.auditoryService
+              .getLastSavedId()
+              .subscribe({
+                next: async res => {
+                  console.log(res)
+                  if (res !== DATABASE_WAITING_MESSAGE) {
+                    this.hideMap = true;
+                    this.auditoryId = res.values[0].id;
 
-    //                 let count = 0;
+                    let count = 0;
 
-    //                 if (this.ImageSrc.length > 0) {
-    //                   this.ImageSrc.forEach(async (src: any, index: number) => {
-    //                     setTimeout(async () => {
-    //                       const blob = await fetch(src.base64).then(r => r.blob());
+                    if (this.ImageSrc.length > 0) {
+                      this.ImageSrc.forEach(async (src: any, index: number) => {
+                        setTimeout(async () => {
+                          const blob = await fetch(src.base64).then(r => r.blob());
 
-    //                       this.photoService
-    //                         .saveLocalAuditoryEvidence(blob, this.auditoryId)
-    //                         .then(photoId => {
-    //                           this.auditoryEvidenceService
-    //                             .localSave({ auditoryId: this.auditoryId, dir: photoId })
-    //                             .subscribe({
-    //                               next: async photo => {
-    //                                 if (photo !== 'waiting') {
-    //                                   count++;
-    //                                   if (count === this.ImageSrc.length) {
-    //                                     window.location.reload();
-    this.auditoryId = '1';
-    this.responseService.onSuccessAndRedirect(URI_BELT_COLLECION_DETAIL('0', this.auditoryId), 'Levantamiento guardado');
-    //                                   }
-    //                                 }
-    //                               },
-    //                               error: err => {
-    //                                 this.responseService.onError(err, 'No se pudo guardar una imagen')
-    //                               },
-    //                             })
-    //                         })
-    //                         .catch();
-    //                     }, 100 * index);
-    //                   });
-    //                 } else {
-    //                   this.responseService.onSuccessAndRedirect(URI_BELT_COLLECION_DETAIL('0', this.auditoryId, `1`), 'Levantamiento guardado');
-    //                 }
-    //               }
+                          this.photoService
+                            .saveLocalAuditoryEvidence(blob, this.auditoryId)
+                            .then(photoId => {
+                              this.auditoryEvidenceService
+                                .localSave({ auditoryId: this.auditoryId, dir: photoId })
+                                .subscribe({
+                                  next: async photo => {
+                                    if (photo !== DATABASE_WAITING_MESSAGE) {
+                                      count++;
+                                      if (count === this.ImageSrc.length) {
+                                        window.location.reload();
+                                        this.auditoryId = '1';
+                                        this.responseService.onSuccessAndRedirect(URI_BELT_COLLECION_DETAIL('0', this.auditoryId), 'Levantamiento guardado');
+                                      }
+                                    }
+                                  },
+                                  error: err => {
+                                    this.responseService.onError(err, 'No se pudo guardar una imagen')
+                                  },
+                                })
+                            })
+                            .catch();
+                        }, 100 * index);
+                      });
+                    } else {
+                      this.responseService.onSuccessAndRedirect(URI_BELT_COLLECION_DETAIL('0', this.auditoryId), 'Levantamiento guardado');
+                    }
+                  }
 
-    //             }
-    //           });
-    //       }
-    //   },
-    //   error: err => {
-    //     this.responseService.onError(err, 'No se pudo guardar')
-    //   },
-    // })
+                }
+              });
+          }
+      },
+      error: err => {
+        this.responseService.onError(err, 'No se pudo guardar')
+      },
+    })
   }
 
   private updateAuditory(auditory: any) {
-    // this.auditoryService
-    //   .updateLocal(this.auditoryId, auditory)
-    //   .subscribe({
-    //     next: (updateRes) => {
-    //       if (updateRes !== 'waiting') {
-    //         this.hideMap = true;
-    //         this.responseService.onSuccessAndRedirect(URI_BELT_LIST('local'), 'Levantamiento actualizada');
-    //       }
-    //     },
-    //     error: err => {
-    //       this.responseService.onError(err, 'No se pudo actualizar')
-    //     },
-    //   })
+    this.auditoryService
+      .updateLocal(this.auditoryId, auditory)
+      .subscribe({
+        next: (updateRes) => {
+          if (updateRes !== DATABASE_WAITING_MESSAGE) {
+            this.hideMap = true;
+            this.responseService.onSuccessAndRedirect(URI_BELT_LIST('local'), 'Levantamiento actualizada');
+          }
+        },
+        error: err => {
+          this.responseService.onError(err, 'No se pudo actualizar')
+        },
+      })
 
   }
 
@@ -150,47 +156,47 @@ export class BeltInitialFormPage implements OnInit {
       lng: auditory.lng,
     });
 
-    // this.auditoryEvidenceService
-    //   .getEvidencesByAuditory(this.auditoryId)
-    //   .subscribe({
-    //     next: res => {
-    //       if (res !== 'waiting') {
-    //         if (isPlatform('hybrid')) {
-    //           res.values.forEach(async (row: any) => {
-    //             this.photoService.getLocalAuditoryEvidenceUri(row.dir).then(photo => {
-    //               this.ImageSrc.push({
-    //                 id: row.dir,
-    //                 url: Capacitor.convertFileSrc(photo.uri),
-    //                 base64: '',
-    //                 expand: {
-    //                   width: '25%'
-    //                 },
-    //               });
-    //             })
-    //           });
-    //         } else {
-    //           res.values.forEach(async (row: any) => {
-    //             this.photoService.getLocalAuditoryEvidence(row.dir).then(photo => {
-    //               const file = 'data:image/png;base64,' + photo.data;
-    //               this.ImageSrc.push({
-    //                 id: row.dir,
-    //                 url: file,
-    //                 base64: file,
-    //                 expand: {
-    //                   width: '25%'
-    //                 },
-    //               });
-    //             })
-    //           });
-    //         }
-    //       }
-    //     }
-    //   });
+    this.auditoryEvidenceService
+      .getEvidencesByAuditory(this.auditoryId)
+      .subscribe({
+        next: res => {
+          if (res !== DATABASE_WAITING_MESSAGE) {
+            if (isPlatform('hybrid')) {
+              res.values.forEach(async (row: any) => {
+                this.photoService.getLocalAuditoryEvidenceUri(row.dir).then(photo => {
+                  this.ImageSrc.push({
+                    id: row.dir,
+                    url: Capacitor.convertFileSrc(photo.uri),
+                    base64: '',
+                    expand: {
+                      width: '25%'
+                    },
+                  });
+                })
+              });
+            } else {
+              res.values.forEach(async (row: any) => {
+                this.photoService.getLocalAuditoryEvidence(row.dir).then(photo => {
+                  const file = 'data:image/png;base64,' + photo.data;
+                  this.ImageSrc.push({
+                    id: row.dir,
+                    url: file,
+                    base64: file,
+                    expand: {
+                      width: '25%'
+                    },
+                  });
+                })
+              });
+            }
+          }
+        }
+      });
 
-    // setTimeout(() => {
-    //   this.mapService.setCenter(auditory.lat, auditory.lng);
-    //   this.loadingService.dismissLoading();
-    // }, 1000)
+    setTimeout(() => {
+      this.mapService.setCenter(auditory.lat, auditory.lng);
+      this.loadingService.dismissLoading();
+    }, 1000)
   }
 
   ngOnInit(): void {
@@ -215,18 +221,18 @@ export class BeltInitialFormPage implements OnInit {
             this.auditoryId = id;
             this.formActionText = 'Actualizando';
             this.SubmitButtonText = 'Guardar';
-            // this.auditoryService
-            //   .getLocalForm(this.auditoryId)
-            //   .subscribe({
-            //     next: res => {
-            //       if (res !== 'waiting') {
-            //         this.setAuditory(res.values[0]);
-            //       }
-            //     },
-            //     error: err => {
-            //       this.responseService.onError(err, 'No se pudieron recuperar los datos');
-            //     },
-            //   })
+            this.auditoryService
+              .getLocalForm(this.auditoryId)
+              .subscribe({
+                next: res => {
+                  if (res !== DATABASE_WAITING_MESSAGE) {
+                    this.setAuditory(res.values[0]);
+                  }
+                },
+                error: err => {
+                  this.responseService.onError(err, 'No se pudieron recuperar los datos');
+                },
+              })
           }
         }
       }).unsubscribe();
@@ -248,28 +254,28 @@ export class BeltInitialFormPage implements OnInit {
   }
 
   onSubmit() {
-    // if (this.validFormService.isValid(this.form, [])) {
-    //   this.confirmDialogService
-    //     .presentAlert('¿Desea guardar los cambios?', () => {
-    //       this.loadingService.showLoading();
+    if (this.validFormService.isValid(this.form, [])) {
+      this.confirmDialogService
+        .presentAlert('¿Desea guardar los cambios?', () => {
+          this.loadingService.showLoading();
 
-    //       this.mapService.setCenter(0, 0);
-    const auditory = {
-      //         title: this.form.controls['title'].value,
-      //         description: this.form.controls['description'].value,
-      //         date: this.form.controls['date'].value,
-      //         time: this.form.controls['time'].value,
-      //         lat: this.form.controls['lat'].value,
-      //         lng: this.form.controls['lng'].value,
-    };
+          this.mapService.setCenter(0, 0);
+          const auditory = {
+            title: this.form.controls['title'].value,
+            description: this.form.controls['description'].value,
+            date: this.form.controls['date'].value,
+            time: this.form.controls['time'].value,
+            lat: this.form.controls['lat'].value,
+            lng: this.form.controls['lng'].value,
+          };
 
-    //       if (this.auditoryId === '0') {
-    this.createAuditory(auditory);
-    //       } else {
-    //         this.updateAuditory(auditory);
-    //       }
-    //     })
-    // }
+        if (this.auditoryId === '0') {
+          this.createAuditory(auditory);
+        } else {
+          this.updateAuditory(auditory);
+        }
+      })
+    }
   }
 
 
@@ -323,46 +329,46 @@ export class BeltInitialFormPage implements OnInit {
             },
           });
         }
-      } //else {
-      //   for (let index = 0; index < res.photos.length; index++) {
-      //     const img = res.photos[index].webPath;
-      //     const blob = await fetch(img).then(r => r.blob());
+      } else {
+        for (let index = 0; index < res.photos.length; index++) {
+          const img = res.photos[index].webPath;
+          const blob = await fetch(img).then(r => r.blob());
 
-      //     this.photoService
-      //       .saveLocalAuditoryEvidence(blob, this.auditoryId)
-      //       .then(photoId => {
-      //         if (photoId !== 'waiting') {
-      //           this.auditoryEvidenceService
-      //             .localSave({ auditoryId: this.auditoryId, dir: photoId })
-      //             .subscribe({
-      //               next: async save => {
-      //                 if (save !== 'waiting') {
-      //                   this.auditoryEvidenceService
-      //                     .getLastInsertedDir()
-      //                     .subscribe({
-      //                       next: async (res2: any) => {
-      //                         if (res2 !== 'waiting') {
-      //                           this.ImageSrc.push({
-      //                             id: res2.values[0].dir,
-      //                             url: this.sanitization.bypassSecurityTrustUrl(img),
-      //                             base64: img,
-      //                             expand: {
-      //                               width: '25%'
-      //                             },
-      //                           });
-      //                         }
-      //                       }
-      //                     });
-      //                 }
-      //               },
-      //               error: err => {
-      //                 this.responseService.onError(err, 'No se pudo guardar una imagen')
-      //               },
-      //             })
-      //         }
-      //       });
-      //   }
-      // }
+          this.photoService
+            .saveLocalAuditoryEvidence(blob, this.auditoryId)
+            .then(photoId => {
+              if (photoId !== DATABASE_WAITING_MESSAGE) {
+                this.auditoryEvidenceService
+                  .localSave({ auditoryId: this.auditoryId, dir: photoId })
+                  .subscribe({
+                    next: async save => {
+                      if (save !== DATABASE_WAITING_MESSAGE) {
+                        this.auditoryEvidenceService
+                          .getLastInsertedDir()
+                          .subscribe({
+                            next: async (res2: any) => {
+                              if (res2 !== DATABASE_WAITING_MESSAGE) {
+                                this.ImageSrc.push({
+                                  id: res2.values[0].dir,
+                                  url: this.sanitization.bypassSecurityTrustUrl(img),
+                                  base64: img,
+                                  expand: {
+                                    width: '25%'
+                                  },
+                                });
+                              }
+                            }
+                          });
+                      }
+                    },
+                    error: err => {
+                      this.responseService.onError(err, 'No se pudo guardar una imagen')
+                    },
+                  })
+              }
+            });
+        }
+      }
     });
   }
 
@@ -377,45 +383,45 @@ export class BeltInitialFormPage implements OnInit {
             width: '25%'
           },
         });
-      } // else {
-      //   const img = res.webPath || '';
-      //   const blob = await fetch(img).then(r => r.blob());
+      }  else {
+        const img = res.webPath || '';
+        const blob = await fetch(img).then(r => r.blob());
 
-      //   this.photoService
-      //     .saveLocalAuditoryEvidence(blob, this.auditoryId)
-      //     .then(photoId => {
-      //       if (photoId !== 'waiting') {
-      //         this.auditoryEvidenceService
-      //           .localSave({ auditoryId: this.auditoryId, dir: photoId })
-      //           .subscribe({
-      //             next: async save => {
-      //               if (save !== 'waiting') {
-      //                 this.auditoryEvidenceService
-      //                   .getLastInsertedDir()
-      //                   .subscribe({
-      //                     next: async (res2: any) => {
-      //                       if (res2 !== 'waiting') {
-      //                         this.ImageSrc.push({
-      //                           id: res2.values[0].dir,
-      //                           url: this.sanitization.bypassSecurityTrustUrl(img),
-      //                           base64: img,
-      //                           expand: {
-      //                             width: '25%'
-      //                           },
-      //                         });
-      //                       }
-      //                     }
-      //                   });
-      //               }
-      //             },
-      //             error: err => {
-      //               this.responseService.onError(err, 'No se pudo guardar una imagen')
-      //             },
-      //           });
-      //       }
-      //     });
+        this.photoService
+          .saveLocalAuditoryEvidence(blob, this.auditoryId)
+          .then(photoId => {
+            if (photoId !== DATABASE_WAITING_MESSAGE) {
+              this.auditoryEvidenceService
+                .localSave({ auditoryId: this.auditoryId, dir: photoId })
+                .subscribe({
+                  next: async save => {
+                    if (save !== DATABASE_WAITING_MESSAGE) {
+                      this.auditoryEvidenceService
+                        .getLastInsertedDir()
+                        .subscribe({
+                          next: async (res2: any) => {
+                            if (res2 !== DATABASE_WAITING_MESSAGE) {
+                              this.ImageSrc.push({
+                                id: res2.values[0].dir,
+                                url: this.sanitization.bypassSecurityTrustUrl(img),
+                                base64: img,
+                                expand: {
+                                  width: '25%'
+                                },
+                              });
+                            }
+                          }
+                        });
+                    }
+                  },
+                  error: err => {
+                    this.responseService.onError(err, 'No se pudo guardar una imagen')
+                  },
+                });
+            }
+          });
 
-      // }
+      }
     });
   }
 
@@ -457,19 +463,19 @@ export class BeltInitialFormPage implements OnInit {
 
   onRemove(dir: string, index: number) {
     this.confirmDialogService.presentAlert('¿Desea eliminar la imagen?', () => {
-      // if (!!dir) {
-      //   this.auditoryEvidenceService
-      //     .localRemove(dir)
-      //     .subscribe({
-      //       next: () => {
-      //         this.photoService
-      //           .removeLocalAuditoryEvidence(dir)
-      //           .then(() => this.ImageSrc.splice(index, 1));
-      //       }
-      //     })
-      // } else {
-      this.ImageSrc.splice(index, 1);
-      // }
+      if (!!dir) {
+        this.auditoryEvidenceService
+          .localRemove(dir)
+          .subscribe({
+            next: () => {
+              this.photoService
+                .removeLocalAuditoryEvidence(dir)
+                .then(() => this.ImageSrc.splice(index, 1));
+            }
+          })
+      } else {
+        this.ImageSrc.splice(index, 1);
+      }
     });
   }
 

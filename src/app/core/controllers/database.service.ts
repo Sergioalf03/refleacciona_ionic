@@ -4,7 +4,7 @@ import { LOCAL_DATABASE } from 'src/environments/environment';
 import { SQLiteDBConnection } from '@capacitor-community/sqlite';
 import { createSchema, loadData } from 'src/app/utils/database.util';
 import { BehaviorSubject, Observable, from, } from 'rxjs';
-import { take, } from 'rxjs/operators';
+import { take, tap, } from 'rxjs/operators';
 import { DATABASE_WAITING_MESSAGE } from '../constants/message-code';
 
 @Injectable({
@@ -19,10 +19,10 @@ export class DatabaseService {
   async checkDatabaseVersion() {
     const result = new Promise((res, rej) => {
       this.executeQuery('SELECT * FROM versions ORDER BY id DESC ;')
-        .subscribe(result => {
+        .subscribe(async result => {
           if (result !== DATABASE_WAITING_MESSAGE) {
             if (result.includes && result.includes('no such table: versions')) {
-              this.createDatabase();
+              await this.createDatabase();
               res('new')
             } else {
               res(result)
@@ -57,7 +57,7 @@ export class DatabaseService {
           });
       });
 
-    return data.asObservable().pipe(take(2));
+    return data.asObservable().pipe(tap(r => console.log(r)),take(2));
   }
 
   private async sendQuery(connection: SQLiteDBConnection, query: string, data: BehaviorSubject<any>) {
@@ -80,7 +80,7 @@ export class DatabaseService {
       });
   }
 
-  private async createDatabase() {
+  public async createDatabase() {
     this._sqlite
       .createConnection(LOCAL_DATABASE.name, LOCAL_DATABASE.encrypted, LOCAL_DATABASE.mode, LOCAL_DATABASE.version)
       .then(async connection => {
@@ -101,6 +101,7 @@ export class DatabaseService {
       .then(result => {
         connection.execute(loadData)
           .then(async (result1) => {
+            console.log('creation result', result1)
             await connection.close().catch(e => console.log(e));
           })
           .catch(async (e) => {
