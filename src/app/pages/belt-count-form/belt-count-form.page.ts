@@ -55,7 +55,6 @@ export class BeltCountFormPage implements OnInit {
   auditoryId = '0';
 
   constructor(
-    private modalCtrl: ModalController,
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private beltCollectionService: BeltCollectionService,
@@ -216,6 +215,7 @@ export class BeltCountFormPage implements OnInit {
         beltCount: this.beltCount,
         chairUserCount: this.chairUserCount,
         chairCount: this.chairCount,
+        vehicleType: this.vehicleTypeId,
         overusedSeatsCount: this.overusedSeatsCount,
       };
 

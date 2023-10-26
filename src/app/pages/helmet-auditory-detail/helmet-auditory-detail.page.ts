@@ -18,139 +18,139 @@ const directions = DIRECTIONS;
 })
 export class HelmetAuditoryDetailPage {
 
-  backUrl = URI_HELMET_LIST('remote');
-  customButton = {
-    click: async () => {
-      this.confirmDialogService
-        .presentAlert('¿Desea descargar el levantamiento?', () => {
-          this.loadingService.showLoading();
-          this.auditoryService
-            .downloadPdf(this.auditoryId)
-            .subscribe({
-              next: async res => {
-                const blob = res;
+    backUrl = URI_HELMET_LIST('remote');
+    customButton = {
+      click: async () => {
+        this.confirmDialogService
+          .presentAlert('¿Desea descargar el levantamiento?', () => {
+            this.loadingService.showLoading();
+            this.auditoryService
+              .downloadPdf(this.auditoryId)
+              .subscribe({
+                next: async res => {
+                  const blob = res;
 
-                const find = ' ';
-                const re = new RegExp(find, 'g');
-                const filePath = `${this.auditoryTitle.replace(re, '-')}.pdf`;
+                  const find = ' ';
+                  const re = new RegExp(find, 'g');
+                  const filePath = `${this.auditoryTitle.replace(re, '-')}.pdf`;
 
-                const fileReader = new FileReader();
+                  const fileReader = new FileReader();
 
-                fileReader.readAsDataURL(blob);
+                  fileReader.readAsDataURL(blob);
 
-                fileReader.onloadend = async () => {
-                  const base64Data: any = fileReader.result;
+                  fileReader.onloadend = async () => {
+                    const base64Data: any = fileReader.result;
 
-                  Filesystem.writeFile({
-                    path: filePath,
-                    data: base64Data,
-                    directory: Directory.Cache,
-                  }).then(() => {
-                    return Filesystem.getUri({
+                    Filesystem.writeFile({
+                      path: filePath,
+                      data: base64Data,
                       directory: Directory.Cache,
-                      path: filePath
-                    });
-                  })
-                    .then((uriResult) => {
-                      return Share.share({
-                        title: filePath,
-                        text: filePath,
-                        url: uriResult.uri,
-                      });
                     }).then(() => {
-                      this.loadingService.dismissLoading();
+                      return Filesystem.getUri({
+                        directory: Directory.Cache,
+                        path: filePath
+                      });
                     })
-                    .catch(err => {
-                      console.log(err)
-                      this.loadingService.dismissLoading();
-                    });
-                }
-              },
-              error: err => this.responseService.onError(err, 'No se pudo descargar el levantamiento')
-            })
-        })
-    },
-    icon: 'cloud-download',
-  }
+                      .then((uriResult) => {
+                        return Share.share({
+                          title: filePath,
+                          text: filePath,
+                          url: uriResult.uri,
+                        });
+                      }).then(() => {
+                        this.loadingService.dismissLoading();
+                      })
+                      .catch(err => {
+                        console.log(err)
+                        this.loadingService.dismissLoading();
+                      });
+                  }
+                },
+                error: err => this.responseService.onError(err, 'No se pudo descargar el levantamiento')
+              })
+          })
+      },
+      icon: 'cloud-download',
+    }
 
-  auditoryId = '0';
+    auditoryId = '0';
 
-  auditoryTitle = '';
-  auditoryDate = '';
-  auditoryTime = '';
-  auditoryDescription = '';
-  auditoryCloseNote = '';
-  auditoryLat = '';
-  auditoryLng = '';
+    auditoryTitle = '';
+    auditoryDate = '';
+    auditoryTime = '';
+    auditoryDescription = '';
+    auditoryCloseNote = '';
+    auditoryLat = '';
+    auditoryLng = '';
 
-  yesScore = 0;
-  notScore = 0;
+    yesScore = 0;
+    notScore = 0;
 
-  auditoyrEvidences: any[] = [];
-  auditorySections: any[] = [];
+    auditoyrEvidences: any[] = [];
+    auditorySections: any[] = [];
 
-  counts: any[] = [];
+    counts: any[] = [];
 
-  constructor(
-    private auditoryService: HelmetAuditoryService,
-    private loadingService: LoadingService,
-    private responseService: HttpResponseService,
-    private mapService: MapService,
-    private route: ActivatedRoute,
-    // private platform: Platform,
-    private router: Router,
-    private confirmDialogService: ConfirmDialogService,
-  ) {}
+    constructor(
+      private auditoryService: HelmetAuditoryService,
+      private loadingService: LoadingService,
+      private responseService: HttpResponseService,
+      private mapService: MapService,
+      private route: ActivatedRoute,
+      // private platform: Platform,
+      private router: Router,
+      private confirmDialogService: ConfirmDialogService,
+    ) {}
 
-  ionViewWillEnter() {
-    this.route
-      .paramMap
-      .subscribe({
-        next: paramMap => {
-          if (!paramMap.has('id')) {
-            this.router.navigateByUrl(this.backUrl);
-            return;
+    ionViewWillEnter() {
+      this.route
+        .paramMap
+        .subscribe({
+          next: paramMap => {
+            if (!paramMap.has('id')) {
+              this.router.navigateByUrl(this.backUrl);
+              return;
+            }
+
+            this.loadingService.showLoading();
+
+            this.auditoryId = paramMap.get('id') || '0';
+
+            this.auditoryService
+              .getRemoteDetail(this.auditoryId)
+              .subscribe({
+                next: res => {
+                  this.setAuditory(res.data);
+                },
+                error: err => this.responseService.onError(err, 'No se pudo recuperar la auditoría'),
+              })
           }
+        }).unsubscribe();
+    }
 
-          this.loadingService.showLoading();
+    private setAuditory(data: any) {
+      this.auditoryTitle = data.title;
+      this.auditoryDate = data.date;
+      this.auditoryTime = data.time;
 
-          this.auditoryId = paramMap.get('id') || '0';
+      this.auditoryDescription = data.description;
+      this.auditoryCloseNote = data.close_note;
+      this.auditoryLat = data.lat;
+      this.auditoryLng = data.lng;
 
-          this.auditoryService
-            .getRemoteDetail(this.auditoryId)
-            .subscribe({
-              next: res => {
-                this.setAuditory(res.data);
-              },
-              error: err => this.responseService.onError(err, 'No se pudo recuperar la auditoría'),
-            })
-        }
-      }).unsubscribe();
-  }
+      this.counts = data.counts.map((c: any) => {
 
-  private setAuditory(data: any) {
-    this.auditoryTitle = data.title;
-    this.auditoryDate = data.date;
-    this.auditoryTime = data.time;
+        return {
+          originText: directions.find(d => +d.id === +c.origin)!.short,
+          destinationText: directions.find(d => +d.id === +c.destination)!.short,
+          ...c,
+        };
+      });
 
-    this.auditoryDescription = data.description;
-    this.auditoryCloseNote = data.close_note;
-    this.auditoryLat = data.lat;
-    this.auditoryLng = data.lng;
-
-    this.counts = data.counts.map((c: any) => {
-
-      return {
-        originText: directions.find(d => +d.id === +c.origin)!.short,
-        destinationText: directions.find(d => +d.id === +c.destination)!.short,
-        ...c,
-      };
-    });
-
-    this.mapService.setCenter(+this.auditoryLat, +this.auditoryLng, true);
-    setTimeout(() => {
-      this.loadingService.dismissLoading();
-    }, 500)
-  }
+      this.mapService.setCenter(+this.auditoryLat, +this.auditoryLng, true);
+      setTimeout(() => {
+        this.loadingService.dismissLoading();
+      }, 500)
+    }
 
 }

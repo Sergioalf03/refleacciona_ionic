@@ -1,9 +1,38 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>belt-auditory-detail</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content>
+
+  <app-header-buttons
+    [backUrl]="backUrl"
+    [customButton]="customButton"
+  ></app-header-buttons>
+
+  <div class="mx-2 mt-4">
+    <h1>{{ auditoryTitle }}</h1>
+
+    <p class="mt-4" *ngIf="auditoryDate"><strong>Fecha:</strong> {{ auditoryDate }} {{ auditoryTime }}</p>
+    <p *ngIf="auditoryDescription"><strong>Descripción:</strong> {{ auditoryDescription }}</p>
+
+    <p>
+      <strong>Ubicación:</strong>
+      <app-map></app-map>
+    </p>
+
+    <p *ngIf="auditoyrEvidences.length > 0">
+      <strong class="mt-2">Fotografías del entorno:</strong>
+      <img width="100%" *ngFor="let url of auditoyrEvidences" class="mb-2" [src]="url">
+    </p>
+
+    <div class="row">
+    <div class="col-12 p-4">
+
+     <ion-item *ngFor="let count of counts" class="mt-2 txtInput ion-no-padding ion-no-margin">
+      <ion-label>
+        <h2 class="text-start ps-2">{{ count.originText }} <ion-icon name="arrow-forward"></ion-icon> {{ count.destinationText }} <span class="mx-1"></span> {{ count.users_count }} Usuarios, <span class="mx-1"></span> {{ count.helmets_count }} Cascos </h2>
+      </ion-label>
+    </ion-item>
+    </div>
+  </div>
+
+
+  </div>
 
 </ion-content>

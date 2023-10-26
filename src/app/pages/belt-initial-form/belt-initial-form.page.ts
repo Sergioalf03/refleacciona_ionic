@@ -152,8 +152,11 @@ export class BeltInitialFormPage implements OnInit {
       description: auditory.description,
       date: auditory.date,
       time: auditory.time,
-      lat: auditory.lat,
-      lng: auditory.lng,
+      // lat: auditory.lat,
+      // lng: auditory.lng,
+      // temporal
+      lat: '100.00',
+      lng: '100.00',
     });
 
     this.auditoryEvidenceService

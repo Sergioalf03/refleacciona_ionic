@@ -1,19 +1,27 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
 import { IonicModule } from '@ionic/angular';
-
-import { BeltAuditoryDetailPageRoutingModule } from './belt-auditory-detail-routing.module';
-
 import { BeltAuditoryDetailPage } from './belt-auditory-detail.page';
+import { RouterModule, Routes } from '@angular/router';
+import { HeaderButtonsModule } from 'src/app/components/header-buttons/header-buttons.module';
+import { MapModule } from 'src/app/components/map/map.module';
+
+const routes: Routes = [
+  {
+    path: '',
+    component: BeltAuditoryDetailPage
+  }
+];
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    BeltAuditoryDetailPageRoutingModule
+    RouterModule.forChild(routes),
+    HeaderButtonsModule,
+    MapModule,
   ],
   declarations: [BeltAuditoryDetailPage]
 })

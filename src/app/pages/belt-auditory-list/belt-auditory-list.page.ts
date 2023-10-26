@@ -67,7 +67,7 @@ export class BeltAuditoryListPage implements OnInit {
           }
 
           if (paramMap.get('origin') === 'remote') {
-            // this.fetchRemoteList();
+            this.fetchRemoteList();
           } else {
             this.fetchLocalList();
           }
@@ -124,14 +124,22 @@ export class BeltAuditoryListPage implements OnInit {
                             user_id: auditory.values[0].user_id,
                           }
 
-                          const formattedCounts = counts.values.map((c: any) => ({
-                            helmet_auditory_id: c.helmet_auditory_id,
-                            origin: c.origin,
-                            destination: c.destination,
-                            users_count: c.users_count,
-                            helmets_count: c.helmets_count,
-                            creation_date: c.creation_date,
-                          }));
+                          const formattedCounts = counts.values.map((c: any) => {
+                            console.log(c)
+                            return {
+                              adults_count: c.adults_count,
+                              belt_auditory_id: c.belt_auditory_id,
+                              belts_count: c.belts_count,
+                              chairs_count: c.chairs_count,
+                              child_count: c.child_count,
+                              coopilot: c.coopilot,
+                              creation_date: c.creation_date,
+                              destination: c.destination,
+                              origin: c.origin,
+                              vehicle_type: c.vehicle_type,
+                              overuse_count: c.overuse_count,
+                            }
+                          });
 
                           const data = {
                             auditory: formattedAuditory,

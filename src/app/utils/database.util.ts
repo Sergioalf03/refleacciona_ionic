@@ -168,6 +168,7 @@ CREATE TABLE IF NOT EXISTS belt_auditory_count (
   chairs_count INTEGER NOT NULL,
   coopilot INTEGER NOT NULL,
   overuse_count INTEGER NOT NULL,
+  vehicle_type INTEGER NOT NULL,
   creation_date TEXT NOT NULL,
   update_date TEXT NOT NULL,
   FOREIGN KEY (belt_auditory_id) REFERENCES belt_auditory(id) ON DELETE CASCADE

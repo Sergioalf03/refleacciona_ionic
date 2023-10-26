@@ -17,8 +17,8 @@ export class BeltCollectionService {
   save(data: any) {
     const now = new Date().toISOString();
     return this.databaseService.executeQuery(`
-      INSERT INTO belt_auditory_count (belt_auditory_id, origin, destination, adults_count, belts_count, child_count, chairs_count, coopilot, overuse_count, creation_date, update_date)
-      VALUES ("${data.belt_auditory_id}", "${data.origin}", "${data.destination}", "${data.beltUserCount}", "${data.beltCount}", "${data.chairUserCount}", "${data.chairCount}", "0", "${data.overusedSeatsCount}", "${now}", "${now}");
+      INSERT INTO belt_auditory_count (belt_auditory_id, origin, destination, adults_count, belts_count, child_count, chairs_count, coopilot, overuse_count, vehicle_type, creation_date, update_date)
+      VALUES ("${data.belt_auditory_id}", "${data.origin}", "${data.destination}", "${data.beltUserCount}", "${data.beltCount}", "${data.chairUserCount}", "${data.chairCount}", "0", "${data.overusedSeatsCount}", "${data.vehicleType}", "${now}", "${now}");
     `);
   }
 
