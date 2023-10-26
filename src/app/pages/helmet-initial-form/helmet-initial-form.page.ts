@@ -89,7 +89,7 @@ export class HelmetInitialFormPage implements OnInit {
                           const blob = await fetch(src.base64).then(r => r.blob());
 
                           this.photoService
-                            .saveLocalAuditoryEvidence(blob, this.auditoryId)
+                            .saveLocalHelmetAuditoryEvidence(blob, this.auditoryId)
                             .then(photoId => {
                               this.helmetAuditoryEvidenceService
                                 .localSave({ auditoryId: this.auditoryId, dir: photoId })
@@ -333,7 +333,7 @@ export class HelmetInitialFormPage implements OnInit {
           const blob = await fetch(img).then(r => r.blob());
 
           this.photoService
-            .saveLocalAuditoryEvidence(blob, this.auditoryId)
+            .saveLocalHelmetAuditoryEvidence(blob, this.auditoryId)
             .then(photoId => {
               if (photoId !== DATABASE_WAITING_MESSAGE) {
                 this.helmetAuditoryEvidenceService
@@ -386,7 +386,7 @@ export class HelmetInitialFormPage implements OnInit {
         const blob = await fetch(img).then(r => r.blob());
 
         this.photoService
-          .saveLocalAuditoryEvidence(blob, this.auditoryId)
+          .saveLocalHelmetAuditoryEvidence(blob, this.auditoryId)
           .then(photoId => {
             if (photoId !== DATABASE_WAITING_MESSAGE) {
               this.helmetAuditoryEvidenceService

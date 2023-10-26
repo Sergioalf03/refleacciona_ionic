@@ -1,0 +1,96 @@
+<ion-content >
+  <app-header-buttons
+    [backUrl]="backUrl"
+    homeUrl="/home"
+  ></app-header-buttons>
+
+  <form *ngIf="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+
+    <div class="mx-2 mt-4">
+      <h1>{{formActionText}} Levantamiento</h1>
+
+      <ion-item class="mt-4 txtInput">
+        <ion-label position="floating">*Título</ion-label>
+        <ion-input
+          [clearInput]="true"
+          formControlName="title"
+          type="text"
+          placeholder="Escriba un título"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item class="mt-2 txtInput">
+        <ion-label position="floating">Fecha</ion-label>
+        <ion-input
+          [clearInput]="true"
+          formControlName="date"
+          type="date"
+          placeholder="Escriba el sentido"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item class="mt-2 txtInput">
+        <ion-label position="floating">Hora</ion-label>
+        <ion-input
+          [clearInput]="true"
+          formControlName="time"
+          type="time"
+          placeholder="Escriba el sentido"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item class="mt-2 txtInput mb-2">
+        <ion-label position="floating">Descripción</ion-label>
+        <ion-textarea
+          formControlName="description"
+          type="text"
+          [autoGrow]="true"
+          rows="3"
+          placeholder="Agregue una descripción"
+        ></ion-textarea>
+      </ion-item>
+
+      <ion-input
+        formControlName="lat"
+        type="hidden"
+        hidden
+      ></ion-input>
+
+      <ion-input
+        formControlName="lng"
+        type="hidden"
+        hidden
+      ></ion-input>
+
+      <app-map (centerEvent)="onSetCoords($event)"></app-map>
+
+      <ion-button expand="full" color="light" class="mt-3" (click)="onAddLocation()">UBICACIÓN ACTUAL</ion-button>
+      <!-- <ion-button class="btn-right" (click)="onAddPhoto()">FOTOS</ion-button> -->
+
+
+      <ion-row *ngIf="ImageSrc">
+        <ion-col [size]="12">
+          <img *ngFor="let img of ImageSrc; let i = index;" [src]="img.url" [ngStyle]="img.expand" (click)="onImgClicked(img.id, i)">
+          <ion-button *ngIf="ImageSrc.length < 10" class="btn-right" fill="clear" size="large" (click)="onAddPhoto()">
+            <ion-icon class="icon-color" slot="icon-only" name="image-outline"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+
+
+      <div class="row mt-5">
+        <div class="col">
+          <ion-button color="danger" expand="full" (click)="onCancel()">
+            CANCELAR
+          </ion-button>
+        </div>
+        <div class="col">
+          <ion-button expand="full"type="submit">
+            {{SubmitButtonText}}
+          </ion-button>
+        </div>
+      </div>
+
+    </div>
+  </form>
+</ion-content>

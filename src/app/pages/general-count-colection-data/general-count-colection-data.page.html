@@ -1,0 +1,46 @@
+<ion-content >
+  <app-header-buttons
+    [backUrl]="backUrl"
+    homeUrl="/home"
+  ></app-header-buttons>
+
+  <div class="mx-2 mt-4">
+    <h1>Total de registros</h1>
+  </div>
+
+  <div class="mx-2 mt-4">
+    <h1>{{ registrationCount }}</h1>
+  </div>
+
+  <div class="row">
+    <div class="col-6 p-4 pe-2">
+      <div class="card ion-button bg-primary" (click)="onOpenList()">
+        <div class="ion-text-center mt-5 mb-4">
+          <ion-icon color="light" size="large" name="clipboard"></ion-icon>
+          <p class="text-light">Listado de registros</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 p-4 ps-2">
+      <div class="card button bg-primary" (click)="openCountForm()">
+        <div class="ion-text-center mt-5 mb-4">
+          <ion-icon color="light" size="large" name="add"></ion-icon>
+          <p class="text-light">Agregar registro</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</ion-content>
+
+<ion-footer>
+  <ion-row>
+    <ion-col >
+      <ion-button expand="full" (click)="onReturn()" color="danger">SALIR</ion-button>
+    </ion-col>
+
+    <ion-col>
+      <ion-button expand="full" (click)="onFinish()">FINALIZAR</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-footer>

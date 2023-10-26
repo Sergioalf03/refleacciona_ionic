@@ -3,29 +3,29 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ActionSheetController } from '@ionic/angular';
 import { DIRECTIONS } from 'src/app/core/constants/directions';
 import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
-import { URI_BELT_COLLECION_DETAIL, URI_BELT_COUNT_FORM } from 'src/app/core/constants/uris';
+import { URI_GENERAL_COUNT_COLLECION_DETAIL, URI_GENERAL_COUNT_COUNT_FORM } from 'src/app/core/constants/uris';
 import { VEHICLE_TYPES } from 'src/app/core/constants/vehicle-types';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
-import { BeltCollectionService } from 'src/app/services/belt-collection.service';
+import { GeneralCountCollectionService } from 'src/app/services/general-count-collection.service';
 
 const directions = DIRECTIONS;
 const vehicleTypes = VEHICLE_TYPES;
 
 @Component({
-  selector: 'app-belt-count-list',
-  templateUrl: './belt-count-list.page.html',
+  selector: 'app-general-count-count-list',
+  templateUrl: './general-count-count-list.page.html',
 })
-export class BeltCountListPage implements OnInit {
+export class GeneralCountCountListPage implements OnInit {
 
-  backUrl = URI_BELT_COLLECION_DETAIL('0', '0');
+  backUrl = URI_GENERAL_COUNT_COLLECION_DETAIL('0', '0');
   counts: any[] = [];
   loading = true;
   auditoryId = '0';
 
   constructor(
-    private beltCollectionService: BeltCollectionService,
+    private generalCountCollectionService: GeneralCountCollectionService,
     private actionSheetCtrl: ActionSheetController,
     private loadingSerivice: LoadingService,
     private router: Router,
@@ -46,7 +46,7 @@ export class BeltCountListPage implements OnInit {
           this.loading = true;
 
           this.auditoryId = paramMap.get('id') || '0';
-          this.backUrl = URI_BELT_COLLECION_DETAIL('0', this.auditoryId);
+          this.backUrl = URI_GENERAL_COUNT_COLLECION_DETAIL('0', this.auditoryId);
 
           this.loadList();
         }
@@ -54,7 +54,7 @@ export class BeltCountListPage implements OnInit {
   }
 
   private loadList() {
-    this.beltCollectionService
+    this.generalCountCollectionService
       .getList(this.auditoryId)
       .subscribe({
         next: res => {
@@ -69,6 +69,8 @@ export class BeltCountListPage implements OnInit {
                 ...c,
               };
             });
+
+            console.log(this.counts)
 
             this.loading = false;
             this.loadingSerivice.dismissLoading();
@@ -106,9 +108,9 @@ export class BeltCountListPage implements OnInit {
   }
 
   private onDelete(id: string) {
-    this.confirmDialog.presentAlert('¿Desea eliminar el conteo?', () =>  {
+    this.confirmDialog.presentAlert('¿Desea eliminar el conteo?', () => {
       this.loadingSerivice.showLoading();
-      this.beltCollectionService
+      this.generalCountCollectionService
         .delete(id)
         .subscribe({
           next: res => {
@@ -122,7 +124,7 @@ export class BeltCountListPage implements OnInit {
   }
 
   onNewCount() {
-    this.router.navigateByUrl(URI_BELT_COUNT_FORM(this.auditoryId));
+    this.router.navigateByUrl(URI_GENERAL_COUNT_COUNT_FORM(this.auditoryId));
   }
 
 }

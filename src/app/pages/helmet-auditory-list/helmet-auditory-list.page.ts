@@ -36,8 +36,6 @@ export class HelmetAuditoryListPage implements OnInit {
     private auditoryService: HelmetAuditoryService,
     private auditoryEvidenceService: HelmetAuditoryEvidenceService,
     private helmetCollectionService: HelmetCollectionService,
-    // private answerService: AnswerService,
-    // private answerEvidenceService: AnswerEvidenceService,
     private photoService: PhotoService,
     private responseService: HttpResponseService,
     private loadingService: LoadingService,
@@ -67,7 +65,7 @@ export class HelmetAuditoryListPage implements OnInit {
           }
 
           if (paramMap.get('origin') === 'remote') {
-            // this.fetchRemoteList();
+            this.fetchRemoteList();
           } else {
             this.fetchLocalList();
           }
@@ -93,7 +91,7 @@ export class HelmetAuditoryListPage implements OnInit {
 
   private onUpload(id: string) {
     this.confirmDialogService
-      .presentAlert('Una vez enviada la auditoría no se podrá modificar. ¿Desea continuar?', () => {
+      .presentAlert('Una vez enviado el levantamiento no se podrá modificar. ¿Desea continuar?', () => {
         this.loadingService.showLoading();
 
         this.auditoryService

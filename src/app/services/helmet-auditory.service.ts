@@ -106,57 +106,38 @@ export class HelmetAuditoryService {
   deleteLocal(id: string) {
     const result = new BehaviorSubject<any>(DATABASE_WAITING_MESSAGE);
     this.databaseService
-      .executeQuery(`SELECT dir FROM auditory_evidences WHERE auditory_id = ${id}`)
+      .executeQuery(`SELECT dir FROM helmet_auditory_evidences WHERE helmet_auditory_id = ${id}`)
       .subscribe(directories => {
         if (directories !== DATABASE_WAITING_MESSAGE) {
           directories.values.forEach((dir: any) => {
             this.photoService.removeLocalAuditoryEvidence(dir.dir)
           });
           this.databaseService
-            .executeQuery(`DELETE FROM auditory_evidences WHERE auditory_id = ${id}`)
+            .executeQuery(`DELETE FROM helmet_auditory_evidences WHERE helmet_auditory_id = ${id}`)
             .subscribe(rm => {
               if (rm !== DATABASE_WAITING_MESSAGE) {
 
+
+
                 setTimeout(() => {
                   this.databaseService
-                    .executeQuery(`SELECT dir FROM answer_evidences WHERE auditory_id = ${id}`)
-                    .subscribe(directories2 => {
-                      if (directories2 !== DATABASE_WAITING_MESSAGE) {
-                        directories2.values.forEach((dir: any) => {
-                          this.photoService.removeLocalAnswerEvidence(dir.dir)
-                        });
+                    .executeQuery(`DELETE FROM helmet_auditory_count WHERE helmet_auditory_id = ${id}`)
+                    .subscribe(rm => {
+                      if (rm !== DATABASE_WAITING_MESSAGE) {
 
                         setTimeout(() => {
-                          this.databaseService
-                            .executeQuery(`DELETE FROM answer_evidences WHERE auditory_id = ${id}`)
-                            .subscribe(rm => {
-                              if (rm !== DATABASE_WAITING_MESSAGE) {
-
-                                setTimeout(() => {
-                                  this.databaseService
-                                    .executeQuery(`DELETE FROM answers WHERE auditory_id = ${id}`)
-                                    .subscribe(rm => {
-                                      if (rm !== DATABASE_WAITING_MESSAGE) {
-
-                                        setTimeout(() => {
-                                          this.databaseService.executeQuery(`
-                                            DELETE FROM helmet_auditory
-                                            WHERE id = ${id};
-                                          `)
-                                            .subscribe({
-                                              next: () => result.next('deleted')
-                                            });
-                                        }, 20);
-
-                                      }
-                                    });
-                                }, 20);
-                              }
+                          this.databaseService.executeQuery(`
+                            DELETE FROM helmet_auditory
+                            WHERE id = ${id};
+                          `)
+                            .subscribe({
+                              next: () => result.next('deleted')
                             });
-                        }, 20)
+                        }, 20);
+
                       }
                     });
-                }, 30);
+                }, 20);
 
               }
             });

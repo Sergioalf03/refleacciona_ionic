@@ -173,6 +173,45 @@ CREATE TABLE IF NOT EXISTS belt_auditory_count (
   update_date TEXT NOT NULL,
   FOREIGN KEY (belt_auditory_id) REFERENCES belt_auditory(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS general_count_auditory (
+  id INTEGER PRIMARY KEY NOT NULL,
+  user_id INTEGER NOT NULL,
+  title TEXT NOT NULL,
+  description TEXT,
+  close_note TEXT,
+  date TEXT NOT NULL,
+  time TEXT NOT NULL,
+  lat TEXT NOT NULL,
+  lng TEXT NOT NULL,
+  status INTEGER NOT NULL,
+  creation_date TEXT NOT NULL,
+  update_date TEXT NOT NULL,
+  remote_id INTEGER
+);
+
+CREATE INDEX IF NOT EXISTS title ON general_count_auditory (title);
+CREATE INDEX IF NOT EXISTS date ON general_count_auditory (date);
+
+CREATE TABLE IF NOT EXISTS general_count_auditory_evidences (
+  id INTEGER PRIMARY KEY NOT NULL,
+  general_count_auditory_id INTEGER NOT NULL,
+  dir TEXT NOT NULL,
+  creation_date TEXT NOT NULL,
+  uploaded INTEGER,
+  FOREIGN KEY (general_count_auditory_id) REFERENCES general_count_auditory(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS general_count_auditory_count (
+  id INTEGER PRIMARY KEY NOT NULL,
+  general_count_auditory_id INTEGER NOT NULL,
+  origin INTEGER NOT NULL,
+  destination INTEGER NOT NULL,
+  vehicle_type INTEGER NOT NULL,
+  creation_date TEXT NOT NULL,
+  update_date TEXT NOT NULL,
+  FOREIGN KEY (general_count_auditory_id) REFERENCES general_count_auditory(id) ON DELETE CASCADE
+);
 `;
 
 const SECTION_ROWS: Array<Array<any>> = [

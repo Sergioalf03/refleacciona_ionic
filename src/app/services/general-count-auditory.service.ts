@@ -3,16 +3,15 @@ import { HttpRequestService } from '../core/controllers/http-request.service';
 import { DatabaseService } from '../core/controllers/database.service';
 import { PhotoService } from '../core/controllers/photo.service';
 import { SessionService } from '../core/controllers/session.service';
-import { BehaviorSubject } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { BehaviorSubject, take } from 'rxjs';
 import { DATABASE_WAITING_MESSAGE } from '../core/constants/message-code';
 
-const BASE_URI = '/belt-auditory';
+const BASE_URI = '/general-count-auditory';
 
 @Injectable({
   providedIn: 'root'
 })
-export class BeltAuditoryService {
+export class GeneralCountAuditoryService {
 
   constructor(
     private httpService: HttpRequestService,
@@ -25,14 +24,14 @@ export class BeltAuditoryService {
     const now = new Date().toISOString();
     const userId = this.sessionService.userId;
     return this.databaseService.executeQuery(`
-      INSERT INTO belt_auditory (title, date, time, description, lat, lng, status, creation_date, update_date, user_id)
+      INSERT INTO general_count_auditory (title, date, time, description, lat, lng, status, creation_date, update_date, user_id)
       VALUES ("${data.title}", "${data.date}", "${data.time}", "${data.description}", "${data.lat}", "${data.lng}", 1, "${now}", "${now}", ${userId});
     `);
   }
 
   getLastSavedId() {
     const userId = this.sessionService.userId;
-    return this.databaseService.executeQuery(`SELECT MAX(id) AS id FROM belt_auditory WHERE status = 1 AND user_id = ${userId} LIMIT 1;`);
+    return this.databaseService.executeQuery(`SELECT MAX(id) AS id FROM general_count_auditory WHERE status = 1 AND user_id = ${userId} LIMIT 1;`);
   }
 
   getLocalList() {
@@ -40,7 +39,7 @@ export class BeltAuditoryService {
     const result = new BehaviorSubject<any>(DATABASE_WAITING_MESSAGE);
 
     this.databaseService
-      .executeQuery(`SELECT id, title, date, status FROM belt_auditory ;`)
+      .executeQuery(`SELECT id, title, date, status FROM general_count_auditory ;`)
       .subscribe({
         next: res => {
           console.log(res)
@@ -75,56 +74,56 @@ export class BeltAuditoryService {
   }
 
   getLocalForm(id: string) {
-    return this.databaseService.executeQuery(`SELECT * FROM belt_auditory WHERE id = ${id} AND (status = 1 OR status = 2);`);
+    return this.databaseService.executeQuery(`SELECT * FROM general_count_auditory WHERE id = ${id} AND (status = 1 OR status = 2);`);
   }
 
   getUpdateData(id: string) {
-    return this.databaseService.executeQuery(`SELECT * FROM belt_auditory WHERE id = ${id};`);
+    return this.databaseService.executeQuery(`SELECT * FROM general_count_auditory WHERE id = ${id};`);
   }
 
   updateLocal(id: string, data: any) {
     const now = new Date().toISOString();
-    return this.databaseService.executeQuery(`UPDATE belt_auditory SET title = "${data.title}", date = "${data.date}", time = "${data.time}", description = "${data.description}", lat = "${data.lat}", lng = "${data.lng}", update_date = "${now}" WHERE id = ${id};`);
+    return this.databaseService.executeQuery(`UPDATE general_count_auditory SET title = "${data.title}", date = "${data.date}", time = "${data.time}", description = "${data.description}", lat = "${data.lat}", lng = "${data.lng}", update_date = "${now}" WHERE id = ${id};`);
   }
 
   finishAuditory(id: string) {
     const now = new Date().toISOString();
-    return this.databaseService.executeQuery(`UPDATE belt_auditory SET status = 2, update_date = "${now}" WHERE id = ${id};`);
+    return this.databaseService.executeQuery(`UPDATE general_count_auditory SET status = 2, update_date = "${now}" WHERE id = ${id};`);
   }
 
   updateExternalId(localId: string, externalId: string) {
     const now = new Date().toISOString();
-    return this.databaseService.executeQuery(`UPDATE belt_auditory SET remote_id = ${externalId}, update_date = "${now}" WHERE id = ${localId};`);
+    return this.databaseService.executeQuery(`UPDATE general_count_auditory SET remote_id = ${externalId}, update_date = "${now}" WHERE id = ${localId};`);
   }
 
   closeLocal(id: string, note: string) {
     const now = new Date().toISOString();
-    return this.databaseService.executeQuery(`UPDATE belt_auditory SET close_note = "${note}", status = 2, update_date = "${now}" WHERE id = ${id};`);
+    return this.databaseService.executeQuery(`UPDATE general_count_auditory SET close_note = "${note}", status = 2, update_date = "${now}" WHERE id = ${id};`);
   }
 
   deleteLocal(id: string) {
     const result = new BehaviorSubject<any>(DATABASE_WAITING_MESSAGE);
     this.databaseService
-      .executeQuery(`SELECT dir FROM belt_auditory_evidences WHERE belt_auditory_id = ${id}`)
+      .executeQuery(`SELECT dir FROM general_count_auditory_evidences WHERE general_count_auditory_id = ${id}`)
       .subscribe(directories => {
         if (directories !== DATABASE_WAITING_MESSAGE) {
           directories.values.forEach((dir: any) => {
             this.photoService.removeLocalAuditoryEvidence(dir.dir)
           });
           this.databaseService
-            .executeQuery(`DELETE FROM belt_auditory_evidences WHERE belt_auditory_id = ${id}`)
+            .executeQuery(`DELETE FROM general_count_auditory_evidences WHERE general_count_auditory_id = ${id}`)
             .subscribe(rm => {
               if (rm !== DATABASE_WAITING_MESSAGE) {
 
                 setTimeout(() => {
                   this.databaseService
-                    .executeQuery(`DELETE FROM belt_auditory_count WHERE belt_auditory_id = ${id}`)
+                    .executeQuery(`DELETE FROM general_count_auditory_count WHERE general_count_auditory_id = ${id}`)
                     .subscribe(rm => {
                       if (rm !== DATABASE_WAITING_MESSAGE) {
 
                         setTimeout(() => {
                           this.databaseService.executeQuery(`
-                            DELETE FROM belt_auditory
+                            DELETE FROM general_count_auditory
                             WHERE id = ${id};
                           `)
                             .subscribe({
@@ -146,12 +145,12 @@ export class BeltAuditoryService {
 
   finalDelete(id: string) {
     return this.databaseService
-      .executeQuery(`DELETE FROM belt_auditory WHERE id = ${id};`);
+      .executeQuery(`DELETE FROM general_count_auditory WHERE id = ${id};`);
   }
 
   getFinalNotes(auditoryId: string) {
     return this.databaseService
-      .executeQuery(`SELECT close_note FROM belt_auditory WHERE id = ${auditoryId}`);
+      .executeQuery(`SELECT close_note FROM general_count_auditory WHERE id = ${auditoryId}`);
   }
 
   // Remote

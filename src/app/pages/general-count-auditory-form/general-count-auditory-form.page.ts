@@ -2,25 +2,25 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Capacitor } from '@capacitor/core';
+import { Geolocation } from '@capacitor/geolocation';
 import { ActionSheetController, isPlatform } from '@ionic/angular';
-import { URI_BELT_COLLECION_DETAIL, URI_BELT_LIST, URI_HOME } from 'src/app/core/constants/uris';
+import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
+import { URI_GENERAL_COUNT_COLLECION_DETAIL, URI_GENERAL_COUNT_LIST, URI_HOME } from 'src/app/core/constants/uris';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { MapService } from 'src/app/core/controllers/map.service';
 import { PhotoService } from 'src/app/core/controllers/photo.service';
 import { ValidFormService } from 'src/app/core/controllers/valid-form.service';
-import { Geolocation } from '@capacitor/geolocation';
-import { BeltAuditoryService } from 'src/app/services/belt-auditory.service';
-import { BeltAuditoryEvidenceService } from 'src/app/services/belt-auditory-evidence.service';
-import { Capacitor } from '@capacitor/core';
-import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
+import { GeneralCountAuditoryEvidenceService } from 'src/app/services/general-count-auditory-evidence.service';
+import { GeneralCountAuditoryService } from 'src/app/services/general-count-auditory.service';
 
 @Component({
-  selector: 'app-belt-initial-form',
-  templateUrl: './belt-initial-form.page.html',
+  selector: 'app-general-count-auditory-form',
+  templateUrl: './general-count-auditory-form.page.html',
 })
-export class BeltInitialFormPage implements OnInit {
+export class GeneralCountAuditoryFormPage implements OnInit {
 
   formActionText = 'Nuevo';
   SubmitButtonText = 'Comenzar';
@@ -34,8 +34,8 @@ export class BeltInitialFormPage implements OnInit {
   ImageSrc: any[] = [];
 
   constructor(
-    private auditoryService: BeltAuditoryService,
-    private auditoryEvidenceService: BeltAuditoryEvidenceService,
+    private generalCountAuditoryService: GeneralCountAuditoryService,
+    private generalCountAuditoryEvidenceService: GeneralCountAuditoryEvidenceService,
     private router: Router,
     private route: ActivatedRoute,
     private validFormService: ValidFormService,
@@ -67,17 +67,16 @@ export class BeltInitialFormPage implements OnInit {
   }
 
   private async createAuditory(auditory: any) {
-    this.auditoryService
+    this.generalCountAuditoryService
       .localSave(auditory)
       .subscribe({
         next: (save) => {
           if (save !== DATABASE_WAITING_MESSAGE) {
 
-            this.auditoryService
+            this.generalCountAuditoryService
               .getLastSavedId()
               .subscribe({
                 next: async res => {
-                  console.log(res)
                   if (res !== DATABASE_WAITING_MESSAGE) {
                     this.hideMap = true;
                     this.auditoryId = res.values[0].id;
@@ -90,9 +89,9 @@ export class BeltInitialFormPage implements OnInit {
                           const blob = await fetch(src.base64).then(r => r.blob());
 
                           this.photoService
-                            .saveLocalBeltAuditoryEvidence(blob, this.auditoryId)
+                            .saveLocalGeneralCountAuditoryEvidence(blob, this.auditoryId)
                             .then(photoId => {
-                              this.auditoryEvidenceService
+                              this.generalCountAuditoryEvidenceService
                                 .localSave({ auditoryId: this.auditoryId, dir: photoId })
                                 .subscribe({
                                   next: async photo => {
@@ -100,8 +99,7 @@ export class BeltInitialFormPage implements OnInit {
                                       count++;
                                       if (count === this.ImageSrc.length) {
                                         window.location.reload();
-                                        this.auditoryId = '1';
-                                        this.responseService.onSuccessAndRedirect(URI_BELT_COLLECION_DETAIL('0', this.auditoryId), 'Levantamiento guardado');
+                                        this.responseService.onSuccessAndRedirect(URI_GENERAL_COUNT_COLLECION_DETAIL('0', this.auditoryId), 'Levantmiento guardado');
                                       }
                                     }
                                   },
@@ -114,28 +112,28 @@ export class BeltInitialFormPage implements OnInit {
                         }, 100 * index);
                       });
                     } else {
-                      this.responseService.onSuccessAndRedirect(URI_BELT_COLLECION_DETAIL('0', this.auditoryId), 'Levantamiento guardado');
+                      this.responseService.onSuccessAndRedirect(URI_GENERAL_COUNT_COLLECION_DETAIL('0', this.auditoryId), 'Levantmiento guardado');
                     }
                   }
 
                 }
               });
           }
-      },
-      error: err => {
-        this.responseService.onError(err, 'No se pudo guardar')
-      },
-    })
+        },
+        error: err => {
+          this.responseService.onError(err, 'No se pudo guardar')
+        },
+      })
   }
 
   private updateAuditory(auditory: any) {
-    this.auditoryService
+    this.generalCountAuditoryService
       .updateLocal(this.auditoryId, auditory)
       .subscribe({
         next: (updateRes) => {
           if (updateRes !== DATABASE_WAITING_MESSAGE) {
             this.hideMap = true;
-            this.responseService.onSuccessAndRedirect(URI_BELT_LIST('local'), 'Levantamiento actualizada');
+            this.responseService.onSuccessAndRedirect(URI_GENERAL_COUNT_LIST('local'), 'Levantamiento actualizado');
           }
         },
         error: err => {
@@ -146,20 +144,17 @@ export class BeltInitialFormPage implements OnInit {
   }
 
   private setAuditory(auditory: any) {
-    this.backUrl = URI_BELT_LIST('local');
+    this.backUrl = URI_GENERAL_COUNT_LIST('local');
     this.form.setValue({
       title: auditory.title,
       description: auditory.description,
       date: auditory.date,
       time: auditory.time,
-      // lat: auditory.lat,
-      // lng: auditory.lng,
-      // temporal
-      lat: '100.00',
-      lng: '100.00',
+      lat: auditory.lat,
+      lng: auditory.lng,
     });
 
-    this.auditoryEvidenceService
+    this.generalCountAuditoryEvidenceService
       .getEvidencesByAuditory(this.auditoryId)
       .subscribe({
         next: res => {
@@ -216,7 +211,7 @@ export class BeltInitialFormPage implements OnInit {
           // this.hideMap = false;
           let id = paramMap.get('id') || '0';
           if (id === '00') {
-            this.backUrl = URI_BELT_LIST('local');
+            this.backUrl = URI_GENERAL_COUNT_LIST('local');
             id = '0';
           }
           if (id !== '0') {
@@ -224,7 +219,7 @@ export class BeltInitialFormPage implements OnInit {
             this.auditoryId = id;
             this.formActionText = 'Actualizando';
             this.SubmitButtonText = 'Guardar';
-            this.auditoryService
+            this.generalCountAuditoryService
               .getLocalForm(this.auditoryId)
               .subscribe({
                 next: res => {
@@ -272,12 +267,12 @@ export class BeltInitialFormPage implements OnInit {
             lng: this.form.controls['lng'].value,
           };
 
-        if (this.auditoryId === '0') {
-          this.createAuditory(auditory);
-        } else {
-          this.updateAuditory(auditory);
-        }
-      })
+          if (this.auditoryId === '0') {
+            this.createAuditory(auditory);
+          } else {
+            this.updateAuditory(auditory);
+          }
+        })
     }
   }
 
@@ -338,15 +333,15 @@ export class BeltInitialFormPage implements OnInit {
           const blob = await fetch(img).then(r => r.blob());
 
           this.photoService
-            .saveLocalBeltAuditoryEvidence(blob, this.auditoryId)
+            .saveLocalGeneralCountAuditoryEvidence(blob, this.auditoryId)
             .then(photoId => {
               if (photoId !== DATABASE_WAITING_MESSAGE) {
-                this.auditoryEvidenceService
+                this.generalCountAuditoryEvidenceService
                   .localSave({ auditoryId: this.auditoryId, dir: photoId })
                   .subscribe({
                     next: async save => {
                       if (save !== DATABASE_WAITING_MESSAGE) {
-                        this.auditoryEvidenceService
+                        this.generalCountAuditoryEvidenceService
                           .getLastInsertedDir()
                           .subscribe({
                             next: async (res2: any) => {
@@ -386,20 +381,20 @@ export class BeltInitialFormPage implements OnInit {
             width: '25%'
           },
         });
-      }  else {
+      } else {
         const img = res.webPath || '';
         const blob = await fetch(img).then(r => r.blob());
 
         this.photoService
-          .saveLocalBeltAuditoryEvidence(blob, this.auditoryId)
+          .saveLocalGeneralCountAuditoryEvidence(blob, this.auditoryId)
           .then(photoId => {
             if (photoId !== DATABASE_WAITING_MESSAGE) {
-              this.auditoryEvidenceService
+              this.generalCountAuditoryEvidenceService
                 .localSave({ auditoryId: this.auditoryId, dir: photoId })
                 .subscribe({
                   next: async save => {
                     if (save !== DATABASE_WAITING_MESSAGE) {
-                      this.auditoryEvidenceService
+                      this.generalCountAuditoryEvidenceService
                         .getLastInsertedDir()
                         .subscribe({
                           next: async (res2: any) => {
@@ -467,7 +462,7 @@ export class BeltInitialFormPage implements OnInit {
   onRemove(dir: string, index: number) {
     this.confirmDialogService.presentAlert('¿Desea eliminar la imagen?', () => {
       if (!!dir) {
-        this.auditoryEvidenceService
+        this.generalCountAuditoryEvidenceService
           .localRemove(dir)
           .subscribe({
             next: () => {
@@ -481,5 +476,6 @@ export class BeltInitialFormPage implements OnInit {
       }
     });
   }
+
 
 }

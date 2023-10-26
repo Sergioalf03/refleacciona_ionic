@@ -1,24 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Capacitor } from '@capacitor/core';
+import { Directory, Filesystem } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
 import { ActionSheetController, Platform } from '@ionic/angular';
 import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
-import { URI_BELT_COLLECION_DETAIL, URI_BELT_DETAIL, URI_BELT_FORM, URI_HOME } from 'src/app/core/constants/uris';
+import { URI_GENERAL_COUNT_COLLECION_DETAIL, URI_GENERAL_COUNT_DETAIL, URI_GENERAL_COUNT_FORM, URI_HOME } from 'src/app/core/constants/uris';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { PhotoService } from 'src/app/core/controllers/photo.service';
-import { BeltAuditoryEvidenceService } from 'src/app/services/belt-auditory-evidence.service';
-import { BeltAuditoryService } from 'src/app/services/belt-auditory.service';
-import { BeltCollectionService } from 'src/app/services/belt-collection.service';
-import { Capacitor } from '@capacitor/core';
-import { Directory, Filesystem } from '@capacitor/filesystem';
-import { Share } from '@capacitor/share';
+import { GeneralCountAuditoryEvidenceService } from 'src/app/services/general-count-auditory-evidence.service';
+import { GeneralCountAuditoryService } from 'src/app/services/general-count-auditory.service';
+import { GeneralCountCollectionService } from 'src/app/services/general-count-collection.service';
 
 @Component({
-  selector: 'app-belt-auditory-list',
-  templateUrl: './belt-auditory-list.page.html',
+  selector: 'app-general-count-auditory-list',
+  templateUrl: './general-count-auditory-list.page.html',
 })
-export class BeltAuditoryListPage implements OnInit {
+export class GeneralCountAuditoryListPage implements OnInit {
 
   auditories: any[] = [];
   sendedList = false;
@@ -30,14 +30,12 @@ export class BeltAuditoryListPage implements OnInit {
   }
 
   backUri = URI_HOME();
-  formUri = URI_BELT_FORM('00');
+  formUri = URI_GENERAL_COUNT_FORM('00');
 
   constructor(
-    private auditoryService: BeltAuditoryService,
-    private auditoryEvidenceService: BeltAuditoryEvidenceService,
-    private helmetCollectionService: BeltCollectionService,
-    // private answerService: AnswerService,
-    // private answerEvidenceService: AnswerEvidenceService,
+    private auditoryService: GeneralCountAuditoryService,
+    private auditoryEvidenceService: GeneralCountAuditoryEvidenceService,
+    private helmetCollectionService: GeneralCountCollectionService,
     private photoService: PhotoService,
     private responseService: HttpResponseService,
     private loadingService: LoadingService,
@@ -84,11 +82,11 @@ export class BeltAuditoryListPage implements OnInit {
   }
 
   private onEdit(id: string) {
-    this.router.navigateByUrl(URI_BELT_FORM(id));
+    this.router.navigateByUrl(URI_GENERAL_COUNT_FORM(id));
   }
 
   onNewAuditory() {
-    this.router.navigateByUrl(URI_BELT_FORM('00'));
+    this.router.navigateByUrl(URI_GENERAL_COUNT_FORM('00'));
   }
 
   private onUpload(id: string) {
@@ -124,22 +122,13 @@ export class BeltAuditoryListPage implements OnInit {
                             user_id: auditory.values[0].user_id,
                           }
 
-                          const formattedCounts = counts.values.map((c: any) => {
-                            console.log(c)
-                            return {
-                              adults_count: c.adults_count,
-                              belt_auditory_id: c.belt_auditory_id,
-                              belts_count: c.belts_count,
-                              chairs_count: c.chairs_count,
-                              child_count: c.child_count,
-                              coopilot: c.coopilot,
-                              creation_date: c.creation_date,
-                              destination: c.destination,
-                              origin: c.origin,
-                              vehicle_type: c.vehicle_type,
-                              overuse_count: c.overuse_count,
-                            }
-                          });
+                          const formattedCounts = counts.values.map((c: any) => ({
+                            helmet_auditory_id: c.helmet_auditory_id,
+                            origin: c.origin,
+                            destination: c.destination,
+                            vehicle_type: c.vehicle_type,
+                            creation_date: c.creation_date,
+                          }));
 
                           const data = {
                             auditory: formattedAuditory,
@@ -260,11 +249,11 @@ export class BeltAuditoryListPage implements OnInit {
   }
 
   private onDetail(id: string) {
-    this.router.navigateByUrl(URI_BELT_COLLECION_DETAIL('0', id));
+    this.router.navigateByUrl(URI_GENERAL_COUNT_COLLECION_DETAIL('0', id));
   }
 
   private onRemoteDetail(id: string) {
-    this.router.navigateByUrl(URI_BELT_DETAIL(id));
+    this.router.navigateByUrl(URI_GENERAL_COUNT_DETAIL(id));
   }
 
   private onDownloadPdf(id: string, title: string) {
