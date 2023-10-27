@@ -77,7 +77,6 @@ export class ProfilePage {
 
 
     this.photoService.getLocalLogoUri().then(photo => {
-      console.log(photo);
       this.ImageSafeSrc = Capacitor.convertFileSrc(photo.uri)
     });
 

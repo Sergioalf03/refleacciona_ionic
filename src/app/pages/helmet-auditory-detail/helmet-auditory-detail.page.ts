@@ -9,6 +9,7 @@ import { HttpResponseService } from 'src/app/core/controllers/http-response.serv
 import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { MapService } from 'src/app/core/controllers/map.service';
 import { HelmetAuditoryService } from 'src/app/services/helmet-auditory.service';
+import { STORAGE_URL } from 'src/environments/environment';
 
 const directions = DIRECTIONS;
 
@@ -60,10 +61,7 @@ export class HelmetAuditoryDetailPage {
                       }).then(() => {
                         this.loadingService.dismissLoading();
                       })
-                      .catch(err => {
-                        console.log(err)
-                        this.loadingService.dismissLoading();
-                      });
+                      .catch(err => this.responseService.onError(err, 'No se pudo descargar el levantamiento'));
                   }
                 },
                 error: err => this.responseService.onError(err, 'No se pudo descargar el levantamiento')
@@ -137,6 +135,8 @@ export class HelmetAuditoryDetailPage {
       this.auditoryCloseNote = data.close_note;
       this.auditoryLat = data.lat;
       this.auditoryLng = data.lng;
+
+      this.auditoyrEvidences = data.auditory.evidences.map((e: any) => `${STORAGE_URL}/helmet/${e.dir}.jpeg`)
 
       this.counts = data.counts.map((c: any) => {
 

@@ -62,10 +62,7 @@ export class BeltAuditoryDetailPage {
                     }).then(() => {
                       this.loadingService.dismissLoading();
                     })
-                    .catch(err => {
-                      console.log(err)
-                      this.loadingService.dismissLoading();
-                    });
+                    .catch(err => this.responseService.onError(err, 'No se pudo descargar el levantamiento'));
                 }
               },
               error: (err: any) => this.responseService.onError(err, 'No se pudo descargar el levantamiento')

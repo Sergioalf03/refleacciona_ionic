@@ -136,8 +136,6 @@ export class HelmetAuditoryListPage implements OnInit {
                             counts: formattedCounts,
                           }
 
-                          console.log(data);
-
                           this.auditoryService
                             .upload(data)
                             .subscribe({
@@ -250,7 +248,7 @@ export class HelmetAuditoryListPage implements OnInit {
   }
 
   private onDetail(id: string) {
-    this.router.navigateByUrl(URI_HELMET_COLLECION_DETAIL('0', id));
+    this.router.navigateByUrl(URI_HELMET_COLLECION_DETAIL('1', id));
   }
 
   private onRemoteDetail(id: string) {
@@ -311,10 +309,7 @@ export class HelmetAuditoryListPage implements OnInit {
                   }).then(() => {
                     this.loadingService.dismissLoading();
                   })
-                  .catch(err => {
-                    console.log(err)
-                    this.loadingService.dismissLoading();
-                  });
+                  .catch(err => this.responseService.onError(err, 'No se pudo descargar el levantamiento'));
               }
             },
             error: err => this.responseService.onError(err, 'No se pudo descargar la auditoría')

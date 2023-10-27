@@ -16,7 +16,7 @@ import { HttpResponseService } from 'src/app/core/controllers/http-response.serv
 })
 export class HelmetCountFormPage implements OnInit {
 
-  backUrl = URI_HELMET_COLLECION_DETAIL('0', '0');
+  backUrl = URI_HELMET_COLLECION_DETAIL('1', '0');
 
   originDirection = 'Origen';
   destinationDirection = 'Destino';
@@ -52,7 +52,7 @@ export class HelmetCountFormPage implements OnInit {
       .subscribe({
         next: paramMap => {
           this.auditoryId = paramMap.get('id') || '0';
-          this.backUrl = URI_HELMET_COLLECION_DETAIL('0', this.auditoryId);
+          this.backUrl = URI_HELMET_COLLECION_DETAIL('1', this.auditoryId);
         }
       });
   }
@@ -134,11 +134,10 @@ export class HelmetCountFormPage implements OnInit {
         .save(data)
         .subscribe({
           next: res => {
-            console.log(res);
             if (res !== DATABASE_WAITING_MESSAGE) {
 
               this.loadingService.dismissLoading();
-              this.router.navigateByUrl(URI_HELMET_COLLECION_DETAIL('0', this.auditoryId));
+              this.router.navigateByUrl(URI_HELMET_COLLECION_DETAIL('1', this.auditoryId));
             }
           },
           error: err => {
@@ -149,7 +148,7 @@ export class HelmetCountFormPage implements OnInit {
   }
 
   onCancel() {
-    this.router.navigateByUrl(URI_HELMET_COLLECION_DETAIL('0', this.auditoryId));
+    this.router.navigateByUrl(URI_HELMET_COLLECION_DETAIL('1', this.auditoryId));
   }
 
 

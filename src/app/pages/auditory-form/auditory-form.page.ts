@@ -100,7 +100,6 @@ export class AuditoryFormPage implements OnInit {
 
                         if (this.ImageSrc.length > 0) {
                           this.ImageSrc.forEach(async (src: any, index: number) => {
-                            console.log('i', index)
 
                               const blob = await fetch(src.base64).then(r => r.blob());
 
@@ -109,16 +108,12 @@ export class AuditoryFormPage implements OnInit {
                                 .then(photoId => {
 
                                   setTimeout(async () => {
-                                    console.log('j', index)
                                     this.auditoryEvidenceService
                                       .localSave({ auditoryId: this.auditoryId, dir: photoId })
                                       .subscribe({
                                         next: async photo => {
-                                          console.log('saved', photo)
                                           if (photo !== DATABASE_WAITING_MESSAGE) {
-                                            console.log('saved')
                                             count++;
-                                            console.log(count, this.ImageSrc.length);
                                             if (count === this.ImageSrc.length) {
                                               this.responseService.onSuccessAndRedirect(URI_QUESTION_FORM('0', this.auditoryId, `1`), 'Auditoría guarda');
                                             }
@@ -131,7 +126,7 @@ export class AuditoryFormPage implements OnInit {
 
                                     }, 50 * index);
                                   })
-                                  .catch(err => console.log(err));
+                                  .catch(err => this.responseService.onError(err, 'No se pudo guardar la imagen'));
 
                             });
                         } else {

@@ -77,20 +77,23 @@
         </ion-col>
       </ion-row>
 
-
-      <div class="row mt-5">
-        <div class="col">
-          <ion-button color="danger" expand="full" (click)="onCancel()">
-            CANCELAR
-          </ion-button>
-        </div>
-        <div class="col">
-          <ion-button expand="full"type="submit">
-            {{SubmitButtonText}}
-          </ion-button>
-        </div>
-      </div>
-
     </div>
   </form>
 </ion-content>
+
+<ion-footer>
+  <ion-row>
+    <ion-col >
+      <ion-button color="danger" expand="full" (click)="onCancel()">
+        CANCELAR
+      </ion-button>
+    </ion-col>
+
+    <ion-col>
+      <ion-button expand="full"type="submit" (click)="onSubmit()">
+        {{SubmitButtonText}}
+      </ion-button>
+    </ion-col>
+  </ion-row>
+</ion-footer>
+

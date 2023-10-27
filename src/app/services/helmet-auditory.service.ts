@@ -42,7 +42,6 @@ export class HelmetAuditoryService {
       .executeQuery(`SELECT id, title, date, status FROM helmet_auditory ;`)
       .subscribe({
         next: res => {
-          console.log(res)
           if (res !== DATABASE_WAITING_MESSAGE) {
             const auditoryResult: any[] = [];
             if (res.values.length > 0) {

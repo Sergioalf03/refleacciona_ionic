@@ -52,7 +52,7 @@ export class HomePage {
           // this.androidPermissions
           //   .checkPermission(this.androidPermissions.PERMISSION.CAMERA)
           //   .then(
-          //     result => console.log('Has permission?', result.hasPermission),
+          //     result => true,
           //     err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.CAMERA)
           //   );
 
@@ -65,15 +65,9 @@ export class HomePage {
   }
 
   ionViewDidEnter() {
-    // this.checkPermissions();
-
     if (!this.versionService.checked) {
       this.onFetchUpdate(false);
     }
-
-    // this.databaseService.executeQuery(createSchema).subscribe({
-    //   next: (rr: any) => console.log(rr),
-    // });
   }
 
   private importQuestions(questions: any[], sectionsQuery: string, version: number) {

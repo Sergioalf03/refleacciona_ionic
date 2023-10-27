@@ -43,7 +43,6 @@ export class BeltAuditoryService {
       .executeQuery(`SELECT id, title, date, status FROM belt_auditory ;`)
       .subscribe({
         next: res => {
-          console.log(res)
           if (res !== DATABASE_WAITING_MESSAGE) {
             const auditoryResult: any[] = [];
             if (res.values.length > 0) {

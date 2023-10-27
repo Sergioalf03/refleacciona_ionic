@@ -6,6 +6,7 @@ import { createSchema, loadData } from 'src/app/utils/database.util';
 import { BehaviorSubject, Observable, from, } from 'rxjs';
 import { take, tap, } from 'rxjs/operators';
 import { DATABASE_WAITING_MESSAGE } from '../constants/message-code';
+import { HttpResponseService } from './http-response.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,7 @@ export class DatabaseService {
 
   constructor(
     private _sqlite: SQLiteService,
+    private responseService: HttpResponseService,
   ) { }
 
   async checkDatabaseVersion() {
@@ -35,7 +37,6 @@ export class DatabaseService {
   }
 
   executeQuery(query: string): Observable<any> {
-    console.log(query);
     const data = new BehaviorSubject<any>(DATABASE_WAITING_MESSAGE);
     this._sqlite
       .createConnection(LOCAL_DATABASE.name, LOCAL_DATABASE.encrypted, LOCAL_DATABASE.mode, LOCAL_DATABASE.version)
@@ -57,7 +58,7 @@ export class DatabaseService {
           });
       });
 
-    return data.asObservable().pipe(tap(r => console.log(r)),take(2));
+    return data.asObservable().pipe(take(2));
   }
 
   private async sendQuery(connection: SQLiteDBConnection, query: string, data: BehaviorSubject<any>) {
@@ -69,14 +70,14 @@ export class DatabaseService {
           .close()
           .then(async () => {
             data.next(result);
-          }).catch(e => console.log(e)) : true;
+          }).catch(e => this.responseService.onError(e, 'No se pudo ejecutar el query')) : true;
       })
       .catch(async (e) => {
         await connection.isExists() ? connection
           .close()
           .then(async () => {
             data.next(`error: ${e.message}`);
-          }).catch(e => console.log(e)) : true;
+          }).catch(e => this.responseService.onError(e, 'No se pudo ejecutar el query')) : true;
       });
   }
 
@@ -101,15 +102,14 @@ export class DatabaseService {
       .then(result => {
         connection.execute(loadData)
           .then(async (result1) => {
-            console.log('creation result', result1)
-            await connection.close().catch(e => console.log(e));
+            await connection.close().catch(e => this.responseService.onError(e, 'No se pudo crear la base de datos'));
           })
           .catch(async (e) => {
-            await connection.close().catch(e => console.log(e));
+            await connection.close().catch(e => this.responseService.onError(e, 'No se pudo crear la base de datos'));
           });
       })
       .catch(async (e) => {
-        await connection.close().catch(e => console.log(e));
+        await connection.close().catch(e => this.responseService.onError(e, 'No se pudo crear la base de datos'));
       });
   }
 }

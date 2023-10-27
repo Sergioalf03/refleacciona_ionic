@@ -98,8 +98,7 @@ export class HelmetInitialFormPage implements OnInit {
                                     if (photo !== DATABASE_WAITING_MESSAGE) {
                                       count++;
                                       if (count === this.ImageSrc.length) {
-                                        window.location.reload();
-                                        this.responseService.onSuccessAndRedirect(URI_HELMET_COLLECION_DETAIL('0', this.auditoryId), 'Levantmiento guardado');
+                                        this.responseService.onSuccessAndRedirect(URI_HELMET_COLLECION_DETAIL('1', this.auditoryId), 'Levantmiento guardado');
                                       }
                                     }
                                   },
@@ -112,7 +111,7 @@ export class HelmetInitialFormPage implements OnInit {
                         }, 100 * index);
                       });
                     } else {
-                      this.responseService.onSuccessAndRedirect(URI_HELMET_COLLECION_DETAIL('0', this.auditoryId), 'Levantmiento guardado');
+                      this.responseService.onSuccessAndRedirect(URI_HELMET_COLLECION_DETAIL('1', this.auditoryId), 'Levantmiento guardado');
                     }
                   }
 

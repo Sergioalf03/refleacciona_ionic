@@ -17,10 +17,15 @@ const directions = DIRECTIONS;
 })
 export class HelmetCountListPage implements OnInit {
 
-  backUrl = URI_HELMET_COLLECION_DETAIL('0', '0');
+  backUrl = URI_HELMET_COLLECION_DETAIL('1', '0');
   counts: any[] = [];
   loading = true;
   auditoryId = '0';
+
+  customButton = {
+    click: async () => this.router.navigateByUrl(URI_HELMET_COUNT_FORM(this.auditoryId)),
+    icon: 'add',
+  }
 
   constructor(
     private helmetCollectionService: HelmetCollectionService,
@@ -44,7 +49,7 @@ export class HelmetCountListPage implements OnInit {
           this.loading = true;
 
           this.auditoryId = paramMap.get('id') || '0';
-          this.backUrl = URI_HELMET_COLLECION_DETAIL('0', this.auditoryId);
+          this.backUrl = URI_HELMET_COLLECION_DETAIL('1', this.auditoryId);
 
           this.loadList();
         }

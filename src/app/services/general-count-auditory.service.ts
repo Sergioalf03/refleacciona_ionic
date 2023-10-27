@@ -42,7 +42,6 @@ export class GeneralCountAuditoryService {
       .executeQuery(`SELECT id, title, date, status FROM general_count_auditory ;`)
       .subscribe({
         next: res => {
-          console.log(res)
           if (res !== DATABASE_WAITING_MESSAGE) {
             const auditoryResult: any[] = [];
             if (res.values.length > 0) {

@@ -70,8 +70,6 @@ export class GeneralCountCountListPage implements OnInit {
               };
             });
 
-            console.log(this.counts)
-
             this.loading = false;
             this.loadingSerivice.dismissLoading();
           }

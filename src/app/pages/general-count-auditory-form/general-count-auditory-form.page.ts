@@ -98,7 +98,6 @@ export class GeneralCountAuditoryFormPage implements OnInit {
                                     if (photo !== DATABASE_WAITING_MESSAGE) {
                                       count++;
                                       if (count === this.ImageSrc.length) {
-                                        window.location.reload();
                                         this.responseService.onSuccessAndRedirect(URI_GENERAL_COUNT_COLLECION_DETAIL('0', this.auditoryId), 'Levantmiento guardado');
                                       }
                                     }

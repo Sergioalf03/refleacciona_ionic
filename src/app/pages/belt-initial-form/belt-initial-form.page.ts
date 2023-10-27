@@ -77,7 +77,6 @@ export class BeltInitialFormPage implements OnInit {
               .getLastSavedId()
               .subscribe({
                 next: async res => {
-                  console.log(res)
                   if (res !== DATABASE_WAITING_MESSAGE) {
                     this.hideMap = true;
                     this.auditoryId = res.values[0].id;
@@ -99,7 +98,6 @@ export class BeltInitialFormPage implements OnInit {
                                     if (photo !== DATABASE_WAITING_MESSAGE) {
                                       count++;
                                       if (count === this.ImageSrc.length) {
-                                        window.location.reload();
                                         this.auditoryId = '1';
                                         this.responseService.onSuccessAndRedirect(URI_BELT_COLLECION_DETAIL('0', this.auditoryId), 'Levantamiento guardado');
                                       }

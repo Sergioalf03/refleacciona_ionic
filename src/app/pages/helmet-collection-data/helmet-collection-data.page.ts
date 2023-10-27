@@ -37,6 +37,11 @@ export class HelmetCollectionDataPage implements OnInit {
       .subscribe({
         next: paramMap => {
           this.auditoryId = paramMap.get('id') || '0';
+          const from = paramMap.get('from') || '0';
+
+          if (from !== '0') {
+            this.backUrl = URI_HELMET_LIST('local');
+          }
 
           this.helmetCollectionService
             .getCount(this.auditoryId)

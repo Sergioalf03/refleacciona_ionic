@@ -198,7 +198,6 @@ export class QuestionFormPage implements OnInit {
                                 .subscribe({
                                   next: result => {
                                     if (result !== DATABASE_WAITING_MESSAGE) {
-                                      console.log(201, q)
                                       q.answer = result.values[0].value;
                                       // Insertar a base de datos
 
@@ -207,7 +206,6 @@ export class QuestionFormPage implements OnInit {
                                           .saveAnswer(q.id, this.auditoryId, q.answer)
                                           .subscribe({
                                             next: save => {
-                                              console.log(210, q)
                                               if (save !== DATABASE_WAITING_MESSAGE) {
                                                 const originalIndex = this.questions.findIndex(question => question.id === q.id);
                                                 this.ImageSrc[originalIndex].canTakePickture = true;
@@ -263,11 +261,9 @@ export class QuestionFormPage implements OnInit {
                                         break;
                                     }
 
-                                    console.log(266, q)
                                     q.answer = answer;
 
                                     setTimeout(() => {
-                                      console.log(270, q)
                                       this.answerService
                                         .saveAnswer(q.id, this.auditoryId, answer)
                                         .subscribe({
@@ -289,7 +285,6 @@ export class QuestionFormPage implements OnInit {
                         // End to answer by some answer
 
                         this.ImageSrc = this.questions.map(q => {
-                          console.log(292, q)
                           return {
                             canTakePickture: !!q.answer,
                             url: '',
@@ -491,10 +486,6 @@ export class QuestionFormPage implements OnInit {
       needsChange.affectedIndexes.forEach((i: number, index: number) => {
         const questionConst = this.questionsWithCondition.find(qwc => qwc.type === 'S' && qwc.questionIndex === i);
 
-        console.log(this.questionsWithCondition);
-        console.log(i, answerValue);
-        console.log(494, questionConst)
-        console.log('needsChange', needsChange.affectedIndexes.length)
         this.hideQuestion[i] = questionConst && (questionConst.answer !== answerValue);
 
         if (this.hideQuestion[i] === true) {
@@ -511,14 +502,11 @@ export class QuestionFormPage implements OnInit {
                       next: (dlt) => {
                         if(dlt !== DATABASE_WAITING_MESSAGE) {
                           this.ImageSrc[i].canTakePickture = false;
-                          console.log(511, this.questions[i])
                           this.questions[i].answer = undefined;
                           this.hideForm = true;
                           this.showedQuestions = this.hideQuestion.filter(q => q !== true).length;
                           count++;
-                          console.log('count 1', count)
                           if (count === needsChange.affectedIndexes.length) {
-                            console.log('finish 1');
                             this.hideForm = false;
                             this.loadingService.dismissLoading();
                           }
@@ -533,13 +521,10 @@ export class QuestionFormPage implements OnInit {
                   next: (dlt) => {
                     if(dlt !== DATABASE_WAITING_MESSAGE) {
                       this.ImageSrc[i].canTakePickture = false;
-                      console.log(531, this.questions[i])
                       this.questions[i].answer = undefined;
                       this.showedQuestions = this.hideQuestion.filter(q => q !== true).length;
                       count++;
-                      console.log('count 2', count)
                       if (count === needsChange.affectedIndexes.length) {
-                        console.log('finish 2');
                         this.hideForm = false;
                         this.loadingService.dismissLoading();
                       }
@@ -551,9 +536,7 @@ export class QuestionFormPage implements OnInit {
         } else {
           this.showedQuestions = this.hideQuestion.filter(q => q !== true).length;
           count++;
-          console.log('count 3', count)
           if (count === needsChange.affectedIndexes.length) {
-            console.log('finish 3');
             this.hideForm = false;
             this.loadingService.dismissLoading();
           }
@@ -577,7 +560,6 @@ export class QuestionFormPage implements OnInit {
     this.loadingService.dismissLoading();
     this.loadingService.dismissLoading();
     this.hideForm = false;
-    console.log(this.alreadyAnsweredAll);
   }
 
   onFinish() {

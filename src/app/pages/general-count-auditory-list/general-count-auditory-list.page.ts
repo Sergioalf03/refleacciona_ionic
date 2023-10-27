@@ -135,8 +135,6 @@ export class GeneralCountAuditoryListPage implements OnInit {
                             counts: formattedCounts,
                           }
 
-                          console.log(data);
-
                           this.auditoryService
                             .upload(data)
                             .subscribe({
@@ -310,10 +308,7 @@ export class GeneralCountAuditoryListPage implements OnInit {
               //     }).then(() => {
               //       this.loadingService.dismissLoading();
               //     })
-              //     .catch(err => {
-              //       console.log(err)
-              //       this.loadingService.dismissLoading();
-              //     });
+              //     .catch(err => this.responseService.onError(err, 'No se pudo descargar la auditoría'));
               // }
             },
             error: err => this.responseService.onError(err, 'No se pudo descargar la auditoría')

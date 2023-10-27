@@ -125,7 +125,6 @@ export class BeltAuditoryListPage implements OnInit {
                           }
 
                           const formattedCounts = counts.values.map((c: any) => {
-                            console.log(c)
                             return {
                               adults_count: c.adults_count,
                               belt_auditory_id: c.belt_auditory_id,
@@ -145,8 +144,6 @@ export class BeltAuditoryListPage implements OnInit {
                             auditory: formattedAuditory,
                             counts: formattedCounts,
                           }
-
-                          console.log(data);
 
                           this.auditoryService
                             .upload(data)
@@ -321,10 +318,7 @@ export class BeltAuditoryListPage implements OnInit {
                   }).then(() => {
                     this.loadingService.dismissLoading();
                   })
-                  .catch(err => {
-                    console.log(err)
-                    this.loadingService.dismissLoading();
-                  });
+                  .catch(err => this.responseService.onError(err, 'No se pudo descargar la auditoría'));
               }
             },
             error: err => this.responseService.onError(err, 'No se pudo descargar la auditoría')

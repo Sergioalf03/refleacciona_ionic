@@ -9,7 +9,6 @@ import { MapService } from 'src/app/core/controllers/map.service';
 import { AuditoryService } from 'src/app/services/auditory.service';
 import { STORAGE_URL } from 'src/environments/environment';
 import { Filesystem, Directory } from '@capacitor/filesystem';
-import { FileOpener } from '@capacitor-community/file-opener';
 import { Share } from '@capacitor/share';
 
 
@@ -62,10 +61,7 @@ export class AuditoryDetailPage {
                   }).then(() => {
                     this.loadingService.dismissLoading();
                   })
-                  .catch(err => {
-                    console.log(err)
-                    this.loadingService.dismissLoading();
-                  });
+                    .catch(err => this.responseService.onError(err, 'No se pudo descargar la auditoría'));
                 }
               },
               error: err => this.responseService.onError(err, 'No se pudo descargar la auditoría')

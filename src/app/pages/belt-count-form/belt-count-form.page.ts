@@ -223,7 +223,6 @@ export class BeltCountFormPage implements OnInit {
         .save(data)
         .subscribe({
           next: res => {
-            console.log(res);
             if (res !== DATABASE_WAITING_MESSAGE) {
 
               this.loadingService.dismissLoading();
