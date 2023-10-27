@@ -16,7 +16,7 @@ import { GeneralCountCollectionService } from 'src/app/services/general-count-co
 })
 export class GeneralCountCountFormPage implements OnInit {
 
-  backUrl = URI_GENERAL_COUNT_COLLECION_DETAIL('0', '0');
+  backUrl = URI_GENERAL_COUNT_COLLECION_DETAIL('1', '0');
 
   originDirection = 'Origen';
   destinationDirection = 'Destino';
@@ -48,7 +48,7 @@ export class GeneralCountCountFormPage implements OnInit {
       .subscribe({
         next: paramMap => {
           this.auditoryId = paramMap.get('id') || '0';
-          this.backUrl = URI_GENERAL_COUNT_COLLECION_DETAIL('0', this.auditoryId);
+          this.backUrl = URI_GENERAL_COUNT_COLLECION_DETAIL('1', this.auditoryId);
         }
       });
   }
@@ -113,7 +113,7 @@ export class GeneralCountCountFormPage implements OnInit {
             if (res !== DATABASE_WAITING_MESSAGE) {
 
               this.loadingService.dismissLoading();
-              this.router.navigateByUrl(URI_GENERAL_COUNT_COLLECION_DETAIL('0', this.auditoryId));
+              this.router.navigateByUrl(URI_GENERAL_COUNT_COLLECION_DETAIL('1', this.auditoryId));
             }
           },
           error: err => {
@@ -125,7 +125,7 @@ export class GeneralCountCountFormPage implements OnInit {
   }
 
   onCancel() {
-    this.router.navigateByUrl(URI_GENERAL_COUNT_COLLECION_DETAIL('0', this.auditoryId));
+    this.router.navigateByUrl(URI_GENERAL_COUNT_COLLECION_DETAIL('1', this.auditoryId));
   }
 
 }

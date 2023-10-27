@@ -99,7 +99,7 @@ export class BeltInitialFormPage implements OnInit {
                                       count++;
                                       if (count === this.ImageSrc.length) {
                                         this.auditoryId = '1';
-                                        this.responseService.onSuccessAndRedirect(URI_BELT_COLLECION_DETAIL('0', this.auditoryId), 'Levantamiento guardado');
+                                        this.responseService.onSuccessAndRedirect(URI_BELT_COLLECION_DETAIL('1', this.auditoryId), 'Levantamiento guardado');
                                       }
                                     }
                                   },
@@ -112,7 +112,7 @@ export class BeltInitialFormPage implements OnInit {
                         }, 100 * index);
                       });
                     } else {
-                      this.responseService.onSuccessAndRedirect(URI_BELT_COLLECION_DETAIL('0', this.auditoryId), 'Levantamiento guardado');
+                      this.responseService.onSuccessAndRedirect(URI_BELT_COLLECION_DETAIL('1', this.auditoryId), 'Levantamiento guardado');
                     }
                   }
 

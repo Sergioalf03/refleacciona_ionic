@@ -98,7 +98,7 @@ export class GeneralCountAuditoryFormPage implements OnInit {
                                     if (photo !== DATABASE_WAITING_MESSAGE) {
                                       count++;
                                       if (count === this.ImageSrc.length) {
-                                        this.responseService.onSuccessAndRedirect(URI_GENERAL_COUNT_COLLECION_DETAIL('0', this.auditoryId), 'Levantmiento guardado');
+                                        this.responseService.onSuccessAndRedirect(URI_GENERAL_COUNT_COLLECION_DETAIL('1', this.auditoryId), 'Levantmiento guardado');
                                       }
                                     }
                                   },
@@ -111,7 +111,7 @@ export class GeneralCountAuditoryFormPage implements OnInit {
                         }, 100 * index);
                       });
                     } else {
-                      this.responseService.onSuccessAndRedirect(URI_GENERAL_COUNT_COLLECION_DETAIL('0', this.auditoryId), 'Levantmiento guardado');
+                      this.responseService.onSuccessAndRedirect(URI_GENERAL_COUNT_COLLECION_DETAIL('1', this.auditoryId), 'Levantmiento guardado');
                     }
                   }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
@@ -10,6 +10,7 @@ import { HttpResponseService } from 'src/app/core/controllers/http-response.serv
 import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { MapService } from 'src/app/core/controllers/map.service';
 import { GeneralCountAuditoryService } from 'src/app/services/general-count-auditory.service';
+import { STORAGE_URL } from 'src/environments/environment';
 
 const directions = DIRECTIONS;
 const vehicleTypes = VEHICLE_TYPES;
@@ -136,6 +137,8 @@ export class GeneralCountAuditoryDetailPage {
     this.auditoryCloseNote = data.close_note;
     this.auditoryLat = data.lat;
     this.auditoryLng = data.lng;
+
+    this.auditoyrEvidences = data.auditory.evidences.map((e: any) => `${STORAGE_URL}/general/${e.dir}.jpeg`);
 
     this.counts = data.counts.map((c: any) => {
 

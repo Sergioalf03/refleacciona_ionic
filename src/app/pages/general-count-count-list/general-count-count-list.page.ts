@@ -19,7 +19,12 @@ const vehicleTypes = VEHICLE_TYPES;
 })
 export class GeneralCountCountListPage implements OnInit {
 
-  backUrl = URI_GENERAL_COUNT_COLLECION_DETAIL('0', '0');
+  customButton = {
+    click: async() => this.router.navigateByUrl(URI_GENERAL_COUNT_COUNT_FORM(this.auditoryId)),
+    icon: 'add',
+  };
+
+  backUrl = URI_GENERAL_COUNT_COLLECION_DETAIL('1', '0');
   counts: any[] = [];
   loading = true;
   auditoryId = '0';
@@ -46,7 +51,7 @@ export class GeneralCountCountListPage implements OnInit {
           this.loading = true;
 
           this.auditoryId = paramMap.get('id') || '0';
-          this.backUrl = URI_GENERAL_COUNT_COLLECION_DETAIL('0', this.auditoryId);
+          this.backUrl = URI_GENERAL_COUNT_COLLECION_DETAIL('1', this.auditoryId);
 
           this.loadList();
         }

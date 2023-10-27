@@ -10,6 +10,7 @@ import { HttpResponseService } from 'src/app/core/controllers/http-response.serv
 import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { MapService } from 'src/app/core/controllers/map.service';
 import { BeltAuditoryService } from 'src/app/services/belt-auditory.service';
+import { STORAGE_URL } from 'src/environments/environment';
 
 const directions = DIRECTIONS;
 const vehicleTypes = VEHICLE_TYPES;
@@ -136,6 +137,8 @@ export class BeltAuditoryDetailPage {
     this.auditoryCloseNote = data.close_note;
     this.auditoryLat = data.lat;
     this.auditoryLng = data.lng;
+
+    this.auditoyrEvidences = data.auditory.evidences.map((e: any) => `${STORAGE_URL}/belt/${e.dir}.jpeg`);
 
     this.counts = data.counts.map((c: any) => {
 

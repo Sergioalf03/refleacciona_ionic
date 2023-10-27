@@ -247,7 +247,7 @@ export class GeneralCountAuditoryListPage implements OnInit {
   }
 
   private onDetail(id: string) {
-    this.router.navigateByUrl(URI_GENERAL_COUNT_COLLECION_DETAIL('0', id));
+    this.router.navigateByUrl(URI_GENERAL_COUNT_COLLECION_DETAIL('1', id));
   }
 
   private onRemoteDetail(id: string) {

@@ -19,7 +19,12 @@ const vehicleTypes = VEHICLE_TYPES;
 })
 export class BeltCountListPage implements OnInit {
 
-  backUrl = URI_BELT_COLLECION_DETAIL('0', '0');
+  customButton = {
+    click: async () => this.router.navigateByUrl(URI_BELT_COUNT_FORM(this.auditoryId)),
+    icon: 'add',
+  };
+
+  backUrl = URI_BELT_COLLECION_DETAIL('1', '0');
   counts: any[] = [];
   loading = true;
   auditoryId = '0';
@@ -46,7 +51,7 @@ export class BeltCountListPage implements OnInit {
           this.loading = true;
 
           this.auditoryId = paramMap.get('id') || '0';
-          this.backUrl = URI_BELT_COLLECION_DETAIL('0', this.auditoryId);
+          this.backUrl = URI_BELT_COLLECION_DETAIL('1', this.auditoryId);
 
           this.loadList();
         }
