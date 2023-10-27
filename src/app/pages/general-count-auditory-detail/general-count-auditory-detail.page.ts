@@ -1,26 +1,26 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { DIRECTIONS } from 'src/app/core/constants/directions';
-import { URI_BELT_LIST } from 'src/app/core/constants/uris';
+import { URI_GENERAL_COUNT_LIST } from 'src/app/core/constants/uris';
 import { VEHICLE_TYPES } from 'src/app/core/constants/vehicle-types';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { MapService } from 'src/app/core/controllers/map.service';
-import { BeltAuditoryService } from 'src/app/services/belt-auditory.service';
+import { GeneralCountAuditoryService } from 'src/app/services/general-count-auditory.service';
 
 const directions = DIRECTIONS;
 const vehicleTypes = VEHICLE_TYPES;
 
 @Component({
-  selector: 'app-belt-auditory-detail',
-  templateUrl: './belt-auditory-detail.page.html',
+  selector: 'app-general-count-auditory-detail',
+  templateUrl: './general-count-auditory-detail.page.html',
 })
-export class BeltAuditoryDetailPage {
+export class GeneralCountAuditoryDetailPage {
 
-  backUrl = URI_BELT_LIST('remote');
+  backUrl = URI_GENERAL_COUNT_LIST('remote');
   customButton = {
     click: async () => {
       this.confirmDialogService
@@ -94,7 +94,7 @@ export class BeltAuditoryDetailPage {
   counts: any[] = [];
 
   constructor(
-    private auditoryService: BeltAuditoryService,
+    private auditoryService: GeneralCountAuditoryService,
     private loadingService: LoadingService,
     private responseService: HttpResponseService,
     private mapService: MapService,
@@ -102,7 +102,7 @@ export class BeltAuditoryDetailPage {
     // private platform: Platform,
     private router: Router,
     private confirmDialogService: ConfirmDialogService,
-  ) {}
+  ) { }
 
   ionViewWillEnter() {
     this.route
@@ -155,4 +155,5 @@ export class BeltAuditoryDetailPage {
       this.loadingService.dismissLoading();
     }, 500)
   }
+
 }

@@ -264,57 +264,57 @@ export class GeneralCountAuditoryListPage implements OnInit {
           .downloadPdf(id)
           .subscribe({
             next: res => {
-              // const blob = res;
-              // const filename = `data.pdf`;
-              // if ((window.navigator as any).msSaveOrOpenBlob) {
-              //   (window.navigator as any).msSaveBlob(blob, filename);
-              // } else {
-              //   const downloadLink = window.document.createElement('a');
-              //   const contentTypeHeader = 'application/pdf';
-              //   downloadLink.href = window.URL.createObjectURL(
-              //     new Blob([blob], { type: contentTypeHeader })
-              //   );
-              //   downloadLink.download = filename;
-              //   document.body.appendChild(downloadLink);
-              //   downloadLink.click();
-              //   document.body.removeChild(downloadLink);
-              // }
               const blob = res;
-              const find = ' ';
-              const re = new RegExp(find, 'g');
-              const filePath = `${title.replace(re, '-')}.pdf`;
-
-              const fileReader = new FileReader();
-
-              fileReader.readAsDataURL(blob);
-
-              fileReader.onloadend = async () => {
-                const base64Data: any = fileReader.result;
-
-                Filesystem.writeFile({
-                  path: filePath,
-                  data: base64Data,
-                  directory: Directory.Cache,
-                }).then(() => {
-                  return Filesystem.getUri({
-                    directory: Directory.Cache,
-                    path: filePath
-                  });
-                })
-                  .then((uriResult) => {
-                    return Share.share({
-                      title: filePath,
-                      text: filePath,
-                      url: uriResult.uri,
-                    });
-                  }).then(() => {
-                    this.loadingService.dismissLoading();
-                  })
-                  .catch(err => {
-                    console.log(err)
-                    this.loadingService.dismissLoading();
-                  });
+              const filename = `data.pdf`;
+              if ((window.navigator as any).msSaveOrOpenBlob) {
+                (window.navigator as any).msSaveBlob(blob, filename);
+              } else {
+                const downloadLink = window.document.createElement('a');
+                const contentTypeHeader = 'application/pdf';
+                downloadLink.href = window.URL.createObjectURL(
+                  new Blob([blob], { type: contentTypeHeader })
+                );
+                downloadLink.download = filename;
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
               }
+              // const blob = res;
+              // const find = ' ';
+              // const re = new RegExp(find, 'g');
+              // const filePath = `${title.replace(re, '-')}.pdf`;
+
+              // const fileReader = new FileReader();
+
+              // fileReader.readAsDataURL(blob);
+
+              // fileReader.onloadend = async () => {
+              //   const base64Data: any = fileReader.result;
+
+              //   Filesystem.writeFile({
+              //     path: filePath,
+              //     data: base64Data,
+              //     directory: Directory.Cache,
+              //   }).then(() => {
+              //     return Filesystem.getUri({
+              //       directory: Directory.Cache,
+              //       path: filePath
+              //     });
+              //   })
+              //     .then((uriResult) => {
+              //       return Share.share({
+              //         title: filePath,
+              //         text: filePath,
+              //         url: uriResult.uri,
+              //       });
+              //     }).then(() => {
+              //       this.loadingService.dismissLoading();
+              //     })
+              //     .catch(err => {
+              //       console.log(err)
+              //       this.loadingService.dismissLoading();
+              //     });
+              // }
             },
             error: err => this.responseService.onError(err, 'No se pudo descargar la auditoría')
           })
