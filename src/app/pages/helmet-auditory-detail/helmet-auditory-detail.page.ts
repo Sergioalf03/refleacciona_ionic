@@ -136,7 +136,7 @@ export class HelmetAuditoryDetailPage {
       this.auditoryLat = data.lat;
       this.auditoryLng = data.lng;
 
-      this.auditoyrEvidences = data.auditory.evidences.map((e: any) => `${STORAGE_URL}/helmet/${e.dir}.jpeg`)
+      this.auditoyrEvidences = data.evidences.map((e: any) => `${STORAGE_URL}/helmet/${e.dir}.jpeg`)
 
       this.counts = data.counts.map((c: any) => {
 

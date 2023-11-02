@@ -56,7 +56,7 @@ export class BeltCollectionDataPage implements OnInit {
               }
             });
         }
-      });
+      }).unsubscribe();
   }
 
   openCountForm() {
@@ -68,7 +68,7 @@ export class BeltCollectionDataPage implements OnInit {
   }
 
   onReturn() {
-    this.router.navigateByUrl(URI_BELT_FORM(this.auditoryId));
+    this.router.navigateByUrl(this.backUrl);
   }
 
   onFinish() {

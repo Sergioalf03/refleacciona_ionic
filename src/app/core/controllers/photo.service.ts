@@ -146,7 +146,7 @@ export class PhotoService {
   }
 
   generateName() {
-    const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_";
+    const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
     const lengthOfCode = 64;
 
     let text = "";

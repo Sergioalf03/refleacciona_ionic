@@ -55,7 +55,7 @@ export class BeltCountListPage implements OnInit {
 
           this.loadList();
         }
-      });
+      }).unsubscribe();;
   }
 
   private loadList() {
@@ -117,7 +117,9 @@ export class BeltCountListPage implements OnInit {
         .delete(id)
         .subscribe({
           next: res => {
-            this.loadList();
+            if (res !== DATABASE_WAITING_MESSAGE) {
+              this.loadList();
+            }
           },
           error: err => {
             this.responseService.onError(err, 'No se pudo guardar el conteo');

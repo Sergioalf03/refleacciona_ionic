@@ -40,6 +40,6 @@ export class GeneralCountAuditoryEvidenceService {
     formData.append('dir', dir);
 
     return this.httpService
-      .post('/no-urk', formData)
+      .post('/general-count-auditory/upload-auditory-evidence', formData)
   }
 }

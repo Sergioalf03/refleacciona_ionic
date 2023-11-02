@@ -32,10 +32,12 @@ export class GeneralCountColectionDataPage implements OnInit {
   }
 
   ionViewDidEnter() {
+    console.log('enter')
     this.activatedRoute
-      .paramMap
-      .subscribe({
-        next: paramMap => {
+    .paramMap
+    .subscribe({
+      next: paramMap => {
+          console.log('paramMap')
           this.auditoryId = paramMap.get('id') || '0';
           const from = paramMap.get('from') || '0';
 
@@ -48,15 +50,16 @@ export class GeneralCountColectionDataPage implements OnInit {
             .subscribe({
               next: res => {
                 if (res !== DATABASE_WAITING_MESSAGE) {
+                  console.log('count')
                   this.registrationCount = res.values[0].total;
                 }
               },
               error: err => {
-                this.responseService.onError(err, 'No se pudo guardar el conteo');
+                this.responseService.onError(err, 'No se pudieron recuperar los conteos');
               }
             });
         }
-      });
+      }).unsubscribe();;
 
 
   }
@@ -70,7 +73,7 @@ export class GeneralCountColectionDataPage implements OnInit {
   }
 
   onReturn() {
-    this.router.navigateByUrl(URI_GENERAL_COUNT_FORM(this.auditoryId));
+    this.router.navigateByUrl(this.backUrl);
   }
 
   onFinish() {

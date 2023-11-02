@@ -72,10 +72,14 @@
           </div>
 
           <div class="col text-end">
-            <ion-button class="btn-right" fill="outline" (click)="onHelmetList()">Ver</ion-button>
-            <ion-button class="btn-right" (click)="onNewHelmet()">
-              <ion-icon name="add-outline"></ion-icon>
+
+            <ion-button (click)="onNewHelmet()">
+              <ion-icon slot="icon-only" name="add-outline"></ion-icon>
             </ion-button>
+
+            <ion-button fill="outline" (click)="onHelmetList()">Ver</ion-button>
+
+
           </div>
         </div>
       </ion-card-header>
@@ -93,10 +97,11 @@
           </div>
 
           <div class="col text-end">
-            <ion-button class="btn-right" fill="outline" (click)="onBeltList()">Ver</ion-button>
-            <ion-button class="btn-right" (click)="onNewBelt()">
-              <ion-icon name="add-outline"></ion-icon>
+            <ion-button (click)="onNewBelt()">
+              <ion-icon slot="icon-only" name="add-outline"></ion-icon>
             </ion-button>
+
+            <ion-button fill="outline" (click)="onBeltList()">Ver</ion-button>
           </div>
         </div>
       </ion-card-header>
@@ -113,10 +118,11 @@
           </div>
 
           <div class="col text-end">
-            <ion-button class="btn-right" fill="outline" (click)="onGeneralCountList()">Ver</ion-button>
-            <ion-button class="btn-right" (click)="onNewGeneralCount()">
-              <ion-icon name="add-outline"></ion-icon>
+            <ion-button (click)="onNewGeneralCount()">
+              <ion-icon slot="icon-only" name="add-outline"></ion-icon>
             </ion-button>
+
+            <ion-button fill="outline" (click)="onGeneralCountList()">Ver</ion-button>
           </div>
         </div>
       </ion-card-header>

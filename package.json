@@ -22,7 +22,7 @@
     "@awesome-cordova-plugins/android-permissions": "^6.4.0",
     "@awesome-cordova-plugins/file-opener": "^6.4.0",
     "@capacitor-community/file-opener": "^1.0.5",
-    "@capacitor-community/sqlite": "^5.0.0",
+    "@capacitor-community/sqlite": "^5.4.1",
     "@capacitor/android": "5.0.3",
     "@capacitor/app": "^5.0.0",
     "@capacitor/camera": "^5.0.2",

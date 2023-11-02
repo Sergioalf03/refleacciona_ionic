@@ -50,7 +50,7 @@ export class GeneralCountCountFormPage implements OnInit {
           this.auditoryId = paramMap.get('id') || '0';
           this.backUrl = URI_GENERAL_COUNT_COLLECION_DETAIL('1', this.auditoryId);
         }
-      });
+      }).unsubscribe();;
   }
 
   onOriginDismiss(evt: any) {
