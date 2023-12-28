@@ -68,7 +68,7 @@ export class SessionService {
     formData.append('image', blob);
 
     return this.httpService
-      .post('/update-logo', formData)
+      .postFile('/update-logo', formData)
   }
 
   async setValuesFromStorage() {

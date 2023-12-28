@@ -2,12 +2,12 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './core/guards/auth.guard';
 import { AutoLoginGuard } from './core/guards/auto-login.guard';
-import { URI_AUDITORY_DETAIL, URI_AUDITORY_FINISH_FORM, URI_AUDITORY_FORM, URI_AUDITORY_LIST, URI_BELT_COLLECION_DETAIL, URI_BELT_COUNT_FORM, URI_BELT_COUNT_LIST, URI_BELT_DETAIL, URI_BELT_FORM, URI_BELT_LIST, URI_EMAIL_CONFIRMATION, URI_GENERAL_COUNT_COLLECION_DETAIL, URI_GENERAL_COUNT_COUNT_FORM, URI_GENERAL_COUNT_COUNT_LIST, URI_GENERAL_COUNT_DETAIL, URI_GENERAL_COUNT_FORM, URI_GENERAL_COUNT_LIST, URI_HELMET_COLLECION_DETAIL, URI_HELMET_COUNT_FORM, URI_HELMET_COUNT_LIST, URI_HELMET_DETAIL, URI_HELMET_FORM, URI_HELMET_LIST, URI_HOME, URI_LOGIN, URI_PROFILE, URI_QUESTION_FORM, URI_RECOVER_ACCOUNT, URI_REGISTER, URI_SEND_RECOVER_CODE } from './core/constants/uris';
+import { URI_AUDITORY_DETAIL, URI_AUDITORY_FINISH_FORM, URI_AUDITORY_FORM, URI_AUDITORY_LIST, URI_BELT_COLLECION_DETAIL, URI_BELT_COUNT_FORM, URI_BELT_COUNT_LIST, URI_BELT_DETAIL, URI_BELT_FORM, URI_BELT_LIST, URI_EMAIL_CONFIRMATION, URI_GENERAL_COUNT_COLLECION_DETAIL, URI_GENERAL_COUNT_COUNT_FORM, URI_GENERAL_COUNT_COUNT_LIST, URI_GENERAL_COUNT_DETAIL, URI_GENERAL_COUNT_FORM, URI_GENERAL_COUNT_LIST, URI_HELMET_COUNT_FORM, URI_HELMET_COUNT_LIST, URI_HELMET_DETAIL, URI_HELMET_FORM, URI_HELMET_LIST, URI_HOME, URI_LOGIN, URI_PROFILE, URI_QUESTION_FORM, URI_RECOVER_ACCOUNT, URI_REGISTER, URI_SEND_RECOVER_CODE } from './core/constants/uris';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: URI_LOGIN(),
+    redirectTo: URI_HOME(),
     pathMatch: 'full'
   },
   {
@@ -68,10 +68,10 @@ const routes: Routes = [
     path: URI_HELMET_FORM(':id'),
     loadChildren: () => import('./pages/helmet-initial-form/helmet-initial-form.module').then( m => m.HelmetInitialFormPageModule)
   },
-  {
-    path: URI_HELMET_COLLECION_DETAIL(':from' ,':id'),
-    loadChildren: () => import('./pages/helmet-collection-data/helmet-collection-data.module').then( m => m.HelmetCollectionDataPageModule)
-  },
+  // {
+  //   path: URI_HELMET_COLLECION_DETAIL(':from' ,':id'),
+  //   loadChildren: () => import('./pages/helmet-collection-data/helmet-collection-data.module').then( m => m.HelmetCollectionDataPageModule)
+  // },
   {
     path: URI_HELMET_COUNT_FORM(':id'),
     loadChildren: () => import('./pages/helmet-count-form/helmet-count-form.module').then( m => m.HelmetCountFormPageModule)
@@ -124,10 +124,10 @@ const routes: Routes = [
     path: URI_GENERAL_COUNT_COLLECION_DETAIL(':from', ':id'),
     loadChildren: () => import('./pages/general-count-colection-data/general-count-colection-data.module').then( m => m.GeneralCountColectionDataPageModule)
   },
-  {
-    path: URI_GENERAL_COUNT_COUNT_FORM(':id'),
-    loadChildren: () => import('./pages/general-count-count-form/general-count-count-form.module').then( m => m.GeneralCountCountFormPageModule)
-  },
+  // {
+    // path: URI_GENERAL_COUNT_COUNT_FORM(':id'),
+    // loadChildren: () => import('./pages/general-count-count-form/general-count-count-form.module').then( m => m.GeneralCountCountFormPageModule)
+  // },
   {
     path: URI_GENERAL_COUNT_COUNT_LIST(':id'),
     loadChildren: () => import('./pages/general-count-count-list/general-count-count-list.module').then( m => m.GeneralCountCountListPageModule)
@@ -136,6 +136,11 @@ const routes: Routes = [
     path: URI_GENERAL_COUNT_DETAIL(':id'),
     loadChildren: () => import('./pages/general-count-auditory-detail/general-count-auditory-detail.module').then( m => m.GeneralCountAuditoryDetailPageModule)
   },
+  {
+    path: URI_GENERAL_COUNT_COUNT_FORM(':id'),
+    loadChildren: () => import('./pages/swipe-form/swipe-form.module').then( m => m.SwipeFormPageModule)
+  },
+
 ];
 
 @NgModule({

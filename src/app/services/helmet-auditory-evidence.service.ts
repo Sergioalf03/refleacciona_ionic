@@ -40,6 +40,6 @@ export class HelmetAuditoryEvidenceService {
     formData.append('dir', dir);
 
     return this.httpService
-      .post('/helmet-auditory/upload-auditory-evidence', formData)
+      .postFile('/helmet-auditory/upload-auditory-evidence', formData)
   }
 }

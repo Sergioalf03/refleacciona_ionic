@@ -5,7 +5,7 @@ import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { ActionSheetController, Platform } from '@ionic/angular';
 import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
-import { URI_GENERAL_COUNT_COLLECION_DETAIL, URI_GENERAL_COUNT_DETAIL, URI_GENERAL_COUNT_FORM, URI_HOME } from 'src/app/core/constants/uris';
+import { URI_GENERAL_COUNT_COLLECION_DETAIL, URI_GENERAL_COUNT_COUNT_FORM, URI_GENERAL_COUNT_DETAIL, URI_GENERAL_COUNT_FORM, URI_HOME } from 'src/app/core/constants/uris';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
@@ -18,7 +18,7 @@ import { GeneralCountCollectionService } from 'src/app/services/general-count-co
   selector: 'app-general-count-auditory-list',
   templateUrl: './general-count-auditory-list.page.html',
 })
-export class GeneralCountAuditoryListPage implements OnInit {
+export class GeneralCountAuditoryListPage {
 
   auditories: any[] = [];
   sendedList = false;
@@ -54,7 +54,7 @@ export class GeneralCountAuditoryListPage implements OnInit {
       });
   }
 
-  ngOnInit() {
+  async ionViewWillEnter() {
     this.route
       .paramMap
       .subscribe({
@@ -71,10 +71,6 @@ export class GeneralCountAuditoryListPage implements OnInit {
           }
         }
       }).unsubscribe();
-  }
-
-  async ionViewWillEnter() {
-
   }
 
   onGoingHome() {
@@ -198,7 +194,9 @@ export class GeneralCountAuditoryListPage implements OnInit {
       }
 
       const ImageSrc = await this.photoService.getLocalAuditoryEvidenceUri(arr[index].dir).then(photo => photo.uri);
-      const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => r.blob());
+      const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => {
+        return r.blob()
+      });
 
       this.auditoryEvidenceService
         .uploadImage(blob, externalId, arr[index].creation_date, arr[index].dir)
@@ -247,7 +245,7 @@ export class GeneralCountAuditoryListPage implements OnInit {
   }
 
   private onDetail(id: string) {
-    this.router.navigateByUrl(URI_GENERAL_COUNT_COLLECION_DETAIL('1', id));
+    this.router.navigateByUrl(URI_GENERAL_COUNT_COUNT_FORM(id));
   }
 
   private onRemoteDetail(id: string) {
@@ -336,8 +334,12 @@ export class GeneralCountAuditoryListPage implements OnInit {
           },
         },
       ] :
-      auditory.status === 1 ?
+      !!auditory.countId ?
         [
+          {
+            text: 'Envíar Auditoría',
+            handler: () => this.onUpload(auditory.id),
+          },
           {
             text: 'Ver',
             handler: () => this.onDetail(auditory.id),
@@ -358,12 +360,8 @@ export class GeneralCountAuditoryListPage implements OnInit {
               action: 'cancel',
             },
           },
-        ] :
+        ]:
         [
-          {
-            text: 'Envíar Auditoría',
-            handler: () => this.onUpload(auditory.id),
-          },
           {
             text: 'Ver',
             handler: () => this.onDetail(auditory.id),

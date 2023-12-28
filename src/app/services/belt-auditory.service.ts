@@ -40,7 +40,7 @@ export class BeltAuditoryService {
     const result = new BehaviorSubject<any>(DATABASE_WAITING_MESSAGE);
 
     this.databaseService
-      .executeQuery(`SELECT id, title, date, status FROM belt_auditory ;`)
+      .executeQuery(`SELECT belt_auditory.id, title, date, status, belt_auditory_count.id AS countId FROM belt_auditory LEFT JOIN belt_auditory_count ON belt_auditory.id = belt_auditory_count.belt_auditory_id WHERE user_id = ${userId};`)
       .subscribe({
         next: res => {
           if (res !== DATABASE_WAITING_MESSAGE) {
@@ -53,7 +53,8 @@ export class BeltAuditoryService {
                     id: auditory.id,
                     title: auditory.title,
                     date: auditory.date,
-                    status: auditory.status,
+                    status: !!auditory.countId ? 1 : 0,
+                    countId: auditory.countId,
                   });
 
                   if (auditoryResult.length === arr.length) {

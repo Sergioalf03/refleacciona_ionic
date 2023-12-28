@@ -40,6 +40,6 @@ export class BeltAuditoryEvidenceService {
     formData.append('dir', dir);
 
     return this.httpService
-      .post('/belt-auditory/upload-auditory-evidence', formData)
+      .postFile('/belt-auditory/upload-auditory-evidence', formData)
   }
 }

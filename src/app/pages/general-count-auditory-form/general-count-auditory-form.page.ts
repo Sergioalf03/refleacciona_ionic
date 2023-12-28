@@ -6,7 +6,7 @@ import { Capacitor } from '@capacitor/core';
 import { Geolocation } from '@capacitor/geolocation';
 import { ActionSheetController, isPlatform } from '@ionic/angular';
 import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
-import { URI_GENERAL_COUNT_COLLECION_DETAIL, URI_GENERAL_COUNT_LIST, URI_HOME } from 'src/app/core/constants/uris';
+import { URI_GENERAL_COUNT_COUNT_FORM, URI_GENERAL_COUNT_LIST, URI_HOME } from 'src/app/core/constants/uris';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
@@ -78,6 +78,8 @@ export class GeneralCountAuditoryFormPage implements OnInit {
               .subscribe({
                 next: async res => {
                   if (res !== DATABASE_WAITING_MESSAGE) {
+
+                    console.log(res);
                     this.hideMap = true;
                     this.auditoryId = res.values[0].id;
 
@@ -98,7 +100,7 @@ export class GeneralCountAuditoryFormPage implements OnInit {
                                     if (photo !== DATABASE_WAITING_MESSAGE) {
                                       count++;
                                       if (count === this.ImageSrc.length) {
-                                        this.responseService.onSuccessAndRedirect(URI_GENERAL_COUNT_COLLECION_DETAIL('1', this.auditoryId), 'Levantmiento guardado');
+                                        this.responseService.onSuccessAndRedirect(URI_GENERAL_COUNT_COUNT_FORM(this.auditoryId), 'Levantmiento guardado');
                                       }
                                     }
                                   },
@@ -111,7 +113,7 @@ export class GeneralCountAuditoryFormPage implements OnInit {
                         }, 100 * index);
                       });
                     } else {
-                      this.responseService.onSuccessAndRedirect(URI_GENERAL_COUNT_COLLECION_DETAIL('1', this.auditoryId), 'Levantmiento guardado');
+                      this.responseService.onSuccessAndRedirect(URI_GENERAL_COUNT_COUNT_FORM(this.auditoryId), 'Levantmiento guardado');
                     }
                   }
 

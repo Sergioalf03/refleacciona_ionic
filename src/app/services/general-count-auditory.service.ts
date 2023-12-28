@@ -39,20 +39,33 @@ export class GeneralCountAuditoryService {
     const result = new BehaviorSubject<any>(DATABASE_WAITING_MESSAGE);
 
     this.databaseService
-      .executeQuery(`SELECT id, title, date, status FROM general_count_auditory ;`)
+      .executeQuery(`
+        SELECT
+          general_count_auditory.id,
+          general_count_auditory.title,
+          general_count_auditory.date,
+          general_count_auditory.status,
+          general_count_auditory_count.id AS countId
+        FROM general_count_auditory
+        LEFT JOIN general_count_auditory_count ON general_count_auditory.id = general_count_auditory_count.general_count_auditory_id
+        WHERE general_count_auditory.user_id = ${userId};`)
       .subscribe({
         next: res => {
           if (res !== DATABASE_WAITING_MESSAGE) {
             const auditoryResult: any[] = [];
-            if (res.values.length > 0) {
+            console.log(res);
+            if (res.values && res.values.length > 0) {
               res.values.forEach((auditory: any, i: number, arr: any[]) => {
                 setTimeout(() => {
+
+                  console.log(auditory.countId)
 
                   auditoryResult.push({
                     id: auditory.id,
                     title: auditory.title,
                     date: auditory.date,
-                    status: auditory.status,
+                    status: !!auditory.countId ? 2 : 1,
+                    countId: auditory.countId,
                   });
 
                   if (auditoryResult.length === arr.length) {

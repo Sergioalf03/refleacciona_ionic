@@ -32,12 +32,10 @@ export class GeneralCountColectionDataPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    console.log('enter')
     this.activatedRoute
     .paramMap
     .subscribe({
       next: paramMap => {
-          console.log('paramMap')
           this.auditoryId = paramMap.get('id') || '0';
           const from = paramMap.get('from') || '0';
 
@@ -50,7 +48,6 @@ export class GeneralCountColectionDataPage implements OnInit {
             .subscribe({
               next: res => {
                 if (res !== DATABASE_WAITING_MESSAGE) {
-                  console.log('count')
                   this.registrationCount = res.values[0].total;
                 }
               },

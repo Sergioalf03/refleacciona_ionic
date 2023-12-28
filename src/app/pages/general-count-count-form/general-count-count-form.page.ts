@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DIRECTIONS } from 'src/app/core/constants/directions';
 import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
-import { URI_GENERAL_COUNT_COLLECION_DETAIL } from 'src/app/core/constants/uris';
+import { URI_GENERAL_COUNT_LIST } from 'src/app/core/constants/uris';
 import { VEHICLE_TYPES } from 'src/app/core/constants/vehicle-types';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
@@ -16,7 +16,7 @@ import { GeneralCountCollectionService } from 'src/app/services/general-count-co
 })
 export class GeneralCountCountFormPage implements OnInit {
 
-  backUrl = URI_GENERAL_COUNT_COLLECION_DETAIL('1', '0');
+  backUrl = URI_GENERAL_COUNT_LIST('local');
 
   originDirection = 'Origen';
   destinationDirection = 'Destino';
@@ -31,6 +31,18 @@ export class GeneralCountCountFormPage implements OnInit {
   vehicleTypeId = -1;
   canSubmit = false;
   auditoryId = '0';
+
+  urbanCount = 0;
+  disableUrbanDecrease = false;
+
+  sedansCount = 0;
+  disableSedanDecrease = false;
+
+  berlinaCount = 0;
+  disableBerlinaDecrease = false;
+
+  hatchbackCount = 0;
+  disableHatchbackDecrease = false;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -48,7 +60,7 @@ export class GeneralCountCountFormPage implements OnInit {
       .subscribe({
         next: paramMap => {
           this.auditoryId = paramMap.get('id') || '0';
-          this.backUrl = URI_GENERAL_COUNT_COLLECION_DETAIL('1', this.auditoryId);
+          this.backUrl = URI_GENERAL_COUNT_LIST('local');
         }
       }).unsubscribe();;
   }
@@ -75,14 +87,53 @@ export class GeneralCountCountFormPage implements OnInit {
     }
   }
 
-  onVehiclenDismiss(evt: any) {
-    const selectedVehicle = this.vehicleTypes.find((d: any) => +d.id === +evt.detail.value);
-    this.vehicleTypeId = evt.detail.value;
+  increaseUrban() {
+    console.log('single click')
+    this.urbanCount++;
+    this.disableUrbanDecrease = false;
+  }
 
-    this.canSubmit = this.originId !== -1 && this.destinationId !== -1 && this.vehicleTypeId !== -1;
+  decreaseUrban() {
+    console.log('double click')
+    if (this.urbanCount > 0) {
+      this.urbanCount--;
+      this.disableUrbanDecrease = this.urbanCount === 0;
+    }
+  }
 
-    if (selectedVehicle) {
-      this.vehicleType = selectedVehicle.text;
+  increaseSedan() {
+    this.sedansCount++;
+    this.disableSedanDecrease = false;
+  }
+
+  decreaseSedan() {
+    if (this.sedansCount > 0) {
+      this.sedansCount--;
+      this.disableSedanDecrease = this.sedansCount === 0;
+    }
+  }
+
+  increaseBerlina() {
+    this.berlinaCount++;
+    this.disableBerlinaDecrease = false;
+  }
+
+  decreaseBerlina() {
+    if (this.berlinaCount > 0) {
+      this.berlinaCount--;
+      this.disableBerlinaDecrease = this.berlinaCount === 0;
+    }
+  }
+
+  increaseHatchback() {
+    this.hatchbackCount++;
+    this.disableHatchbackDecrease = false;
+  }
+
+  decreaseHatchback() {
+    if (this.hatchbackCount > 0) {
+      this.hatchbackCount--;
+      this.disableHatchbackDecrease = this.hatchbackCount === 0;
     }
   }
 
@@ -106,26 +157,26 @@ export class GeneralCountCountFormPage implements OnInit {
         vehicleType: this.vehicleTypeId,
       };
 
-      this.generalCountCollectionService
-        .save(data)
-        .subscribe({
-          next: res => {
-            if (res !== DATABASE_WAITING_MESSAGE) {
+      // this.generalCountCollectionService
+      //   .save(data)
+      //   .subscribe({
+      //     next: res => {
+      //       if (res !== DATABASE_WAITING_MESSAGE) {
 
-              this.loadingService.dismissLoading();
-              this.router.navigateByUrl(URI_GENERAL_COUNT_COLLECION_DETAIL('1', this.auditoryId));
-            }
-          },
-          error: err => {
-            this.responseService.onError(err, 'No se pudo guardar el conteo');
-          }
-        });
+      //         this.loadingService.dismissLoading();
+      //         this.router.navigateByUrl(URI_GENERAL_COUNT_LIST('local'));
+      //       }
+      //     },
+      //     error: err => {
+      //       this.responseService.onError(err, 'No se pudo guardar el conteo');
+      //     }
+      //   });
     })
 
   }
 
   onCancel() {
-    this.router.navigateByUrl(URI_GENERAL_COUNT_COLLECION_DETAIL('1', this.auditoryId));
+    this.router.navigateByUrl(URI_GENERAL_COUNT_LIST('local'));
   }
 
 }

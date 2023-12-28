@@ -45,7 +45,7 @@ export class AnswerEvidenceService {
     formData.append('dir', dir);
 
     return this.httpService
-      .post('/auditory/upload-answer-evidence', formData)
+      .postFile('/auditory/upload-answer-evidence', formData)
   }
 
 }

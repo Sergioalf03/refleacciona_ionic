@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ActionSheetController, Platform, isPlatform } from '@ionic/angular';
-import { URI_HELMET_COLLECION_DETAIL, URI_HELMET_LIST, URI_HOME } from 'src/app/core/constants/uris';
+import { URI_HELMET_COLLECION_DETAIL, URI_HELMET_COUNT_FORM, URI_HELMET_LIST, URI_HOME } from 'src/app/core/constants/uris';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
@@ -98,7 +98,7 @@ export class HelmetInitialFormPage implements OnInit {
                                     if (photo !== DATABASE_WAITING_MESSAGE) {
                                       count++;
                                       if (count === this.ImageSrc.length) {
-                                        this.responseService.onSuccessAndRedirect(URI_HELMET_COLLECION_DETAIL('1', this.auditoryId), 'Levantmiento guardado');
+                                        this.responseService.onSuccessAndRedirect(URI_HELMET_COUNT_FORM(this.auditoryId), 'Levantmiento guardado');
                                       }
                                     }
                                   },
@@ -111,7 +111,7 @@ export class HelmetInitialFormPage implements OnInit {
                         }, 100 * index);
                       });
                     } else {
-                      this.responseService.onSuccessAndRedirect(URI_HELMET_COLLECION_DETAIL('1', this.auditoryId), 'Levantmiento guardado');
+                      this.responseService.onSuccessAndRedirect(URI_HELMET_COUNT_FORM(this.auditoryId), 'Levantmiento guardado');
                     }
                   }
 

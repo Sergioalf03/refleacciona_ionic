@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ModalController } from '@ionic/angular';
 import { DIRECTIONS } from 'src/app/core/constants/directions';
 import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
-import { URI_BELT_COLLECION_DETAIL } from 'src/app/core/constants/uris';
+import { URI_BELT_LIST } from 'src/app/core/constants/uris';
 import { VEHICLE_TYPES } from 'src/app/core/constants/vehicle-types';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
@@ -17,35 +17,26 @@ import { BeltCollectionService } from 'src/app/services/belt-collection.service'
 })
 export class BeltCountFormPage implements OnInit {
 
-  backUrl = URI_BELT_COLLECION_DETAIL('1', '0');
+  backUrl = URI_BELT_LIST('local');
 
   originDirection = 'Origen';
   destinationDirection = 'Destino';
   vehicleType = 'Tipo Vehículo';
 
-  beltUserCount = 1;
+  beltlessCount = 0;
   beltCount = 0;
 
-  chairUserCount = 0;
+  chairChairlessCount = 0;
   chairCount = 0;
-
-  overusedSeatsCount = 0;
-
-  overusedSeats = 0;
 
   directions = DIRECTIONS;
   vehicleTypes = VEHICLE_TYPES;
 
   disableBeltUserDecrease = true;
   disableBeltDecrease = true;
-  disableBeltIncrease = false;
 
   disableChairUserDecrease = true;
   disableChairDecrease = true;
-  disableChairIncrease = false;
-
-  disableOverusedDecrease = true;
-  disableOverusedIncrease = true;
 
   submitButtonText = 'Guardar';
   originId = -1;
@@ -53,6 +44,8 @@ export class BeltCountFormPage implements OnInit {
   vehicleTypeId = -1;
   canSubmit = false;
   auditoryId = '0';
+
+  countId = '0';
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -70,7 +63,47 @@ export class BeltCountFormPage implements OnInit {
       .subscribe({
         next: paramMap => {
           this.auditoryId = paramMap.get('id') || '0';
-          this.backUrl = URI_BELT_COLLECION_DETAIL('1' ,this.auditoryId);
+          this.backUrl = URI_BELT_LIST('local');
+
+          this.beltCollectionService
+            .getByAuditoryId(this.auditoryId)
+            .subscribe({
+              next: result =>  {
+                if (result !== 'W' && result.values.length > 0) {
+                  const count = result.values[0];
+
+                  this.originId = count.origin;
+                  this.destinationId = count.destination;
+
+                  this.beltCount = count.belts_count;
+                  this.beltlessCount = count.adults_count;
+                  this.chairCount = count.chairs_count;
+                  this.chairChairlessCount = count.child_count;
+
+                  if (this.beltCount !== 0) {
+                    this.disableBeltDecrease = false;
+                  }
+
+                  if (this.beltlessCount !== 0) {
+                    this.disableBeltUserDecrease = false;
+                  }
+
+                  if (this.chairChairlessCount !== 0) {
+                    this.disableChairUserDecrease = false;
+                  }
+
+                  if (this.chairCount !== 0) {
+                    this.disableChairDecrease = false;
+                  }
+
+                  this.onOriginDismiss({ detail: { value: this.originId }});
+                  this.onDestinationDismiss({ detail: { value: this.destinationId }});
+
+                  this.countId = count.id;
+                }
+              },
+              error: err => this.responseService.onError(err, 'No se pudo recuperar el conteo'),
+            })
         }
       }).unsubscribe();;
   }
@@ -109,95 +142,54 @@ export class BeltCountFormPage implements OnInit {
   }
 
   increaseBeltUsers() {
-    this.beltUserCount++;
+    this.beltlessCount++;
     this.disableBeltUserDecrease = false;
-    this.disableBeltIncrease = false;
-    this.disableOverusedIncrease = false;
   }
 
   decreaseBeltUsers() {
-    if (this.beltUserCount > 1) {
-      this.beltUserCount--;
-      this.disableBeltUserDecrease = this.beltUserCount === 1;
-      if (this.beltCount > this.beltUserCount) {
-        this.beltCount = this.beltUserCount
-      }
-      this.disableBeltIncrease = this.beltCount === this.beltUserCount;
+    if (this.beltlessCount > 0) {
+      this.beltlessCount--;
+      this.disableBeltUserDecrease = this.beltlessCount === 0;
     }
   }
 
   increaseBelts() {
-    if (this.beltCount < this.beltUserCount) {
-      this.beltCount++;
-      this.disableBeltIncrease = this.beltCount === this.beltUserCount;
-      this.disableBeltDecrease = false;
-    }
+    this.beltCount++;
+    this.disableBeltDecrease = false;
   }
 
   decreaseBelts() {
     if (this.beltCount > 0) {
       this.beltCount--;
       this.disableBeltDecrease = this.beltCount === 0;
-      this.disableBeltIncrease = false;
     }
   }
 
   increaseChairUsers() {
-    this.chairUserCount++;
+    this.chairChairlessCount++;
     this.disableChairUserDecrease = false;
-    this.disableChairIncrease = false;
-    this.disableOverusedIncrease = false;
   }
 
   decreaseChairUsers() {
-    if (this.chairUserCount > 0) {
-      this.chairUserCount--;
-      this.disableChairUserDecrease = this.chairUserCount === 0;
-      if (this.chairCount > this.chairUserCount) {
-        this.chairCount = this.chairUserCount
-        this.disableChairDecrease = this.chairCount === 0;
-      }
-      this.disableChairIncrease = this.chairCount === this.chairUserCount;
+    if (this.chairChairlessCount > 0) {
+      this.chairChairlessCount--;
+      this.disableChairUserDecrease = this.chairChairlessCount === 0;
     }
   }
 
   increaseChairs() {
-    if (this.chairCount < this.chairUserCount) {
-      this.chairCount++;
-      this.disableChairIncrease = this.chairCount === this.chairUserCount;
-      this.disableChairDecrease = false;
-    }
+    this.chairCount++;
+    this.disableChairDecrease = false;
   }
 
   decreaseChairs() {
     if (this.chairCount > 0) {
       this.chairCount--;
       this.disableChairDecrease = this.chairCount === 0;
-      this.disableChairIncrease = false;
-    }
-  }
-
-  increaseOverUsedSeats() {
-    const total = this.beltUserCount + this.chairUserCount;
-    if (total > 1 && this.overusedSeatsCount < total) {
-      this.overusedSeatsCount++;
-      this.disableOverusedDecrease = false;
-      this.disableOverusedIncrease = this.overusedSeatsCount === total;
-    }
-  }
-
-  decreaseOverUsedSeats() {
-    if (this.overusedSeatsCount > 0) {
-      this.overusedSeatsCount--;
-      this.disableOverusedIncrease = false;
-      this.disableOverusedDecrease = this.overusedSeatsCount === 0;
     }
   }
 
   onSubmit() {
-    if (this.vehicleTypeId === -1) {
-      this.toastService.showErrorToast('Seleccione un tipo de vehículo');
-    }
     if (this.originId === -1) {
       this.toastService.showErrorToast('Seleccione un origen');
     }
@@ -211,34 +203,51 @@ export class BeltCountFormPage implements OnInit {
         belt_auditory_id: this.auditoryId,
         origin: this.originId,
         destination: this.destinationId,
-        beltUserCount: this.beltUserCount,
+        beltUserCount: this.beltlessCount,
         beltCount: this.beltCount,
-        chairUserCount: this.chairUserCount,
+        chairUserCount: this.chairChairlessCount,
         chairCount: this.chairCount,
-        vehicleType: this.vehicleTypeId,
-        overusedSeatsCount: this.overusedSeatsCount,
       };
 
-      this.beltCollectionService
-        .save(data)
-        .subscribe({
-          next: res => {
-            if (res !== DATABASE_WAITING_MESSAGE) {
+      if (this.countId === '0') {
 
-              this.loadingService.dismissLoading();
-              this.router.navigateByUrl(URI_BELT_COLLECION_DETAIL('1', this.auditoryId));
+        this.beltCollectionService
+          .save(data)
+          .subscribe({
+            next: res => {
+              if (res !== DATABASE_WAITING_MESSAGE) {
+
+                this.loadingService.dismissLoading();
+                this.router.navigateByUrl(URI_BELT_LIST('local'));
+              }
+            },
+            error: err => {
+              this.responseService.onError(err, 'No se pudo guardar el conteo');
             }
-          },
-          error: err => {
-            this.responseService.onError(err, 'No se pudo guardar el conteo');
-          }
-        });
+          });
+
+      } else {
+        this.beltCollectionService
+          .update(this.countId, data)
+          .subscribe({
+            next: res => {
+              if (res !== DATABASE_WAITING_MESSAGE) {
+
+                this.loadingService.dismissLoading();
+                this.router.navigateByUrl(URI_BELT_LIST('local'));
+              }
+            },
+            error: err => {
+              this.responseService.onError(err, 'No se pudo guardar el conteo');
+            }
+          });
+      }
     })
 
   }
 
   onCancel() {
-    this.router.navigateByUrl(URI_BELT_COLLECION_DETAIL('1', this.auditoryId));
+    this.router.navigateByUrl(URI_BELT_LIST('local'));
   }
 
 }

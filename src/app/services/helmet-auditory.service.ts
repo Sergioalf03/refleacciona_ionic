@@ -39,7 +39,7 @@ export class HelmetAuditoryService {
     const result = new BehaviorSubject<any>(DATABASE_WAITING_MESSAGE);
 
     this.databaseService
-      .executeQuery(`SELECT id, title, date, status FROM helmet_auditory ;`)
+      .executeQuery(`SELECT helmet_auditory.id, title, date, status, helmet_auditory_count.id AS countId FROM helmet_auditory LEFT JOIN helmet_auditory_count ON helmet_auditory.id = helmet_auditory_count.helmet_auditory_id WHERE user_id = ${userId};`)
       .subscribe({
         next: res => {
           if (res !== DATABASE_WAITING_MESSAGE) {
@@ -48,12 +48,12 @@ export class HelmetAuditoryService {
               res.values.forEach((auditory: any, i: number, arr: any[]) => {
                 setTimeout(() => {
 
-
                   auditoryResult.push({
                     id: auditory.id,
                     title: auditory.title,
                     date: auditory.date,
-                    status: auditory.status,
+                    status: !!auditory.countId ? 1 : 0,
+                    countId: auditory.countId,
                   });
 
                   if (auditoryResult.length === arr.length) {

@@ -66,14 +66,14 @@ export class DatabaseService {
 
     connection?.query(query)
       .then(async (result) => {
-        await connection.isExists() ? connection
+        await connection.isDBOpen() ? connection
           .close()
           .then(async () => {
             data.next(result);
           }).catch(e => this.responseService.onError(e, 'No se pudo ejecutar el query')) : true;
       })
       .catch(async (e) => {
-        await connection.isExists() ? connection
+        await connection.isDBOpen() ? connection
           .close()
           .then(async () => {
             data.next(`error: ${e.message}`);
