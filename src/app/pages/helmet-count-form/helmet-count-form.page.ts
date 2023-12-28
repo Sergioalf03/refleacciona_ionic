@@ -18,8 +18,8 @@ export class HelmetCountFormPage implements OnInit {
 
   backUrl = URI_HELMET_LIST('local');
 
-  originDirection = 'Origen';
-  destinationDirection = 'Destino';
+  // originDirection = 'Origen';
+  // destinationDirection = 'Destino';
 
   helmetlessCount = 0;
   helmetCount = 0;
@@ -62,8 +62,8 @@ export class HelmetCountFormPage implements OnInit {
                 if (result !== 'W' && result.values.length > 0) {
                   const count = result.values[0];
 
-                  this.originId = count.origin;
-                  this.destinationId = count.destination;
+                  // this.originId = count.origin;
+                  // this.destinationId = count.destination;
                   this.helmetCount = count.helmets_count;
                   this.helmetlessCount = count.users_count;
 
@@ -75,8 +75,8 @@ export class HelmetCountFormPage implements OnInit {
                     this.disableUserDecrease = false;
                   }
 
-                  this.onOriginDismiss({ detail: { value: this.originId }});
-                  this.onDestinationDismiss({ detail: { value: this.destinationId }});
+                  // this.onOriginDismiss({ detail: { value: this.originId }});
+                  // this.onDestinationDismiss({ detail: { value: this.destinationId }});
 
                   this.countId = count.id;
                 }
@@ -88,25 +88,25 @@ export class HelmetCountFormPage implements OnInit {
   }
 
   onOriginDismiss(evt: any) {
-    const selectedDirection = this.directions.find((d: any) => +d.id === +evt.detail.value);
-    this.originId = evt.detail.value;
+    // const selectedDirection = this.directions.find((d: any) => +d.id === +evt.detail.value);
+    // this.originId = evt.detail.value;
 
-    this.canSubmit = this.originId !== -1 && this.destinationId !== -1;
+    // this.canSubmit = this.originId !== -1 && this.destinationId !== -1;
 
-    if (selectedDirection) {
-      this.originDirection = selectedDirection.text;
-    }
+    // if (selectedDirection) {
+    //   this.originDirection = selectedDirection.text;
+    // }
   }
 
   onDestinationDismiss(evt: any) {
-    const selectedDirection = this.directions.find((d: any) => +d.id === +evt.detail.value);
-    this.destinationId = evt.detail.value;
+    // const selectedDirection = this.directions.find((d: any) => +d.id === +evt.detail.value);
+    // this.destinationId = evt.detail.value;
 
-    this.canSubmit = this.originId !== -1 && this.destinationId !== -1;
+    // this.canSubmit = this.originId !== -1 && this.destinationId !== -1;
 
-    if (selectedDirection) {
-      this.destinationDirection = selectedDirection.text;
-    }
+    // if (selectedDirection) {
+    //   this.destinationDirection = selectedDirection.text;
+    // }
   }
 
   increaseUsers() {
@@ -134,12 +134,12 @@ export class HelmetCountFormPage implements OnInit {
   }
 
   onSubmit() {
-    if (this.originId === -1) {
-      this.toastService.showErrorToast('Seleccione un origen');
-    }
-    if (this.destinationId === -1) {
-      this.toastService.showErrorToast('Seleccione un destino');
-    }
+    // if (this.originId === -1) {
+    //   this.toastService.showErrorToast('Seleccione un origen');
+    // }
+    // if (this.destinationId === -1) {
+    //   this.toastService.showErrorToast('Seleccione un destino');
+    // }
     this.confirmDialogService.presentAlert('¿Desea guardar el conteo?', () => {
       this.loadingService.showLoading();
 

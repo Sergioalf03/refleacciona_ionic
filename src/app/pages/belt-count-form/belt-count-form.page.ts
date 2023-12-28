@@ -72,8 +72,8 @@ export class BeltCountFormPage implements OnInit {
                 if (result !== 'W' && result.values.length > 0) {
                   const count = result.values[0];
 
-                  this.originId = count.origin;
-                  this.destinationId = count.destination;
+                  // this.originId = count.origin;
+                  // this.destinationId = count.destination;
 
                   this.beltCount = count.belts_count;
                   this.beltlessCount = count.adults_count;
@@ -96,8 +96,8 @@ export class BeltCountFormPage implements OnInit {
                     this.disableChairDecrease = false;
                   }
 
-                  this.onOriginDismiss({ detail: { value: this.originId }});
-                  this.onDestinationDismiss({ detail: { value: this.destinationId }});
+                  // this.onOriginDismiss({ detail: { value: this.originId }});
+                  // this.onDestinationDismiss({ detail: { value: this.destinationId }});
 
                   this.countId = count.id;
                 }
@@ -109,36 +109,36 @@ export class BeltCountFormPage implements OnInit {
   }
 
   onOriginDismiss(evt: any) {
-    const selectedDirection = this.directions.find((d: any) => +d.id === +evt.detail.value);
-    this.originId = evt.detail.value;
+    // const selectedDirection = this.directions.find((d: any) => +d.id === +evt.detail.value);
+    // this.originId = evt.detail.value;
 
-    this.canSubmit = this.originId !== -1 && this.destinationId !== -1;
+    // this.canSubmit = this.originId !== -1 && this.destinationId !== -1;
 
-    if (selectedDirection) {
-      this.originDirection = selectedDirection.text;
-    }
+    // if (selectedDirection) {
+    //   this.originDirection = selectedDirection.text;
+    // }
   }
 
   onDestinationDismiss(evt: any) {
-    const selectedDirection = this.directions.find((d: any) => +d.id === +evt.detail.value);
-    this.destinationId = evt.detail.value;
+    // const selectedDirection = this.directions.find((d: any) => +d.id === +evt.detail.value);
+    // this.destinationId = evt.detail.value;
 
-    this.canSubmit = this.originId !== -1 && this.destinationId !== -1;
+    // this.canSubmit = this.originId !== -1 && this.destinationId !== -1;
 
-    if (selectedDirection) {
-      this.destinationDirection = selectedDirection.text;
-    }
+    // if (selectedDirection) {
+    //   this.destinationDirection = selectedDirection.text;
+    // }
   }
 
   onVehiclenDismiss(evt: any) {
-    const selectedVehicle = this.vehicleTypes.find((d: any) => +d.id === +evt.detail.value);
-    this.vehicleTypeId = evt.detail.value;
+    // const selectedVehicle = this.vehicleTypes.find((d: any) => +d.id === +evt.detail.value);
+    // this.vehicleTypeId = evt.detail.value;
 
-    this.canSubmit = this.originId !== -1 && this.destinationId !== -1 && this.vehicleTypeId !== -1;
+    // this.canSubmit = this.originId !== -1 && this.destinationId !== -1 && this.vehicleTypeId !== -1;
 
-    if (selectedVehicle) {
-      this.vehicleType = selectedVehicle.text;
-    }
+    // if (selectedVehicle) {
+    //   this.vehicleType = selectedVehicle.text;
+    // }
   }
 
   increaseBeltUsers() {
@@ -190,12 +190,12 @@ export class BeltCountFormPage implements OnInit {
   }
 
   onSubmit() {
-    if (this.originId === -1) {
-      this.toastService.showErrorToast('Seleccione un origen');
-    }
-    if (this.destinationId === -1) {
-      this.toastService.showErrorToast('Seleccione un destino');
-    }
+    // if (this.originId === -1) {
+    //   this.toastService.showErrorToast('Seleccione un origen');
+    // }
+    // if (this.destinationId === -1) {
+    //   this.toastService.showErrorToast('Seleccione un destino');
+    // }
     this.confirmDialogService.presentAlert('¿Desea guardar el conteo?', () => {
       this.loadingService.showLoading();
 

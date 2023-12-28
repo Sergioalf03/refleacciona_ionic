@@ -4,11 +4,11 @@
     homeUrl="/home"
   ></app-header-buttons>
 
-  <div class="mx-2 mt-4">
-    <h1>Ingrese su registro</h1>
+  <div class="mx-2 mt-4 mb-3">
+    <h1>Registros de uso de cinturón</h1>
   </div>
 
-  <div class="mx-2 ion-text-center ion-text-center">
+  <!-- <div class="mx-2 ion-text-center ion-text-center">
     <h3>Dirección</h3>
   </div>
 
@@ -37,10 +37,10 @@
         <ion-select-option *ngFor="let direction of directions" [value]="direction.id">{{ direction.text }}</ion-select-option>
       </ion-select>
     </div>
-  </div>
+  </div> -->
 
   <div class="mx-2 mt-1 ion-text-center">
-    <h3>Usuarios cinturón: {{ beltlessCount }}</h3>
+    <h3>Sin cinturón: {{ beltlessCount }}</h3>
   </div>
 
   <div class="row">
@@ -63,7 +63,7 @@
   </div>
 
   <div class="mx-2 mt-1 ion-text-center">
-    <h3>Cinturones: {{ beltCount }} </h3>
+    <h3>Con cinturón: {{ beltCount }} </h3>
   </div>
 
   <div class="row">
@@ -86,7 +86,7 @@
   </div>
 
   <div class="mx-2 mt-1 ion-text-center">
-    <h3>Sillas de retención: {{ chairCount }} </h3>
+    <h3>Con silla de retención: {{ chairCount }} </h3>
   </div>
 
   <div class="row">
