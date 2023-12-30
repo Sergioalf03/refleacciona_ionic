@@ -40,6 +40,6 @@ export class HelmetAuditoryEvidenceService {
     formData.append('dir', dir);
 
     return this.httpService
-      .post('/no-urk', formData)
+      .postFile('/helmet-auditory/upload-auditory-evidence', formData)
   }
 }

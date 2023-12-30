@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ActionSheetController, isPlatform } from '@ionic/angular';
-import { URI_BELT_COLLECION_DETAIL, URI_BELT_LIST, URI_HOME } from 'src/app/core/constants/uris';
+import { URI_BELT_COUNT_FORM, URI_BELT_LIST, URI_HOME } from 'src/app/core/constants/uris';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
@@ -86,7 +86,8 @@ export class BeltInitialFormPage implements OnInit {
                     if (this.ImageSrc.length > 0) {
                       this.ImageSrc.forEach(async (src: any, index: number) => {
                         setTimeout(async () => {
-                          const blob = await fetch(src.base64).then(r => r.blob());
+                          const blob = src.trueb64;
+                          // const blob = await fetch(src.base64).then(r => r.blob());
 
                           this.photoService
                             .saveLocalBeltAuditoryEvidence(blob, this.auditoryId)
@@ -98,8 +99,7 @@ export class BeltInitialFormPage implements OnInit {
                                     if (photo !== DATABASE_WAITING_MESSAGE) {
                                       count++;
                                       if (count === this.ImageSrc.length) {
-                                        this.auditoryId = '1';
-                                        this.responseService.onSuccessAndRedirect(URI_BELT_COLLECION_DETAIL('1', this.auditoryId), 'Levantamiento guardado');
+                                        this.responseService.onSuccessAndRedirect(URI_BELT_COUNT_FORM(this.auditoryId), 'Levantamiento guardado');
                                       }
                                     }
                                   },
@@ -112,7 +112,7 @@ export class BeltInitialFormPage implements OnInit {
                         }, 100 * index);
                       });
                     } else {
-                      this.responseService.onSuccessAndRedirect(URI_BELT_COLLECION_DETAIL('1', this.auditoryId), 'Levantamiento guardado');
+                      this.responseService.onSuccessAndRedirect(URI_BELT_COUNT_FORM(this.auditoryId), 'Levantamiento guardado');
                     }
                   }
 
@@ -380,6 +380,7 @@ export class BeltInitialFormPage implements OnInit {
           id: '',
           url: this.sanitization.bypassSecurityTrustUrl(res.webPath || ''),
           base64: res.webPath || '',
+          trueb64: res.base64String,
           expand: {
             width: '25%'
           },

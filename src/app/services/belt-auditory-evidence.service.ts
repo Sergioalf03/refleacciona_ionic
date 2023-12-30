@@ -40,6 +40,6 @@ export class BeltAuditoryEvidenceService {
     formData.append('dir', dir);
 
     return this.httpService
-      .post('/no-urk', formData)
+      .postFile('/belt-auditory/upload-auditory-evidence', formData)
   }
 }

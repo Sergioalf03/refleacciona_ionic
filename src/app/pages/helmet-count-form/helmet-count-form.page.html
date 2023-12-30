@@ -4,12 +4,15 @@
     homeUrl="/home"
   ></app-header-buttons>
 
-  <div class="mx-2 mt-4">
-    <h1>Ingrese su registro</h1>
+  <div class="mx-2 mt-4 mb-2">
+    <h1>Registro de uso de casco</h1>
+  </div>
+  <!-- <div class="mx-2 mt-4 text-center">
+    <h5 class="text-justify">ubicado en un cruce específico, inicie por indicar la dirección del carril que está registrando, y la cantidad de personas con y sin casco que circulan en motocicleta.</h5>
   </div>
 
   <div class="mx-2 mt-4 ion-text-center ion-text-center">
-    <h3>Dirección</h3>
+    <h3>Origen y destino del cruce</h3>
   </div>
 
   <div class="row">
@@ -37,10 +40,33 @@
         <ion-select-option *ngFor="let direction of directions" [value]="direction.id">{{ direction.text }}</ion-select-option>
       </ion-select>
     </div>
+  </div> -->
+
+  <div class="mx-2 mt-1 ion-text-center">
+    <h3>Con Cascos: {{ helmetCount }} </h3>
+  </div>
+
+  <div class="row">
+    <div class="col-6 p-4 pt-0 pe-2">
+      <div [ngClass]="{ 'bg-secondary': disableHelmetDecrease, 'bg-primary': !disableHelmetDecrease }" class="card ion-button">
+        <div (click)="decreaseHelmets()" class="ion-text-center mt-4 mb-2">
+          <ion-icon color="light" size="large" name="remove"></ion-icon>
+          <p class="text-light">Decrementar</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 p-4 pt-0 ps-2">
+      <div class="card button bg-primary">
+        <div (click)="increaseHelmets()" class="ion-text-center mt-4 mb-2">
+          <ion-icon color="light" size="large" name="add"></ion-icon>
+          <p class="text-light">Incrementar</p>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="mx-2 mt-1 ion-text-center">
-    <h3>Usuarios: {{ userCount }}</h3>
+    <h3>Sin casco: {{ helmetlessCount }}</h3>
   </div>
 
   <div class="row">
@@ -62,28 +88,7 @@
     </div>
   </div>
 
-  <div class="mx-2 mt-1 ion-text-center">
-    <h3>Cascos: {{ helmetCount }} </h3>
-  </div>
 
-  <div class="row">
-    <div class="col-6 p-4 pt-0 pe-2">
-      <div [ngClass]="{ 'bg-secondary': disableHelmetDecrease, 'bg-primary': !disableHelmetDecrease }" class="card ion-button">
-        <div (click)="decreaseHelmets()" class="ion-text-center mt-4 mb-2">
-          <ion-icon color="light" size="large" name="remove"></ion-icon>
-          <p class="text-light">Decrementar</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-6 p-4 pt-0 ps-2">
-      <div [ngClass]="{ 'bg-secondary': disableHelmetIncrease, 'bg-primary': !disableHelmetIncrease }" class="card button bg-primary">
-        <div (click)="increaseHelmets()" class="ion-text-center mt-4 mb-2">
-          <ion-icon color="light" size="large" name="add"></ion-icon>
-          <p class="text-light">Incrementar</p>
-        </div>
-      </div>
-    </div>
-  </div>
 
 </ion-content>
 

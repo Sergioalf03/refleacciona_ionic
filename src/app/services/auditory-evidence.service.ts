@@ -40,7 +40,7 @@ export class AuditoryEvidenceService {
     formData.append('dir', dir);
 
     return this.httpService
-      .post('/auditory/upload-auditory-evidence', formData)
+      .postFile('/auditory/upload-auditory-evidence', formData)
   }
 
 }

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ModalController } from '@ionic/angular';
 import { DIRECTIONS } from 'src/app/core/constants/directions';
-import { URI_HELMET_COLLECION_DETAIL } from 'src/app/core/constants/uris';
+import { URI_HELMET_LIST } from 'src/app/core/constants/uris';
 import { HelmetCollectionService } from 'src/app/services/helmet-collection.service';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { ToastService } from 'src/app/core/controllers/toast.service';
@@ -16,24 +16,25 @@ import { HttpResponseService } from 'src/app/core/controllers/http-response.serv
 })
 export class HelmetCountFormPage implements OnInit {
 
-  backUrl = URI_HELMET_COLLECION_DETAIL('1', '0');
+  backUrl = URI_HELMET_LIST('local');
 
-  originDirection = 'Origen';
-  destinationDirection = 'Destino';
+  // originDirection = 'Origen';
+  // destinationDirection = 'Destino';
 
-  userCount = 1;
+  helmetlessCount = 0;
   helmetCount = 0;
 
   directions = DIRECTIONS;
 
   disableUserDecrease = true;
   disableHelmetDecrease = true;
-  disableHelmetIncrease = false;
   submitButtonText = 'Guardar';
   originId = -1;
   destinationId = -1;
-  canSubmit = false;
+  canSubmit = true;
   auditoryId = '0';
+
+  countId = '0';
 
   constructor(
     private modalCtrl: ModalController,
@@ -52,73 +53,93 @@ export class HelmetCountFormPage implements OnInit {
       .subscribe({
         next: paramMap => {
           this.auditoryId = paramMap.get('id') || '0';
-          this.backUrl = URI_HELMET_COLLECION_DETAIL('1', this.auditoryId);
+          this.backUrl = URI_HELMET_LIST('local');
+
+          this.helmetCollectionService
+            .getByAuditoryId(this.auditoryId)
+            .subscribe({
+              next: result =>  {
+                if (result !== 'W' && result.values.length > 0) {
+                  const count = result.values[0];
+
+                  // this.originId = count.origin;
+                  // this.destinationId = count.destination;
+                  this.helmetCount = count.helmets_count;
+                  this.helmetlessCount = count.users_count;
+
+                  if (this.helmetCount !== 0) {
+                    this.disableHelmetDecrease = false;
+                  }
+
+                  if (this.helmetlessCount !== 0) {
+                    this.disableUserDecrease = false;
+                  }
+
+                  // this.onOriginDismiss({ detail: { value: this.originId }});
+                  // this.onDestinationDismiss({ detail: { value: this.destinationId }});
+
+                  this.countId = count.id;
+                }
+              },
+              error: err => this.responseService.onError(err, 'No se pudo recuperar el conteo'),
+            })
         }
-      });
+      }).unsubscribe();
   }
 
   onOriginDismiss(evt: any) {
-    const selectedDirection = this.directions.find((d: any) => +d.id === +evt.detail.value);
-    this.originId = evt.detail.value;
+    // const selectedDirection = this.directions.find((d: any) => +d.id === +evt.detail.value);
+    // this.originId = evt.detail.value;
 
-    this.canSubmit = this.originId !== -1 && this.destinationId !== -1;
+    // this.canSubmit = this.originId !== -1 && this.destinationId !== -1;
 
-    if (selectedDirection) {
-      this.originDirection = selectedDirection.text;
-    }
+    // if (selectedDirection) {
+    //   this.originDirection = selectedDirection.text;
+    // }
   }
 
   onDestinationDismiss(evt: any) {
-    const selectedDirection = this.directions.find((d: any) => +d.id === +evt.detail.value);
-    this.destinationId = evt.detail.value;
+    // const selectedDirection = this.directions.find((d: any) => +d.id === +evt.detail.value);
+    // this.destinationId = evt.detail.value;
 
-    this.canSubmit = this.originId !== -1 && this.destinationId !== -1;
+    // this.canSubmit = this.originId !== -1 && this.destinationId !== -1;
 
-    if (selectedDirection) {
-      this.destinationDirection = selectedDirection.text;
-    }
+    // if (selectedDirection) {
+    //   this.destinationDirection = selectedDirection.text;
+    // }
   }
 
   increaseUsers() {
-    this.userCount++;
+    this.helmetlessCount++;
     this.disableUserDecrease = false;
-    this.disableHelmetIncrease = false;
   }
 
   decreaseUsers() {
-    if (this.userCount > 1) {
-      this.userCount--;
-      this.disableUserDecrease = this.userCount === 1;
-      if (this.helmetCount > this.userCount) {
-        this.helmetCount = this.userCount
-      }
-      this.disableHelmetIncrease = this.helmetCount === this.userCount;
+    if (this.helmetlessCount > 0) {
+      this.helmetlessCount--;
+      this.disableUserDecrease = this.helmetlessCount === 0;
     }
   }
 
   increaseHelmets() {
-    if (this.helmetCount < this.userCount) {
-      this.helmetCount++;
-      this.disableHelmetIncrease = this.helmetCount === this.userCount;
-      this.disableHelmetDecrease = false;
-    }
+    this.helmetCount++;
+    this.disableHelmetDecrease = false;
   }
 
   decreaseHelmets() {
     if (this.helmetCount > 0) {
       this.helmetCount--;
       this.disableHelmetDecrease = this.helmetCount === 0;
-      this.disableHelmetIncrease = false;
     }
   }
 
   onSubmit() {
-    if (this.originId === -1) {
-      this.toastService.showErrorToast('Seleccione un origen');
-    }
-    if (this.destinationId === -1) {
-      this.toastService.showErrorToast('Seleccione un destino');
-    }
+    // if (this.originId === -1) {
+    //   this.toastService.showErrorToast('Seleccione un origen');
+    // }
+    // if (this.destinationId === -1) {
+    //   this.toastService.showErrorToast('Seleccione un destino');
+    // }
     this.confirmDialogService.presentAlert('¿Desea guardar el conteo?', () => {
       this.loadingService.showLoading();
 
@@ -126,31 +147,47 @@ export class HelmetCountFormPage implements OnInit {
         helmet_auditory_id: this.auditoryId,
         origin: this.originId,
         destination: this.destinationId,
-        userCount: this.userCount,
+        helmetlessCount: this.helmetlessCount,
         helmetCount: this.helmetCount,
       };
 
-      this.helmetCollectionService
-        .save(data)
-        .subscribe({
-          next: res => {
-            if (res !== DATABASE_WAITING_MESSAGE) {
+      if (this.countId === '0') {
+        this.helmetCollectionService
+          .save(data)
+          .subscribe({
+            next: res => {
+              if (res !== DATABASE_WAITING_MESSAGE) {
 
-              this.loadingService.dismissLoading();
-              this.router.navigateByUrl(URI_HELMET_COLLECION_DETAIL('1', this.auditoryId));
+                this.loadingService.dismissLoading();
+                this.router.navigateByUrl(URI_HELMET_LIST('local'));
+              }
+            },
+            error: err => {
+              this.responseService.onError(err, 'No se pudo guardar el conteo');
             }
-          },
-          error: err => {
-            this.responseService.onError(err, 'No se pudo guardar el conteo');
-          }
-        });
-    })
+          });
+      } else {
+        this.helmetCollectionService
+          .update(this.countId, data)
+          .subscribe({
+            next: res => {
+              if (res !== DATABASE_WAITING_MESSAGE) {
+
+                this.loadingService.dismissLoading();
+                this.router.navigateByUrl(URI_HELMET_LIST('local'));
+              }
+            },
+            error: err => {
+              this.responseService.onError(err, 'No se pudo guardar el conteo');
+            }
+          });
+      }
+
+    });
   }
 
   onCancel() {
-    this.router.navigateByUrl(URI_HELMET_COLLECION_DETAIL('1', this.auditoryId));
+    this.router.navigateByUrl(URI_HELMET_LIST('local'));
   }
-
-
 
 }

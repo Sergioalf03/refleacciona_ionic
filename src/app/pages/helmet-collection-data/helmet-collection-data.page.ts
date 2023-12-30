@@ -56,7 +56,7 @@ export class HelmetCollectionDataPage implements OnInit {
               }
             });
         }
-      });
+      }).unsubscribe();;
 
 
   }
@@ -70,7 +70,7 @@ export class HelmetCollectionDataPage implements OnInit {
   }
 
   onReturn() {
-    this.router.navigateByUrl(URI_HELMET_FORM(this.auditoryId));
+    this.router.navigateByUrl(this.backUrl);
   }
 
   onFinish() {

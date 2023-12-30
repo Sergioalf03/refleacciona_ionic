@@ -1,24 +1,27 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
 import { IonicModule } from '@ionic/angular';
-import { GeneralCountAuditoryListPage } from './general-count-auditory-list.page';
+
+import { SwipeFormPage } from './swipe-form.page';
 import { RouterModule, Routes } from '@angular/router';
-import { HeaderButtonsModule } from 'src/app/components/header-buttons/header-buttons.module';
 
 const routes: Routes = [
   {
     path: '',
-    component: GeneralCountAuditoryListPage
+    component: SwipeFormPage
   }
 ];
 
 @NgModule({
   imports: [
     CommonModule,
+    FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
-    HeaderButtonsModule,
   ],
-  declarations: [GeneralCountAuditoryListPage]
+  declarations: [SwipeFormPage],
+  exports: [RouterModule],
 })
-export class GeneralCountAuditoryListPageModule {}
+export class SwipeFormPageModule {}

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { API_URL } from 'src/environments/environment';
 
 @Injectable({
@@ -50,5 +50,16 @@ export class HttpRequestService {
     return this.httpClient
       .get<any>(COMPLETE_URL, { withCredentials: true })
   }
+
+  postFile(uri: string, body: FormData){
+    let httpOptions = {
+        headers: new HttpHeaders({
+            'enctype': 'multipart/form-data; boundary=----WebKitFormBoundaryuL67FWkv1CA'
+        })
+    };
+
+    return this.httpClient
+      .post<any>(`${API_URL}${uri}`, body, httpOptions);
+}
 
 }

@@ -178,53 +178,53 @@ export class HomePage {
           .checkLastVersion()
           .subscribe({
             next: res => {
-              // const localVersionLowerThanRemote = (localVersion === 'new' ? 1 : +localVersion.values[0].number) < +res.data.number;
-              // if (localVersionLowerThanRemote) {
-              //   this.confirmDialogService.presentAlert('Hay una nueva versión del formulario de auditorías. ¿Desea actualizar?', () => {
-              //     this.versionService
-              //       .getNewVersion()
-              //       .subscribe({
-              //         next: newVersionRes => {
-              //           let query = '';
-              //           let count = 0;
+              const localVersionLowerThanRemote = (localVersion === 'new' ? 1 : +localVersion.values[0].number) < +res.data.number;
+              if (localVersionLowerThanRemote) {
+                this.confirmDialogService.presentAlert('Hay una nueva versión del formulario de auditorías. ¿Desea actualizar?', () => {
+                  this.versionService
+                    .getNewVersion()
+                    .subscribe({
+                      next: newVersionRes => {
+                        let query = '';
+                        let count = 0;
 
-              //           if (newVersionRes.data.sections.length > 0) {
-              //             newVersionRes.data.sections.forEach((s: any, i: number, arr: any[]) => {
-              //               setTimeout(() => {
-              //                 this.databaseService
-              //                   .executeQuery(`SELECT * FROM sections WHERE uid = "${s.uid}"`)
-              //                   .subscribe({
-              //                     next: questionExists => {
-              //                       if (questionExists !== DATABASE_WAITING_MESSAGE) {
-              //                         if (questionExists.values.length === 0) {
-              //                           query += `INSERT INTO sections (uid, name, subname, page, indx, status) VALUES ("${s.uid}", "${s.name}", "${s.subname}", ${s.page}, ${s.indx}, ${s.status}); `
-              //                         } else {
-              //                           query += `UPDATE sections SET uid = "${s.uid}", name = "${s.name}", subname = "${s.subname}", page = ${s.page}, indx = ${s.indx}, status = ${s.status} WHERE uid = "${s.uid}"; `
-              //                         }
+                        if (newVersionRes.data.sections.length > 0) {
+                          newVersionRes.data.sections.forEach((s: any, i: number, arr: any[]) => {
+                            setTimeout(() => {
+                              this.databaseService
+                                .executeQuery(`SELECT * FROM sections WHERE uid = "${s.uid}"`)
+                                .subscribe({
+                                  next: questionExists => {
+                                    if (questionExists !== DATABASE_WAITING_MESSAGE) {
+                                      if (questionExists.values.length === 0) {
+                                        query += `INSERT INTO sections (uid, name, subname, page, indx, status) VALUES ("${s.uid}", "${s.name}", "${s.subname}", ${s.page}, ${s.indx}, ${s.status}); `
+                                      } else {
+                                        query += `UPDATE sections SET uid = "${s.uid}", name = "${s.name}", subname = "${s.subname}", page = ${s.page}, indx = ${s.indx}, status = ${s.status} WHERE uid = "${s.uid}"; `
+                                      }
 
-              //                         count++;
-              //                         if (count === arr.length) {
-              //                           this.importQuestions(newVersionRes.data.questions, query, +res.data.number);
-              //                         }
-              //                       }
-              //                     }
-              //                   })
-              //               }, 50 * i);
-              //             });
-              //           } else {
-              //             this.importQuestions(newVersionRes.data.questions, query, +res.data.number);
-              //           }
-              //         },
-              //         error: err => this.httpResponseService.onError(err, 'No se pudo recuperar la actualización'),
-              //       })
-              //   });
-              // } else {
-              //   if (showToast) {
-              //     this.httpResponseService.onSuccess('La versión más reciente ya está instalada')
-              //   } else {
-              //     this.loadingService.dismissLoading();
-              //   }
-              // }
+                                      count++;
+                                      if (count === arr.length) {
+                                        this.importQuestions(newVersionRes.data.questions, query, +res.data.number);
+                                      }
+                                    }
+                                  }
+                                })
+                            }, 50 * i);
+                          });
+                        } else {
+                          this.importQuestions(newVersionRes.data.questions, query, +res.data.number);
+                        }
+                      },
+                      error: err => this.httpResponseService.onError(err, 'No se pudo recuperar la actualización'),
+                    })
+                });
+              } else {
+                if (showToast) {
+                  this.httpResponseService.onSuccess('La versión más reciente ya está instalada')
+                } else {
+                  this.loadingService.dismissLoading();
+                }
+              }
             },
             error: err => this.httpResponseService.onError(err, 'No se pudo recuperar'),
           });

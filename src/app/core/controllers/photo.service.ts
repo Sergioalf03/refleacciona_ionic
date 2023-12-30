@@ -64,26 +64,28 @@ export class PhotoService {
     return fileName;
   }
   async saveLocalBeltAuditoryEvidence(photo: any, id: string) {
-    const base64Data = await this.readAsBase64(photo);
+    // const base64Data = await this.readAsBase64(photo);
 
     const fileName = `${id}-BEL${this.generateName()}`;
     const savedFile = await Filesystem.writeFile({
       path: fileName,
-      data: base64Data,
+      data: photo,
       directory: Directory.Data
     });
 
     return fileName;
   }
   async saveLocalGeneralCountAuditoryEvidence(photo: any, id: string) {
-    const base64Data = await this.readAsBase64(photo);
+    // const base64Data = await this.readAsBase64(photo);
 
     const fileName = `${id}-GCO${this.generateName()}`;
     const savedFile = await Filesystem.writeFile({
       path: fileName,
-      data: base64Data,
+      data: photo,
       directory: Directory.Data
     });
+
+
 
     return fileName;
   }
@@ -146,7 +148,7 @@ export class PhotoService {
   }
 
   generateName() {
-    const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_";
+    const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
     const lengthOfCode = 64;
 
     let text = "";

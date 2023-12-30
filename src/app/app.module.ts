@@ -1,5 +1,5 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule, Optional } from '@angular/core';
+import { BrowserModule, EVENT_MANAGER_PLUGINS, HAMMER_LOADER } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
@@ -13,6 +13,17 @@ import { ErrorInterceptorService } from './core/controllers/error-interceptor.se
 
 import { SQLiteService } from './core/controllers/sqlite.service';
 
+import { HammerGestureConfig, HAMMER_GESTURE_CONFIG,  } from '@angular/platform-browser';
+import { DOCUMENT } from '@angular/common';
+import { Console } from 'console';
+
+import * as Hammer from 'hammerjs';
+
+  export class HammerConfig extends HammerGestureConfig {
+    override overrides = <any>{
+      'swipe': { direction: Hammer.DIRECTION_ALL }
+    };
+  }
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -27,6 +38,10 @@ import { SQLiteService } from './core/controllers/sqlite.service';
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptorService, multi: true },
     SQLiteService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    {
+      provide: HAMMER_GESTURE_CONFIG,
+      useClass: HammerConfig
+    }
   ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

@@ -32,7 +32,7 @@ export class GeneralCountAuditoryEvidenceService {
     return this.databaseService.executeQuery(`DELETE FROM general_count_auditory_evidences WHERE dir = "${id}";`);
   }
 
-  uploadImage(blob: any, auditoryId: string, creationDate: string, dir: string) {
+  uploadImage(blob: Blob, auditoryId: string, creationDate: string, dir: string) {
     let formData = new FormData();
     formData.append('image', blob);
     formData.append('general_count_auditory_id', auditoryId);
@@ -40,6 +40,6 @@ export class GeneralCountAuditoryEvidenceService {
     formData.append('dir', dir);
 
     return this.httpService
-      .post('/no-urk', formData)
+      .postFile('/general-count-auditory/upload-auditory-evidence', formData)
   }
 }

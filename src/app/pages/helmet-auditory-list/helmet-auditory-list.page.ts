@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ActionSheetController, Platform } from '@ionic/angular';
 import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
-import { URI_HELMET_COLLECION_DETAIL, URI_HELMET_DETAIL, URI_HELMET_FORM, URI_HOME } from 'src/app/core/constants/uris';
+import { URI_HELMET_COUNT_FORM, URI_HELMET_DETAIL, URI_HELMET_FORM, URI_HOME } from 'src/app/core/constants/uris';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
@@ -18,7 +18,7 @@ import { Share } from '@capacitor/share';
   selector: 'app-helmet-auditory-list',
   templateUrl: './helmet-auditory-list.page.html',
 })
-export class HelmetAuditoryListPage implements OnInit {
+export class HelmetAuditoryListPage {
 
   auditories: any[] = [];
   sendedList = false;
@@ -54,7 +54,7 @@ export class HelmetAuditoryListPage implements OnInit {
       });
   }
 
-  ngOnInit() {
+  async ionViewWillEnter() {
     this.route
       .paramMap
       .subscribe({
@@ -71,10 +71,6 @@ export class HelmetAuditoryListPage implements OnInit {
           }
         }
       }).unsubscribe();
-  }
-
-  async ionViewWillEnter() {
-
   }
 
   onGoingHome() {
@@ -248,7 +244,7 @@ export class HelmetAuditoryListPage implements OnInit {
   }
 
   private onDetail(id: string) {
-    this.router.navigateByUrl(URI_HELMET_COLLECION_DETAIL('1', id));
+    this.router.navigateByUrl(URI_HELMET_COUNT_FORM(id));
   }
 
   private onRemoteDetail(id: string) {
@@ -263,54 +259,54 @@ export class HelmetAuditoryListPage implements OnInit {
           .downloadPdf(id)
           .subscribe({
             next: res => {
-              // const blob = res;
-              // const filename = `data.pdf`;
-              // if ((window.navigator as any).msSaveOrOpenBlob) {
-              //   (window.navigator as any).msSaveBlob(blob, filename);
-              // } else {
-              //   const downloadLink = window.document.createElement('a');
-              //   const contentTypeHeader = 'application/pdf';
-              //   downloadLink.href = window.URL.createObjectURL(
-              //     new Blob([blob], { type: contentTypeHeader })
-              //   );
-              //   downloadLink.download = filename;
-              //   document.body.appendChild(downloadLink);
-              //   downloadLink.click();
-              //   document.body.removeChild(downloadLink);
-              // }
               const blob = res;
-              const find = ' ';
-              const re = new RegExp(find, 'g');
-              const filePath = `${title.replace(re, '-')}.pdf`;
-
-              const fileReader = new FileReader();
-
-              fileReader.readAsDataURL(blob);
-
-              fileReader.onloadend = async () => {
-                const base64Data: any = fileReader.result;
-
-                Filesystem.writeFile({
-                  path: filePath,
-                  data: base64Data,
-                  directory: Directory.Cache,
-                }).then(() => {
-                  return Filesystem.getUri({
-                    directory: Directory.Cache,
-                    path: filePath
-                  });
-                })
-                  .then((uriResult) => {
-                    return Share.share({
-                      title: filePath,
-                      text: filePath,
-                      url: uriResult.uri,
-                    });
-                  }).then(() => {
-                    this.loadingService.dismissLoading();
-                  })
-                  .catch(err => this.responseService.onError(err, 'No se pudo descargar el levantamiento'));
+              const filename = `data.pdf`;
+              if ((window.navigator as any).msSaveOrOpenBlob) {
+                (window.navigator as any).msSaveBlob(blob, filename);
+              } else {
+                const downloadLink = window.document.createElement('a');
+                const contentTypeHeader = 'application/pdf';
+                downloadLink.href = window.URL.createObjectURL(
+                  new Blob([blob], { type: contentTypeHeader })
+                );
+                downloadLink.download = filename;
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
               }
+              // const blob = res;
+              // const find = ' ';
+              // const re = new RegExp(find, 'g');
+              // const filePath = `${title.replace(re, '-')}.pdf`;
+
+              // const fileReader = new FileReader();
+
+              // fileReader.readAsDataURL(blob);
+
+              // fileReader.onloadend = async () => {
+              //   const base64Data: any = fileReader.result;
+
+              //   Filesystem.writeFile({
+              //     path: filePath,
+              //     data: base64Data,
+              //     directory: Directory.Cache,
+              //   }).then(() => {
+              //     return Filesystem.getUri({
+              //       directory: Directory.Cache,
+              //       path: filePath
+              //     });
+              //   })
+              //     .then((uriResult) => {
+              //       return Share.share({
+              //         title: filePath,
+              //         text: filePath,
+              //         url: uriResult.uri,
+              //       });
+              //     }).then(() => {
+              //       this.loadingService.dismissLoading();
+              //     })
+              //     .catch(err => this.responseService.onError(err, 'No se pudo descargar el levantamiento'));
+              // }
             },
             error: err => this.responseService.onError(err, 'No se pudo descargar la auditoría')
           })
@@ -322,11 +318,11 @@ export class HelmetAuditoryListPage implements OnInit {
     const buttons = this.sendedList ?
       [
         {
-          text: 'Ver',
+          text: 'Ver Conteo',
           handler: () => this.onRemoteDetail(auditory.id),
         },
         {
-          text: 'Descargar',
+          text: 'Descargar Conteo',
           handler: () => this.onDownloadPdf(auditory.id, auditory.title),
         },
         {
@@ -337,18 +333,22 @@ export class HelmetAuditoryListPage implements OnInit {
           },
         },
       ] :
-      auditory.status === 1 ?
+      !!auditory.countId ?
         [
           {
-            text: 'Ver',
+            text: 'Envíar Conteo',
+            handler: () => this.onUpload(auditory.id),
+          },
+          {
+            text: 'Ver Conteo',
             handler: () => this.onDetail(auditory.id),
           },
           {
-            text: 'Actualizar',
+            text: 'Actualizar Conteo',
             handler: () => this.onEdit(auditory.id),
           },
           {
-            text: 'Eliminar',
+            text: 'Eliminar Conteo',
             role: 'destructive',
             handler: () => this.onDelete(auditory.id),
           },
@@ -362,19 +362,15 @@ export class HelmetAuditoryListPage implements OnInit {
         ] :
         [
           {
-            text: 'Envíar Auditoría',
-            handler: () => this.onUpload(auditory.id),
-          },
-          {
-            text: 'Ver',
+            text: 'Ver Conteo',
             handler: () => this.onDetail(auditory.id),
           },
           {
-            text: 'Actualizar',
+            text: 'Actualizar Conteo',
             handler: () => this.onEdit(auditory.id),
           },
           {
-            text: 'Eliminar',
+            text: 'Eliminar Conteo',
             role: 'destructive',
             handler: () => this.onDelete(auditory.id),
           },
@@ -432,7 +428,7 @@ export class HelmetAuditoryListPage implements OnInit {
           this.sendedList = true;
           this.auditories = res.data.map((a: any) => ({
             ...a,
-            statusWord: a.status === 1 ? 'En progreso' : 'Terminada',
+            statusWord: 'Enviado',
           }));
           this.loadingService.dismissLoading();
         },

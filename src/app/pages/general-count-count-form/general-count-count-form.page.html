@@ -8,26 +8,6 @@
     <h1>Ingrese su registro</h1>
   </div>
 
-  <div class="mx-2 mt-4 ion-text-center ion-text-center">
-    <h3>Tipo Vehículo</h3>
-  </div>
-
-  <div class="row">
-
-    <div class="col-6 p-4 pt-0 pe-2">
-      <div class="card button bg-primary">
-        <div (click)="vehicleTypeSelector.open()" class="ion-text-center mt-4 mb-2">
-          <ion-icon color="light" size="large" name="car"></ion-icon>
-          <p class="text-light">{{ vehicleType }}</p>
-        </div>
-      </div>
-
-      <ion-select #vehicleTypeSelector [hidden]="true" [mode]="'ios'" (ionChange)="onVehiclenDismiss($event)" interface="action-sheet">
-        <ion-select-option *ngFor="let vehicleType of vehicleTypes" [value]="vehicleType.id">{{ vehicleType.text }}</ion-select-option>
-      </ion-select>
-    </div>
-  </div>
-
   <div class="mx-2 ion-text-center ion-text-center">
     <h3>Dirección</h3>
   </div>
@@ -57,6 +37,408 @@
         <ion-select-option *ngFor="let direction of directions" [value]="direction.id">{{ direction.text }}</ion-select-option>
       </ion-select>
     </div>
+  </div>
+
+  <div class="row">
+    <div class="col-6">
+
+      <div class="row px-2">
+        <div class="col text-center">
+          Urbano:
+        </div>
+      </div>
+
+      <div class="row px-3">
+
+        <div class="col text-center">
+
+          <div class="btn btn-primary">
+            <ion-icon color="light" size="small" name="remove"></ion-icon>
+          </div>
+
+        </div>
+
+        <div class="col text-center pt-1">
+          {{ urbanCount }}
+        </div>
+
+        <div class="col text-center">
+
+          <div class="btn btn-primary">
+            <ion-icon color="light" size="small" name="add"></ion-icon>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6">
+
+      <div class="row px-2">
+        <div class="col text-center">
+          Sedán:
+        </div>
+      </div>
+
+      <div class="row px-3">
+
+        <div class="col text-center">
+
+          <div class="btn btn-primary">
+            <ion-icon color="light" size="small" name="remove"></ion-icon>
+          </div>
+
+        </div>
+
+        <div class="col text-center pt-1">
+          {{ urbanCount }}
+        </div>
+
+        <div class="col text-center">
+
+          <div class="btn btn-primary">
+            <ion-icon color="light" size="small" name="add"></ion-icon>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-6">
+
+      <div class="row px-2">
+        <div class="col text-center">
+          Berlina:
+        </div>
+      </div>
+
+      <div class="row px-3">
+
+        <div class="col text-center">
+
+          <div class="btn btn-primary">
+            <ion-icon color="light" size="small" name="remove"></ion-icon>
+          </div>
+
+        </div>
+
+        <div class="col text-center pt-1">
+          {{ urbanCount }}
+        </div>
+
+        <div class="col text-center">
+
+          <div class="btn btn-primary">
+            <ion-icon color="light" size="small" name="add"></ion-icon>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6">
+
+      <div class="row px-2">
+        <div class="col text-center">
+          Hatchback:
+        </div>
+      </div>
+
+      <div class="row px-3">
+
+        <div class="col text-center">
+
+          <div class="btn btn-primary">
+            <ion-icon color="light" size="small" name="remove"></ion-icon>
+          </div>
+
+        </div>
+
+        <div class="col text-center pt-1">
+          {{ urbanCount }}
+        </div>
+
+        <div class="col text-center">
+
+          <div class="btn btn-primary">
+            <ion-icon color="light" size="small" name="add"></ion-icon>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-6">
+
+      <div class="row px-2">
+        <div class="col text-center">
+          Cupé:
+        </div>
+      </div>
+
+      <div class="row px-3">
+
+        <div class="col text-center">
+
+          <div class="btn btn-primary">
+            <ion-icon color="light" size="small" name="remove"></ion-icon>
+          </div>
+
+        </div>
+
+        <div class="col text-center pt-1">
+          {{ urbanCount }}
+        </div>
+
+        <div class="col text-center">
+
+          <div class="btn btn-primary">
+            <ion-icon color="light" size="small" name="add"></ion-icon>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6">
+
+      <div class="row px-2">
+        <div class="col text-center">
+          Descapotable:
+        </div>
+      </div>
+
+      <div class="row px-3">
+
+        <div class="col text-center">
+
+          <div class="btn btn-primary">
+            <ion-icon color="light" size="small" name="remove"></ion-icon>
+          </div>
+
+        </div>
+
+        <div class="col text-center pt-1">
+          {{ urbanCount }}
+        </div>
+
+        <div class="col text-center">
+
+          <div class="btn btn-primary">
+            <ion-icon color="light" size="small" name="add"></ion-icon>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-6">
+
+      <div class="row px-2">
+        <div class="col text-center">
+          Deportivo:
+        </div>
+      </div>
+
+      <div class="row px-3">
+
+        <div class="col text-center">
+
+          <div class="btn btn-primary">
+            <ion-icon color="light" size="small" name="remove"></ion-icon>
+          </div>
+
+        </div>
+
+        <div class="col text-center pt-1">
+          {{ urbanCount }}
+        </div>
+
+        <div class="col text-center">
+
+          <div class="btn btn-primary">
+            <ion-icon color="light" size="small" name="add"></ion-icon>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6">
+
+      <div class="row px-2">
+        <div class="col text-center">
+          Todoterreno:
+        </div>
+      </div>
+
+      <div class="row px-3">
+
+        <div class="col text-center">
+
+          <div class="btn btn-primary">
+            <ion-icon color="light" size="small" name="remove"></ion-icon>
+          </div>
+
+        </div>
+
+        <div class="col text-center pt-1">
+          {{ urbanCount }}
+        </div>
+
+        <div class="col text-center">
+
+          <div class="btn btn-primary">
+            <ion-icon color="light" size="small" name="add"></ion-icon>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-6">
+
+      <div class="row px-2">
+        <div class="col text-center">
+          Monovolumen:
+        </div>
+      </div>
+
+      <div class="row px-3">
+
+        <div class="col text-center">
+
+          <div class="btn btn-primary">
+            <ion-icon color="light" size="small" name="remove"></ion-icon>
+          </div>
+
+        </div>
+
+        <div class="col text-center pt-1">
+          {{ urbanCount }}
+        </div>
+
+        <div class="col text-center">
+
+          <div class="btn btn-primary">
+            <ion-icon color="light" size="small" name="add"></ion-icon>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6">
+
+      <div class="row px-2">
+        <div class="col text-center">
+          SUV:
+        </div>
+      </div>
+
+      <div class="row px-3">
+
+        <div class="col text-center">
+
+          <div class="btn btn-primary">
+            <ion-icon color="light" size="small" name="remove"></ion-icon>
+          </div>
+
+        </div>
+
+        <div class="col text-center pt-1">
+          {{ urbanCount }}
+        </div>
+
+        <div class="col text-center">
+
+          <div class="btn btn-primary">
+            <ion-icon color="light" size="small" name="add"></ion-icon>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-6">
+
+      <div class="row px-2">
+        <div class="col text-center">
+          Furgoneta:
+        </div>
+      </div>
+
+      <div class="row px-3">
+
+        <div class="col text-center">
+
+          <div class="btn btn-primary">
+            <ion-icon color="light" size="small" name="remove"></ion-icon>
+          </div>
+
+        </div>
+
+        <div class="col text-center pt-1">
+          {{ urbanCount }}
+        </div>
+
+        <div class="col text-center">
+
+          <div class="btn btn-primary">
+            <ion-icon color="light" size="small" name="add"></ion-icon>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6">
+
+      <div class="row px-2">
+        <div class="col text-center">
+          Pickup:
+        </div>
+      </div>
+
+      <div class="row px-3">
+
+        <div class="col text-center">
+
+          <div class="btn btn-primary">
+            <ion-icon color="light" size="small" name="remove"></ion-icon>
+          </div>
+
+        </div>
+
+        <div class="col text-center pt-1">
+          {{ urbanCount }}
+        </div>
+
+        <div class="col text-center">
+
+          <div class="btn btn-primary">
+            <ion-icon color="light" size="small" name="add"></ion-icon>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
   </div>
 
 </ion-content>

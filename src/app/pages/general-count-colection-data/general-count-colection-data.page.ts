@@ -33,9 +33,9 @@ export class GeneralCountColectionDataPage implements OnInit {
 
   ionViewDidEnter() {
     this.activatedRoute
-      .paramMap
-      .subscribe({
-        next: paramMap => {
+    .paramMap
+    .subscribe({
+      next: paramMap => {
           this.auditoryId = paramMap.get('id') || '0';
           const from = paramMap.get('from') || '0';
 
@@ -52,11 +52,11 @@ export class GeneralCountColectionDataPage implements OnInit {
                 }
               },
               error: err => {
-                this.responseService.onError(err, 'No se pudo guardar el conteo');
+                this.responseService.onError(err, 'No se pudieron recuperar los conteos');
               }
             });
         }
-      });
+      }).unsubscribe();;
 
 
   }
@@ -70,7 +70,7 @@ export class GeneralCountColectionDataPage implements OnInit {
   }
 
   onReturn() {
-    this.router.navigateByUrl(URI_GENERAL_COUNT_FORM(this.auditoryId));
+    this.router.navigateByUrl(this.backUrl);
   }
 
   onFinish() {

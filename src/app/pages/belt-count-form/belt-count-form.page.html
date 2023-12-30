@@ -4,31 +4,11 @@
     homeUrl="/home"
   ></app-header-buttons>
 
-  <div class="mx-2 mt-4">
-    <h1>Ingrese su registro</h1>
+  <div class="mx-2 mt-4 mb-3">
+    <h1>Registros de uso de cinturón</h1>
   </div>
 
-  <div class="mx-2 mt-4 ion-text-center ion-text-center">
-    <h3>Tipo Vehículo</h3>
-  </div>
-
-  <div class="row">
-
-    <div class="col-6 p-4 pt-0 pe-2">
-      <div class="card button bg-primary">
-        <div (click)="vehicleTypeSelector.open()" class="ion-text-center mt-4 mb-2">
-          <ion-icon color="light" size="large" name="car"></ion-icon>
-          <p class="text-light">{{ vehicleType }}</p>
-        </div>
-      </div>
-
-      <ion-select #vehicleTypeSelector [hidden]="true" [mode]="'ios'" (ionChange)="onVehiclenDismiss($event)" interface="action-sheet">
-        <ion-select-option *ngFor="let vehicleType of vehicleTypes" [value]="vehicleType.id">{{ vehicleType.text }}</ion-select-option>
-      </ion-select>
-    </div>
-  </div>
-
-  <div class="mx-2 ion-text-center ion-text-center">
+  <!-- <div class="mx-2 ion-text-center ion-text-center">
     <h3>Dirección</h3>
   </div>
 
@@ -57,10 +37,10 @@
         <ion-select-option *ngFor="let direction of directions" [value]="direction.id">{{ direction.text }}</ion-select-option>
       </ion-select>
     </div>
-  </div>
+  </div> -->
 
   <div class="mx-2 mt-1 ion-text-center">
-    <h3>Usuarios cinturón: {{ beltUserCount }}</h3>
+    <h3>Sin cinturón: {{ beltlessCount }}</h3>
   </div>
 
   <div class="row">
@@ -83,7 +63,7 @@
   </div>
 
   <div class="mx-2 mt-1 ion-text-center">
-    <h3>Cinturones: {{ beltCount }} </h3>
+    <h3>Con cinturón: {{ beltCount }} </h3>
   </div>
 
   <div class="row">
@@ -96,7 +76,7 @@
       </div>
     </div>
     <div class="col-6 p-4 pt-0 ps-2">
-      <div [ngClass]="{ 'bg-secondary': disableBeltIncrease, 'bg-primary': !disableBeltIncrease }" class="card button bg-primary">
+      <div class="card button bg-primary">
         <div (click)="increaseBelts()" class="ion-text-center mt-4 mb-2">
           <ion-icon color="light" size="large" name="add"></ion-icon>
           <p class="text-light">Incrementar</p>
@@ -106,30 +86,7 @@
   </div>
 
   <div class="mx-2 mt-1 ion-text-center">
-    <h3>Usuarios silla retención: {{ chairUserCount }}</h3>
-  </div>
-
-  <div class="row">
-    <div class="col-6 p-4 pt-0 pe-2">
-      <div [ngClass]="{ 'bg-secondary': disableChairUserDecrease, 'bg-primary': !disableChairUserDecrease }" class="card ion-button">
-        <div (click)="decreaseChairUsers()" class="ion-text-center mt-4 mb-2">
-          <ion-icon color="light" size="large" name="remove"></ion-icon>
-          <p class="text-light">Decrementar</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-6 p-4 pt-0 ps-2">
-      <div class="card button bg-primary">
-        <div (click)="increaseChairUsers()" class="ion-text-center mt-4 mb-2">
-          <ion-icon color="light" size="large" name="add"></ion-icon>
-          <p class="text-light">Incrementar</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="mx-2 mt-1 ion-text-center">
-    <h3>Sillas de retención: {{ chairCount }} </h3>
+    <h3>Con silla de retención: {{ chairCount }} </h3>
   </div>
 
   <div class="row">
@@ -142,31 +99,8 @@
       </div>
     </div>
     <div class="col-6 p-4 pt-0 ps-2">
-      <div [ngClass]="{ 'bg-secondary': disableChairIncrease, 'bg-primary': !disableChairIncrease }" class="card button bg-primary">
+      <div class="card button bg-primary">
         <div (click)="increaseChairs()" class="ion-text-center mt-4 mb-2">
-          <ion-icon color="light" size="large" name="add"></ion-icon>
-          <p class="text-light">Incrementar</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="mx-2 mt-1 ion-text-center">
-    <h3>Usuarios compartiendo asiento: {{ overusedSeatsCount }} </h3>
-  </div>
-
-  <div class="row">
-    <div class="col-6 p-4 pt-0 pe-2">
-      <div [ngClass]="{ 'bg-secondary': disableOverusedDecrease, 'bg-primary': !disableOverusedDecrease }" class="card ion-button">
-        <div (click)="decreaseOverUsedSeats()" class="ion-text-center mt-4 mb-2">
-          <ion-icon color="light" size="large" name="remove"></ion-icon>
-          <p class="text-light">Decrementar</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-6 p-4 pt-0 ps-2">
-      <div [ngClass]="{ 'bg-secondary': disableOverusedIncrease, 'bg-primary': !disableOverusedIncrease }" class="card button bg-primary">
-        <div (click)="increaseOverUsedSeats()" class="ion-text-center mt-4 mb-2">
           <ion-icon color="light" size="large" name="add"></ion-icon>
           <p class="text-light">Incrementar</p>
         </div>

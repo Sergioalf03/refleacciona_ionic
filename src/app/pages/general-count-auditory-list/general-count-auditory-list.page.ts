@@ -5,7 +5,7 @@ import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { ActionSheetController, Platform } from '@ionic/angular';
 import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
-import { URI_GENERAL_COUNT_COLLECION_DETAIL, URI_GENERAL_COUNT_DETAIL, URI_GENERAL_COUNT_FORM, URI_HOME } from 'src/app/core/constants/uris';
+import { URI_GENERAL_COUNT_COLLECION_DETAIL, URI_GENERAL_COUNT_COUNT_FORM, URI_GENERAL_COUNT_DETAIL, URI_GENERAL_COUNT_FORM, URI_HOME } from 'src/app/core/constants/uris';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
@@ -18,7 +18,7 @@ import { GeneralCountCollectionService } from 'src/app/services/general-count-co
   selector: 'app-general-count-auditory-list',
   templateUrl: './general-count-auditory-list.page.html',
 })
-export class GeneralCountAuditoryListPage implements OnInit {
+export class GeneralCountAuditoryListPage {
 
   auditories: any[] = [];
   sendedList = false;
@@ -54,7 +54,7 @@ export class GeneralCountAuditoryListPage implements OnInit {
       });
   }
 
-  ngOnInit() {
+  async ionViewWillEnter() {
     this.route
       .paramMap
       .subscribe({
@@ -73,10 +73,6 @@ export class GeneralCountAuditoryListPage implements OnInit {
       }).unsubscribe();
   }
 
-  async ionViewWillEnter() {
-
-  }
-
   onGoingHome() {
     this.router.navigateByUrl(this.backUri);
   }
@@ -91,7 +87,7 @@ export class GeneralCountAuditoryListPage implements OnInit {
 
   private onUpload(id: string) {
     this.confirmDialogService
-      .presentAlert('Una vez enviado el levantamiento no se podrá modificar. ¿Desea continuar?', () => {
+      .presentAlert('Una vez enviado el conteo no se podrá modificar. ¿Desea continuar?', () => {
         this.loadingService.showLoading();
 
         this.auditoryService
@@ -124,9 +120,18 @@ export class GeneralCountAuditoryListPage implements OnInit {
 
                           const formattedCounts = counts.values.map((c: any) => ({
                             helmet_auditory_id: c.helmet_auditory_id,
-                            origin: c.origin,
-                            destination: c.destination,
-                            vehicle_type: c.vehicle_type,
+                            count1: c.count1,
+                            count2: c.count2,
+                            count3: c.count3,
+                            count4: c.count4,
+                            count5: c.count5,
+                            count6: c.count6,
+                            count7: c.count7,
+                            count8: c.count8,
+                            count9: c.count9,
+                            count10: c.count10,
+                            count11: c.count11,
+                            count12: c.count12,
                             creation_date: c.creation_date,
                           }));
 
@@ -198,7 +203,9 @@ export class GeneralCountAuditoryListPage implements OnInit {
       }
 
       const ImageSrc = await this.photoService.getLocalAuditoryEvidenceUri(arr[index].dir).then(photo => photo.uri);
-      const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => r.blob());
+      const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => {
+        return r.blob()
+      });
 
       this.auditoryEvidenceService
         .uploadImage(blob, externalId, arr[index].creation_date, arr[index].dir)
@@ -247,7 +254,7 @@ export class GeneralCountAuditoryListPage implements OnInit {
   }
 
   private onDetail(id: string) {
-    this.router.navigateByUrl(URI_GENERAL_COUNT_COLLECION_DETAIL('1', id));
+    this.router.navigateByUrl(URI_GENERAL_COUNT_COUNT_FORM(id));
   }
 
   private onRemoteDetail(id: string) {
@@ -262,54 +269,54 @@ export class GeneralCountAuditoryListPage implements OnInit {
           .downloadPdf(id)
           .subscribe({
             next: res => {
-              const blob = res;
-              const filename = `data.pdf`;
-              if ((window.navigator as any).msSaveOrOpenBlob) {
-                (window.navigator as any).msSaveBlob(blob, filename);
-              } else {
-                const downloadLink = window.document.createElement('a');
-                const contentTypeHeader = 'application/pdf';
-                downloadLink.href = window.URL.createObjectURL(
-                  new Blob([blob], { type: contentTypeHeader })
-                );
-                downloadLink.download = filename;
-                document.body.appendChild(downloadLink);
-                downloadLink.click();
-                document.body.removeChild(downloadLink);
-              }
               // const blob = res;
-              // const find = ' ';
-              // const re = new RegExp(find, 'g');
-              // const filePath = `${title.replace(re, '-')}.pdf`;
-
-              // const fileReader = new FileReader();
-
-              // fileReader.readAsDataURL(blob);
-
-              // fileReader.onloadend = async () => {
-              //   const base64Data: any = fileReader.result;
-
-              //   Filesystem.writeFile({
-              //     path: filePath,
-              //     data: base64Data,
-              //     directory: Directory.Cache,
-              //   }).then(() => {
-              //     return Filesystem.getUri({
-              //       directory: Directory.Cache,
-              //       path: filePath
-              //     });
-              //   })
-              //     .then((uriResult) => {
-              //       return Share.share({
-              //         title: filePath,
-              //         text: filePath,
-              //         url: uriResult.uri,
-              //       });
-              //     }).then(() => {
-              //       this.loadingService.dismissLoading();
-              //     })
-              //     .catch(err => this.responseService.onError(err, 'No se pudo descargar la auditoría'));
+              // const filename = `data.pdf`;
+              // if ((window.navigator as any).msSaveOrOpenBlob) {
+              //   (window.navigator as any).msSaveBlob(blob, filename);
+              // } else {
+              //   const downloadLink = window.document.createElement('a');
+              //   const contentTypeHeader = 'application/pdf';
+              //   downloadLink.href = window.URL.createObjectURL(
+              //     new Blob([blob], { type: contentTypeHeader })
+              //   );
+              //   downloadLink.download = filename;
+              //   document.body.appendChild(downloadLink);
+              //   downloadLink.click();
+              //   document.body.removeChild(downloadLink);
               // }
+              const blob = res;
+              const find = ' ';
+              const re = new RegExp(find, 'g');
+              const filePath = `${title.replace(re, '-')}.pdf`;
+
+              const fileReader = new FileReader();
+
+              fileReader.readAsDataURL(blob);
+
+              fileReader.onloadend = async () => {
+                const base64Data: any = fileReader.result;
+
+                Filesystem.writeFile({
+                  path: filePath,
+                  data: base64Data,
+                  directory: Directory.Cache,
+                }).then(() => {
+                  return Filesystem.getUri({
+                    directory: Directory.Cache,
+                    path: filePath
+                  });
+                })
+                  .then((uriResult) => {
+                    return Share.share({
+                      title: filePath,
+                      text: filePath,
+                      url: uriResult.uri,
+                    });
+                  }).then(() => {
+                    this.loadingService.dismissLoading();
+                  })
+                  .catch(err => this.responseService.onError(err, 'No se pudo descargar la auditoría'));
+              }
             },
             error: err => this.responseService.onError(err, 'No se pudo descargar la auditoría')
           })
@@ -321,11 +328,11 @@ export class GeneralCountAuditoryListPage implements OnInit {
     const buttons = this.sendedList ?
       [
         {
-          text: 'Ver',
+          text: 'Ver Conteo',
           handler: () => this.onRemoteDetail(auditory.id),
         },
         {
-          text: 'Descargar',
+          text: 'Descargar Conteo',
           handler: () => this.onDownloadPdf(auditory.id, auditory.title),
         },
         {
@@ -336,18 +343,22 @@ export class GeneralCountAuditoryListPage implements OnInit {
           },
         },
       ] :
-      auditory.status === 1 ?
+      !!auditory.countId ?
         [
           {
-            text: 'Ver',
+            text: 'Envíar Conteo',
+            handler: () => this.onUpload(auditory.id),
+          },
+          {
+            text: 'Ver Conteo',
             handler: () => this.onDetail(auditory.id),
           },
           {
-            text: 'Actualizar',
+            text: 'Actualizar Conteo',
             handler: () => this.onEdit(auditory.id),
           },
           {
-            text: 'Eliminar',
+            text: 'Eliminar Conteo',
             role: 'destructive',
             handler: () => this.onDelete(auditory.id),
           },
@@ -358,22 +369,18 @@ export class GeneralCountAuditoryListPage implements OnInit {
               action: 'cancel',
             },
           },
-        ] :
+        ]:
         [
           {
-            text: 'Envíar Auditoría',
-            handler: () => this.onUpload(auditory.id),
-          },
-          {
-            text: 'Ver',
+            text: 'Ver Conteo',
             handler: () => this.onDetail(auditory.id),
           },
           {
-            text: 'Actualizar',
+            text: 'Actualizar Conteo',
             handler: () => this.onEdit(auditory.id),
           },
           {
-            text: 'Eliminar',
+            text: 'Eliminar Conteo',
             role: 'destructive',
             handler: () => this.onDelete(auditory.id),
           },
@@ -431,7 +438,7 @@ export class GeneralCountAuditoryListPage implements OnInit {
           this.sendedList = true;
           this.auditories = res.data.map((a: any) => ({
             ...a,
-            statusWord: a.status === 1 ? 'En progreso' : 'Terminada',
+            statusWord: 'Enviado',
           }));
           this.loadingService.dismissLoading();
         },
