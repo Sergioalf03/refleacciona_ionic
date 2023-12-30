@@ -398,7 +398,7 @@ export class AuditoryListPage implements OnInit {
     auditory.status === 1 ?
       auditory.answersCompleted ? [
         {
-          text: 'Actualizar Auditoría',
+          text: 'Actualizar datos generales',
           handler: () => this.onEdit(auditory.id),
         },
         {
@@ -424,7 +424,7 @@ export class AuditoryListPage implements OnInit {
       ] :
       [
           {
-            text: 'Actualizar Auditoría',
+            text: 'Actualizar datos generales',
             handler: () => this.onEdit(auditory.id),
           },
           {
@@ -446,7 +446,7 @@ export class AuditoryListPage implements OnInit {
       ] :
       [
         {
-          text: 'Actualizar Auditoría',
+          text: 'Actualizar datos generales',
           handler: () => this.onEdit(auditory.id),
         },
         {
@@ -454,7 +454,7 @@ export class AuditoryListPage implements OnInit {
           handler: () => this.onEditAnswers(auditory.id, 1),
         },
         {
-          text: 'Actualizar Finalización',
+          text: 'Actualizar comentario final',
           handler: () => this.onFinish(auditory.id),
         },
         {
