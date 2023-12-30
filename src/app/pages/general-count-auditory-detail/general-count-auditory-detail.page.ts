@@ -73,6 +73,21 @@ export class GeneralCountAuditoryDetailPage {
     icon: 'cloud-download',
   }
 
+  names = [
+    'Urbano',
+    'Sedán',
+    'Berlina',
+    'Hatchback',
+    'Cupé',
+    'Descapotable',
+    'Deportivo',
+    'Todoterreno',
+    'Monovolumen',
+    'SUV',
+    'Furgoneta',
+    'Pickup'
+  ];
+
   auditoryId = '0';
 
   auditoryTitle = '';
@@ -140,15 +155,9 @@ export class GeneralCountAuditoryDetailPage {
 
     this.auditoyrEvidences = data.evidences.map((e: any) => `${STORAGE_URL}/general/${e.dir}.jpeg`);
 
-    this.counts = data.counts.map((c: any) => {
+    this.counts = data.counts;
 
-      return {
-        originText: directions.find(d => +d.id === +c.origin)!.short,
-        destinationText: directions.find(d => +d.id === +c.destination)!.short,
-        vehicleTypeText: vehicleTypes.find(v => +v.id === +c.vehicle_type)!.text,
-        ...c,
-      };
-    });
+    console.log(this.counts)
 
     this.mapService.setCenter(+this.auditoryLat, +this.auditoryLng, true);
     setTimeout(() => {

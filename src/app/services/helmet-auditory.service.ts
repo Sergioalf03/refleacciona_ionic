@@ -52,7 +52,7 @@ export class HelmetAuditoryService {
                     id: auditory.id,
                     title: auditory.title,
                     date: auditory.date,
-                    status: !!auditory.countId ? 1 : 0,
+                    status: !!auditory.countId ? 2 : 1,
                     countId: auditory.countId,
                   });
 

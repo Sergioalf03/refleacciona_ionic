@@ -87,7 +87,7 @@ export class GeneralCountAuditoryListPage {
 
   private onUpload(id: string) {
     this.confirmDialogService
-      .presentAlert('Una vez enviado el levantamiento no se podrá modificar. ¿Desea continuar?', () => {
+      .presentAlert('Una vez enviado el conteo no se podrá modificar. ¿Desea continuar?', () => {
         this.loadingService.showLoading();
 
         this.auditoryService
@@ -120,9 +120,18 @@ export class GeneralCountAuditoryListPage {
 
                           const formattedCounts = counts.values.map((c: any) => ({
                             helmet_auditory_id: c.helmet_auditory_id,
-                            origin: c.origin,
-                            destination: c.destination,
-                            vehicle_type: c.vehicle_type,
+                            count1: c.count1,
+                            count2: c.count2,
+                            count3: c.count3,
+                            count4: c.count4,
+                            count5: c.count5,
+                            count6: c.count6,
+                            count7: c.count7,
+                            count8: c.count8,
+                            count9: c.count9,
+                            count10: c.count10,
+                            count11: c.count11,
+                            count12: c.count12,
                             creation_date: c.creation_date,
                           }));
 
@@ -319,11 +328,11 @@ export class GeneralCountAuditoryListPage {
     const buttons = this.sendedList ?
       [
         {
-          text: 'Ver',
+          text: 'Ver Conteo',
           handler: () => this.onRemoteDetail(auditory.id),
         },
         {
-          text: 'Descargar',
+          text: 'Descargar Conteo',
           handler: () => this.onDownloadPdf(auditory.id, auditory.title),
         },
         {
@@ -337,19 +346,19 @@ export class GeneralCountAuditoryListPage {
       !!auditory.countId ?
         [
           {
-            text: 'Envíar Auditoría',
+            text: 'Envíar Conteo',
             handler: () => this.onUpload(auditory.id),
           },
           {
-            text: 'Ver',
+            text: 'Ver Conteo',
             handler: () => this.onDetail(auditory.id),
           },
           {
-            text: 'Actualizar',
+            text: 'Actualizar Conteo',
             handler: () => this.onEdit(auditory.id),
           },
           {
-            text: 'Eliminar',
+            text: 'Eliminar Conteo',
             role: 'destructive',
             handler: () => this.onDelete(auditory.id),
           },
@@ -363,15 +372,15 @@ export class GeneralCountAuditoryListPage {
         ]:
         [
           {
-            text: 'Ver',
+            text: 'Ver Conteo',
             handler: () => this.onDetail(auditory.id),
           },
           {
-            text: 'Actualizar',
+            text: 'Actualizar Conteo',
             handler: () => this.onEdit(auditory.id),
           },
           {
-            text: 'Eliminar',
+            text: 'Eliminar Conteo',
             role: 'destructive',
             handler: () => this.onDelete(auditory.id),
           },
@@ -429,7 +438,7 @@ export class GeneralCountAuditoryListPage {
           this.sendedList = true;
           this.auditories = res.data.map((a: any) => ({
             ...a,
-            statusWord: a.status === 1 ? 'En progreso' : 'Terminada',
+            statusWord: 'Enviado',
           }));
           this.loadingService.dismissLoading();
         },

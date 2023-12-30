@@ -128,7 +128,7 @@ export class BeltAuditoryListPage {
                               creation_date: c.creation_date,
                               destination: c.destination,
                               origin: c.origin,
-                              vehicle_type: c.vehicle_type,
+                              vehicle_type: 1,
                               overuse_count: c.overuse_count,
                             }
                           });
@@ -334,11 +334,11 @@ export class BeltAuditoryListPage {
     const buttons = this.sendedList ?
       [
         {
-          text: 'Ver',
+          text: 'Ver Conteo',
           handler: () => this.onRemoteDetail(auditory.id),
         },
         {
-          text: 'Descargar',
+          text: 'Descargar Conteo',
           handler: () => this.onDownloadPdf(auditory.id, auditory.title),
         },
         {
@@ -352,19 +352,19 @@ export class BeltAuditoryListPage {
       !!auditory.countId ?
       [
         {
-          text: 'Envíar Auditoría',
+          text: 'Envíar Conteo',
           handler: () => this.onUpload(auditory.id),
         },
         {
-          text: 'Ver',
+          text: 'Ver Conteo',
           handler: () => this.onDetail(auditory.id),
         },
         {
-          text: 'Actualizar',
+          text: 'Actualizar Conteo',
           handler: () => this.onEdit(auditory.id),
         },
         {
-          text: 'Eliminar',
+          text: 'Eliminar Conteo',
           role: 'destructive',
           handler: () => this.onDelete(auditory.id),
         },
@@ -378,15 +378,15 @@ export class BeltAuditoryListPage {
       ]:
       [
         {
-          text: 'Ver',
+          text: 'Ver Conteo',
           handler: () => this.onDetail(auditory.id),
         },
         {
-          text: 'Actualizar',
+          text: 'Actualizar Conteo',
           handler: () => this.onEdit(auditory.id),
         },
         {
-          text: 'Eliminar',
+          text: 'Eliminar Conteo',
           role: 'destructive',
           handler: () => this.onDelete(auditory.id),
         },
@@ -444,7 +444,7 @@ export class BeltAuditoryListPage {
           this.sendedList = true;
           this.auditories = res.data.map((a: any) => ({
             ...a,
-            statusWord: a.status === 1 ? 'En progreso' : 'Terminada',
+            statusWord: 'Enviado',
           }));
           this.loadingService.dismissLoading();
         },

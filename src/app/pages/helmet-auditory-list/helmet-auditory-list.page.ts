@@ -318,11 +318,11 @@ export class HelmetAuditoryListPage {
     const buttons = this.sendedList ?
       [
         {
-          text: 'Ver',
+          text: 'Ver Conteo',
           handler: () => this.onRemoteDetail(auditory.id),
         },
         {
-          text: 'Descargar',
+          text: 'Descargar Conteo',
           handler: () => this.onDownloadPdf(auditory.id, auditory.title),
         },
         {
@@ -336,19 +336,19 @@ export class HelmetAuditoryListPage {
       !!auditory.countId ?
         [
           {
-            text: 'Envíar Auditoría',
+            text: 'Envíar Conteo',
             handler: () => this.onUpload(auditory.id),
           },
           {
-            text: 'Ver',
+            text: 'Ver Conteo',
             handler: () => this.onDetail(auditory.id),
           },
           {
-            text: 'Actualizar',
+            text: 'Actualizar Conteo',
             handler: () => this.onEdit(auditory.id),
           },
           {
-            text: 'Eliminar',
+            text: 'Eliminar Conteo',
             role: 'destructive',
             handler: () => this.onDelete(auditory.id),
           },
@@ -362,15 +362,15 @@ export class HelmetAuditoryListPage {
         ] :
         [
           {
-            text: 'Ver',
+            text: 'Ver Conteo',
             handler: () => this.onDetail(auditory.id),
           },
           {
-            text: 'Actualizar',
+            text: 'Actualizar Conteo',
             handler: () => this.onEdit(auditory.id),
           },
           {
-            text: 'Eliminar',
+            text: 'Eliminar Conteo',
             role: 'destructive',
             handler: () => this.onDelete(auditory.id),
           },
@@ -428,7 +428,7 @@ export class HelmetAuditoryListPage {
           this.sendedList = true;
           this.auditories = res.data.map((a: any) => ({
             ...a,
-            statusWord: a.status === 1 ? 'En progreso' : 'Terminada',
+            statusWord: 'Enviado',
           }));
           this.loadingService.dismissLoading();
         },

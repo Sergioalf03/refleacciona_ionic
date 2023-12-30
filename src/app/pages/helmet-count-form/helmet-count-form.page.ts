@@ -31,7 +31,7 @@ export class HelmetCountFormPage implements OnInit {
   submitButtonText = 'Guardar';
   originId = -1;
   destinationId = -1;
-  canSubmit = false;
+  canSubmit = true;
   auditoryId = '0';
 
   countId = '0';

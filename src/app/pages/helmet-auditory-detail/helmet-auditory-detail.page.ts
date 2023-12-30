@@ -138,14 +138,7 @@ export class HelmetAuditoryDetailPage {
 
       this.auditoyrEvidences = data.evidences.map((e: any) => `${STORAGE_URL}/helmet/${e.dir}.jpeg`)
 
-      this.counts = data.counts.map((c: any) => {
-
-        return {
-          originText: directions.find(d => +d.id === +c.origin)!.short,
-          destinationText: directions.find(d => +d.id === +c.destination)!.short,
-          ...c,
-        };
-      });
+      this.counts = data.counts;
 
       this.mapService.setCenter(+this.auditoryLat, +this.auditoryLng, true);
       setTimeout(() => {
