@@ -24,48 +24,7 @@ export class AuditoryDetailPage {
     click: async () => {
       this.confirmDialogService
         .presentAlert('¿Desea descargar la auditoría?', () => {
-          this.loadingService.showLoading();
-          this.auditoryService
-            .downloadPdf(this.auditoryId)
-            .subscribe({
-              next: async res => {
-                const blob = res;
-
-                const find = ' ';
-                const re = new RegExp(find, 'g');
-                const filePath = `${this.auditoryTitle.replace(re, '-')}.pdf`;
-
-                const fileReader = new FileReader();
-
-                fileReader.readAsDataURL(blob);
-
-                fileReader.onloadend = async () => {
-                  const base64Data: any = fileReader.result;
-
-                  Filesystem.writeFile({
-                    path: filePath,
-                    data: base64Data,
-                    directory: Directory.Cache,
-                  }).then(() => {
-                    return Filesystem.getUri({
-                      directory: Directory.Cache,
-                      path: filePath
-                    });
-                  })
-                  .then((uriResult) => {
-                    return Share.share({
-                      title: filePath,
-                      text: filePath,
-                      url: uriResult.uri,
-                    });
-                  }).then(() => {
-                    this.loadingService.dismissLoading();
-                  })
-                    .catch(err => this.responseService.onError(err, 'No se pudo descargar la auditoría'));
-                }
-              },
-              error: err => this.responseService.onError(err, 'No se pudo descargar la auditoría')
-            })
+          this.downloadCsv();
         })
     },
     icon: 'cloud-download',
@@ -172,6 +131,80 @@ export class AuditoryDetailPage {
 
   answerEvicenceUrl(dir: string) {
     return `${STORAGE_URL}/answers/${dir}.jpeg`;
+  }
+
+  private downloadCsv() {
+    this.loadingService.showLoading();
+    const headers = 'Sección,SubSección,Identificador,Pregunta,Respuesta\n';
+
+    const data = this.auditorySections.map((s: any) => s.answers.map((a: any) => `${s.name},${s.subname ? s.subname : '-' },${a.uid},${a.sentence.replace(',', ';')},${a.formattedAnswer}`).join('\n')).join('\n');
+
+    const blob = new Blob([`${headers}${data}`], {
+      type: "text/csv"
+    });
+
+    const filename = `data.csv`;
+
+    if ((window.navigator as any).msSaveOrOpenBlob) {
+      (window.navigator as any).msSaveBlob(blob, filename);
+    } else {
+      const downloadLink = window.document.createElement('a');
+      const contentTypeHeader = 'text/csv';
+      downloadLink.href = window.URL.createObjectURL(
+        new Blob([blob], { type: contentTypeHeader })
+      );
+      downloadLink.download = filename;
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    }
+
+    this.loadingService.dismissLoading();
+  }
+
+  private downloadPdf() {
+    this.loadingService.showLoading();
+    this.auditoryService
+      .downloadPdf(this.auditoryId)
+      .subscribe({
+        next: async res => {
+          const blob = res;
+
+          const find = ' ';
+          const re = new RegExp(find, 'g');
+          const filePath = `${this.auditoryTitle.replace(re, '-')}.pdf`;
+
+          const fileReader = new FileReader();
+
+          fileReader.readAsDataURL(blob);
+
+          fileReader.onloadend = async () => {
+            const base64Data: any = fileReader.result;
+
+            Filesystem.writeFile({
+              path: filePath,
+              data: base64Data,
+              directory: Directory.Cache,
+            }).then(() => {
+              return Filesystem.getUri({
+                directory: Directory.Cache,
+                path: filePath
+              });
+            })
+            .then((uriResult) => {
+              return Share.share({
+                title: filePath,
+                text: filePath,
+                url: uriResult.uri,
+              });
+            }).then(() => {
+              this.loadingService.dismissLoading();
+            })
+              .catch(err => this.responseService.onError(err, 'No se pudo descargar la auditoría'));
+          }
+        },
+        error: err => this.responseService.onError(err, 'No se pudo descargar la auditoría')
+      })
   }
 
 }

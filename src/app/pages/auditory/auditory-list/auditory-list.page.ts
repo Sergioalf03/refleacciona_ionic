@@ -10,7 +10,7 @@ import { AnswerService } from 'src/app/services/answer.service';
 import { AuditoryEvidenceService } from 'src/app/services/auditory-evidence.service';
 import { PhotoService } from 'src/app/core/controllers/photo.service';
 import { AnswerEvidenceService } from 'src/app/services/answer-evidence.service';
-import { URI_AUDITORY_DETAIL, URI_AUDITORY_FINISH_FORM, URI_AUDITORY_FORM, URI_HOME, URI_QUESTION_FORM } from 'src/app/core/constants/uris';
+import { URI_AUDITORY_DETAIL, URI_AUDITORY_FORM, URI_HOME, URI_QUESTION_FORM } from 'src/app/core/constants/uris';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
@@ -89,10 +89,6 @@ export class AuditoryListPage implements OnInit {
 
   private onEditAnswers(id: string, lastIndex: number) {
     this.router.navigateByUrl(URI_QUESTION_FORM('1', id, `${lastIndex}`));
-  }
-
-  private onFinish(id: string) {
-    this.router.navigateByUrl(URI_AUDITORY_FINISH_FORM('1', id));
   }
 
   onNewAuditory() {
@@ -420,10 +416,10 @@ export class AuditoryListPage implements OnInit {
           text: 'Actualizar Respuestas',
           handler: () => this.onEditAnswers(auditory.id, 1),
         },
-        {
-          text: 'Finalizar auditoría',
-          handler: () => this.onFinish(auditory.id),
-        },
+        // {
+        //   text: 'Finalizar auditoría',
+        //   handler: () => this.onFinish(auditory.id),
+        // },
         {
           text: 'Eliminar Auditoría',
           role: 'destructive',
@@ -468,10 +464,10 @@ export class AuditoryListPage implements OnInit {
           text: 'Actualizar Respuestas',
           handler: () => this.onEditAnswers(auditory.id, 1),
         },
-        {
-          text: 'Actualizar comentario final',
-          handler: () => this.onFinish(auditory.id),
-        },
+        // {
+        //   text: 'Actualizar comentario final',
+        //   handler: () => this.onFinish(auditory.id),
+        // },
         {
           text: 'Envíar Auditoría',
           handler: () => this.onUpload(auditory.id),

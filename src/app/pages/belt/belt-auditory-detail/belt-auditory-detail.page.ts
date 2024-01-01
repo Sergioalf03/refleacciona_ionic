@@ -26,48 +26,8 @@ export class BeltAuditoryDetailPage {
     click: async () => {
       this.confirmDialogService
         .presentAlert('¿Desea descargar el levantamiento?', () => {
-          this.loadingService.showLoading();
-          this.auditoryService
-            .downloadPdf(this.auditoryId)
-            .subscribe({
-              next: async (res: any) => {
-                const blob = res;
+          this.downloadCsv();
 
-                const find = ' ';
-                const re = new RegExp(find, 'g');
-                const filePath = `${this.auditoryTitle.replace(re, '-')}.pdf`;
-
-                const fileReader = new FileReader();
-
-                fileReader.readAsDataURL(blob);
-
-                fileReader.onloadend = async () => {
-                  const base64Data: any = fileReader.result;
-
-                  Filesystem.writeFile({
-                    path: filePath,
-                    data: base64Data,
-                    directory: Directory.Cache,
-                  }).then(() => {
-                    return Filesystem.getUri({
-                      directory: Directory.Cache,
-                      path: filePath
-                    });
-                  })
-                    .then((uriResult) => {
-                      return Share.share({
-                        title: filePath,
-                        text: filePath,
-                        url: uriResult.uri,
-                      });
-                    }).then(() => {
-                      this.loadingService.dismissLoading();
-                    })
-                    .catch(err => this.responseService.onError(err, 'No se pudo descargar el levantamiento'));
-                }
-              },
-              error: (err: any) => this.responseService.onError(err, 'No se pudo descargar el levantamiento')
-            })
         })
     },
     icon: 'cloud-download',
@@ -146,5 +106,79 @@ export class BeltAuditoryDetailPage {
     setTimeout(() => {
       this.loadingService.dismissLoading();
     }, 500)
+  }
+
+  private downloadCsv() {
+    const headers = 'Tipo,conteo\n';
+
+    const data = 'Sin Cinturón,' + this.counts[0].adults_count + '\nCon Cinturón,' + this.counts[0].adults_count + '\nCon Silla de Retención,' + this.counts[0].adults_count + '\n';
+
+    const blob = new Blob([`${headers}${data}`], {
+      type: "text/csv"
+    });
+
+    const filename = `data.csv`;
+
+    if ((window.navigator as any).msSaveOrOpenBlob) {
+      (window.navigator as any).msSaveBlob(blob, filename);
+      this.loadingService.dismissLoading();
+    } else {
+      const downloadLink = window.document.createElement('a');
+      const contentTypeHeader = 'text/csv';
+      downloadLink.href = window.URL.createObjectURL(
+        new Blob([blob], { type: contentTypeHeader })
+      );
+      downloadLink.download = filename;
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+      this.loadingService.dismissLoading();
+    }
+
+  }
+
+  private downloadPdf() {
+    this.loadingService.showLoading();
+    this.auditoryService
+      .downloadPdf(this.auditoryId)
+      .subscribe({
+        next: async (res: any) => {
+          const blob = res;
+
+          const find = ' ';
+          const re = new RegExp(find, 'g');
+          const filePath = `${this.auditoryTitle.replace(re, '-')}.pdf`;
+
+          const fileReader = new FileReader();
+
+          fileReader.readAsDataURL(blob);
+
+          fileReader.onloadend = async () => {
+            const base64Data: any = fileReader.result;
+
+            Filesystem.writeFile({
+              path: filePath,
+              data: base64Data,
+              directory: Directory.Cache,
+            }).then(() => {
+              return Filesystem.getUri({
+                directory: Directory.Cache,
+                path: filePath
+              });
+            })
+              .then((uriResult) => {
+                return Share.share({
+                  title: filePath,
+                  text: filePath,
+                  url: uriResult.uri,
+                });
+              }).then(() => {
+                this.loadingService.dismissLoading();
+              })
+              .catch(err => this.responseService.onError(err, 'No se pudo descargar el levantamiento'));
+          }
+        },
+        error: (err: any) => this.responseService.onError(err, 'No se pudo descargar el levantamiento')
+      })
   }
 }

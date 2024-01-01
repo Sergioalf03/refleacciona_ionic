@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
 import { ActionSheetController, Platform, isPlatform } from '@ionic/angular';
 import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
-import { URI_AUDITORY_FINISH_FORM, URI_AUDITORY_FORM, URI_AUDITORY_LIST, URI_HOME } from 'src/app/core/constants/uris';
+import { URI_AUDITORY_FORM, URI_AUDITORY_LIST, URI_HOME } from 'src/app/core/constants/uris';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
@@ -563,7 +563,7 @@ export class QuestionFormPage implements OnInit {
   }
 
   onFinish() {
-    this.router.navigateByUrl(URI_AUDITORY_FINISH_FORM('0', this.auditoryId));
+    this.router.navigateByUrl(URI_AUDITORY_LIST('local'));
   }
 
 }

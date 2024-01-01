@@ -356,11 +356,11 @@ export class BeltAuditoryListPage {
           handler: () => this.onUpload(auditory.id),
         },
         {
-          text: 'Ver Conteo',
+          text: 'Actualizar Conteo',
           handler: () => this.onDetail(auditory.id),
         },
         {
-          text: 'Actualizar Conteo',
+          text: 'Actualizar datos generales',
           handler: () => this.onEdit(auditory.id),
         },
         {
@@ -378,11 +378,11 @@ export class BeltAuditoryListPage {
       ]:
       [
         {
-          text: 'Ver Conteo',
+          text: 'Actualizar Conteo',
           handler: () => this.onDetail(auditory.id),
         },
         {
-          text: 'Actualizar Conteo',
+          text: 'Actualizar datos generales',
           handler: () => this.onEdit(auditory.id),
         },
         {

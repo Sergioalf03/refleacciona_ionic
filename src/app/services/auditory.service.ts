@@ -90,7 +90,7 @@ export class AuditoryService {
                                                 id: auditory.id,
                                                 title: auditory.title,
                                                 date: auditory.date,
-                                                status: auditory.status,
+                                                status: answerCount.values[0].answers === questionCount.values[0].questions ? 1 : 0,
                                                 lastIndex: lastAnswer.values[0] ? lastAnswer.values[0].section_id : 1,
                                                 answersCompleted: answerCount.values[0].answers === questionCount.values[0].questions,
                                               });

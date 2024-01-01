@@ -1,24 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Capacitor } from '@capacitor/core';
-import { Directory, Filesystem } from '@capacitor/filesystem';
-import { Share } from '@capacitor/share';
 import { ActionSheetController, Platform } from '@ionic/angular';
 import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
-import { URI_GENERAL_COUNT_COLLECION_DETAIL, URI_GENERAL_COUNT_COUNT_FORM, URI_GENERAL_COUNT_DETAIL, URI_GENERAL_COUNT_FORM, URI_HOME } from 'src/app/core/constants/uris';
+import { URI_HELMET_COUNT_FORM, URI_HELMET_DETAIL, URI_HELMET_FORM, URI_HOME } from 'src/app/core/constants/uris';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { PhotoService } from 'src/app/core/controllers/photo.service';
-import { GeneralCountAuditoryEvidenceService } from 'src/app/services/general-count-auditory-evidence.service';
-import { GeneralCountAuditoryService } from 'src/app/services/general-count-auditory.service';
-import { GeneralCountCollectionService } from 'src/app/services/general-count-collection.service';
+import { HelmetAuditoryEvidenceService } from 'src/app/services/helmet-auditory-evidence.service';
+import { HelmetAuditoryService } from 'src/app/services/helmet-auditory.service';
+import { HelmetCollectionService } from 'src/app/services/helmet-collection.service';
+import { Capacitor } from '@capacitor/core';
+import { Directory, Filesystem } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
 
 @Component({
-  selector: 'app-general-count-auditory-list',
-  templateUrl: './general-count-auditory-list.page.html',
+  selector: 'app-helmet-auditory-list',
+  templateUrl: './helmet-auditory-list.page.html',
 })
-export class GeneralCountAuditoryListPage {
+export class HelmetAuditoryListPage {
 
   auditories: any[] = [];
   sendedList = false;
@@ -30,12 +30,12 @@ export class GeneralCountAuditoryListPage {
   }
 
   backUri = URI_HOME();
-  formUri = URI_GENERAL_COUNT_FORM('00');
+  formUri = URI_HELMET_FORM('00');
 
   constructor(
-    private auditoryService: GeneralCountAuditoryService,
-    private auditoryEvidenceService: GeneralCountAuditoryEvidenceService,
-    private helmetCollectionService: GeneralCountCollectionService,
+    private auditoryService: HelmetAuditoryService,
+    private auditoryEvidenceService: HelmetAuditoryEvidenceService,
+    private helmetCollectionService: HelmetCollectionService,
     private photoService: PhotoService,
     private responseService: HttpResponseService,
     private loadingService: LoadingService,
@@ -78,16 +78,16 @@ export class GeneralCountAuditoryListPage {
   }
 
   private onEdit(id: string) {
-    this.router.navigateByUrl(URI_GENERAL_COUNT_FORM(id));
+    this.router.navigateByUrl(URI_HELMET_FORM(id));
   }
 
   onNewAuditory() {
-    this.router.navigateByUrl(URI_GENERAL_COUNT_FORM('00'));
+    this.router.navigateByUrl(URI_HELMET_FORM('00'));
   }
 
   private onUpload(id: string) {
     this.confirmDialogService
-      .presentAlert('Una vez enviado el conteo no se podrá modificar. ¿Desea continuar?', () => {
+      .presentAlert('Una vez enviado el levantamiento no se podrá modificar. ¿Desea continuar?', () => {
         this.loadingService.showLoading();
 
         this.auditoryService
@@ -120,18 +120,10 @@ export class GeneralCountAuditoryListPage {
 
                           const formattedCounts = counts.values.map((c: any) => ({
                             helmet_auditory_id: c.helmet_auditory_id,
-                            count1: c.count1,
-                            count2: c.count2,
-                            count3: c.count3,
-                            count4: c.count4,
-                            count5: c.count5,
-                            count6: c.count6,
-                            count7: c.count7,
-                            count8: c.count8,
-                            count9: c.count9,
-                            count10: c.count10,
-                            count11: c.count11,
-                            count12: c.count12,
+                            origin: c.origin,
+                            destination: c.destination,
+                            users_count: c.users_count,
+                            helmets_count: c.helmets_count,
                             creation_date: c.creation_date,
                           }));
 
@@ -203,9 +195,7 @@ export class GeneralCountAuditoryListPage {
       }
 
       const ImageSrc = await this.photoService.getLocalAuditoryEvidenceUri(arr[index].dir).then(photo => photo.uri);
-      const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => {
-        return r.blob()
-      });
+      const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => r.blob());
 
       this.auditoryEvidenceService
         .uploadImage(blob, externalId, arr[index].creation_date, arr[index].dir)
@@ -254,11 +244,11 @@ export class GeneralCountAuditoryListPage {
   }
 
   private onDetail(id: string) {
-    this.router.navigateByUrl(URI_GENERAL_COUNT_COUNT_FORM(id));
+    this.router.navigateByUrl(URI_HELMET_COUNT_FORM(id));
   }
 
   private onRemoteDetail(id: string) {
-    this.router.navigateByUrl(URI_GENERAL_COUNT_DETAIL(id));
+    this.router.navigateByUrl(URI_HELMET_DETAIL(id));
   }
 
   private onDownloadPdf(id: string, title: string) {
@@ -269,54 +259,54 @@ export class GeneralCountAuditoryListPage {
           .downloadPdf(id)
           .subscribe({
             next: res => {
-              // const blob = res;
-              // const filename = `data.pdf`;
-              // if ((window.navigator as any).msSaveOrOpenBlob) {
-              //   (window.navigator as any).msSaveBlob(blob, filename);
-              // } else {
-              //   const downloadLink = window.document.createElement('a');
-              //   const contentTypeHeader = 'application/pdf';
-              //   downloadLink.href = window.URL.createObjectURL(
-              //     new Blob([blob], { type: contentTypeHeader })
-              //   );
-              //   downloadLink.download = filename;
-              //   document.body.appendChild(downloadLink);
-              //   downloadLink.click();
-              //   document.body.removeChild(downloadLink);
-              // }
               const blob = res;
-              const find = ' ';
-              const re = new RegExp(find, 'g');
-              const filePath = `${title.replace(re, '-')}.pdf`;
-
-              const fileReader = new FileReader();
-
-              fileReader.readAsDataURL(blob);
-
-              fileReader.onloadend = async () => {
-                const base64Data: any = fileReader.result;
-
-                Filesystem.writeFile({
-                  path: filePath,
-                  data: base64Data,
-                  directory: Directory.Cache,
-                }).then(() => {
-                  return Filesystem.getUri({
-                    directory: Directory.Cache,
-                    path: filePath
-                  });
-                })
-                  .then((uriResult) => {
-                    return Share.share({
-                      title: filePath,
-                      text: filePath,
-                      url: uriResult.uri,
-                    });
-                  }).then(() => {
-                    this.loadingService.dismissLoading();
-                  })
-                  .catch(err => this.responseService.onError(err, 'No se pudo descargar la auditoría'));
+              const filename = `data.pdf`;
+              if ((window.navigator as any).msSaveOrOpenBlob) {
+                (window.navigator as any).msSaveBlob(blob, filename);
+              } else {
+                const downloadLink = window.document.createElement('a');
+                const contentTypeHeader = 'application/pdf';
+                downloadLink.href = window.URL.createObjectURL(
+                  new Blob([blob], { type: contentTypeHeader })
+                );
+                downloadLink.download = filename;
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
               }
+              // const blob = res;
+              // const find = ' ';
+              // const re = new RegExp(find, 'g');
+              // const filePath = `${title.replace(re, '-')}.pdf`;
+
+              // const fileReader = new FileReader();
+
+              // fileReader.readAsDataURL(blob);
+
+              // fileReader.onloadend = async () => {
+              //   const base64Data: any = fileReader.result;
+
+              //   Filesystem.writeFile({
+              //     path: filePath,
+              //     data: base64Data,
+              //     directory: Directory.Cache,
+              //   }).then(() => {
+              //     return Filesystem.getUri({
+              //       directory: Directory.Cache,
+              //       path: filePath
+              //     });
+              //   })
+              //     .then((uriResult) => {
+              //       return Share.share({
+              //         title: filePath,
+              //         text: filePath,
+              //         url: uriResult.uri,
+              //       });
+              //     }).then(() => {
+              //       this.loadingService.dismissLoading();
+              //     })
+              //     .catch(err => this.responseService.onError(err, 'No se pudo descargar el levantamiento'));
+              // }
             },
             error: err => this.responseService.onError(err, 'No se pudo descargar la auditoría')
           })
@@ -350,11 +340,11 @@ export class GeneralCountAuditoryListPage {
             handler: () => this.onUpload(auditory.id),
           },
           {
-            text: 'Ver Conteo',
+            text: 'Actualizar Conteo',
             handler: () => this.onDetail(auditory.id),
           },
           {
-            text: 'Actualizar Conteo',
+            text: 'Actualizar Datos Generales',
             handler: () => this.onEdit(auditory.id),
           },
           {
@@ -369,14 +359,14 @@ export class GeneralCountAuditoryListPage {
               action: 'cancel',
             },
           },
-        ]:
+        ] :
         [
           {
-            text: 'Ver Conteo',
+            text: 'Actualizar Conteo',
             handler: () => this.onDetail(auditory.id),
           },
           {
-            text: 'Actualizar Conteo',
+            text: 'Actualizar Datos Generales',
             handler: () => this.onEdit(auditory.id),
           },
           {
