@@ -263,7 +263,7 @@ export class BeltAuditoryListPage {
     this.router.navigateByUrl(URI_BELT_COUNT_FORM(id));
   }
 
-  private onRemoteDetail(id: string) {
+  onRemoteDetail(id: string) {
     this.router.navigateByUrl(URI_BELT_DETAIL(id));
   }
 

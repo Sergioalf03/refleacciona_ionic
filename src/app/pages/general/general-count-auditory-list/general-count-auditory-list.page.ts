@@ -257,7 +257,7 @@ export class GeneralCountAuditoryListPage {
     this.router.navigateByUrl(URI_GENERAL_COUNT_COUNT_FORM(id));
   }
 
-  private onRemoteDetail(id: string) {
+  onRemoteDetail(id: string) {
     this.router.navigateByUrl(URI_GENERAL_COUNT_DETAIL(id));
   }
 

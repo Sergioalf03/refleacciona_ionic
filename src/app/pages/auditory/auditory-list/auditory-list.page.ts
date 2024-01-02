@@ -320,7 +320,7 @@ export class AuditoryListPage implements OnInit {
     });
   }
 
-  private onDetail(id: string) {
+  onRemoteDetail(id: string) {
     this.router.navigateByUrl(URI_AUDITORY_DETAIL(id));
   }
 
@@ -392,7 +392,7 @@ export class AuditoryListPage implements OnInit {
     [
       {
         text: 'Ver',
-        handler: () => this.onDetail(auditory.id),
+        handler: () => this.onRemoteDetail(auditory.id),
       },
       {
         text: 'Descargar',

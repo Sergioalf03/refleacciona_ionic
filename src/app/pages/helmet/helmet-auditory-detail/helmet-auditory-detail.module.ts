@@ -6,7 +6,6 @@ import { IonicModule } from '@ionic/angular';
 
 import { HelmetAuditoryDetailPage } from './helmet-auditory-detail.page';
 import { RouterModule, Routes } from '@angular/router';
-import { HeaderButtonsModule } from 'src/app/components/header-buttons/header-buttons.module';
 import { MapModule } from 'src/app/components/map/map.module';
 
 const routes: Routes = [
@@ -22,7 +21,6 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
-    HeaderButtonsModule,
     MapModule,
   ],
   declarations: [HelmetAuditoryDetailPage]

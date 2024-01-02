@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Directory, Filesystem } from '@capacitor/filesystem';
-import { Share } from '@capacitor/share';
+
 import { DIRECTIONS } from 'src/app/core/constants/directions';
 import { URI_HELMET_LIST } from 'src/app/core/constants/uris';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
+import { DownloadPlatformService } from 'src/app/core/controllers/download-platform.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { MapService } from 'src/app/core/controllers/map.service';
@@ -20,15 +20,6 @@ const directions = DIRECTIONS;
 export class HelmetAuditoryDetailPage {
 
     backUrl = URI_HELMET_LIST('remote');
-    customButton = {
-      click: async () => {
-        this.confirmDialogService
-          .presentAlert('¿Desea descargar el levantamiento?', () => {
-            this.downloadCsv();
-          })
-      },
-      icon: 'cloud-download',
-    }
 
     auditoryId = '0';
 
@@ -57,6 +48,7 @@ export class HelmetAuditoryDetailPage {
       // private platform: Platform,
       private router: Router,
       private confirmDialogService: ConfirmDialogService,
+      private platformDownloadService: DownloadPlatformService,
     ) {}
 
     ionViewWillEnter() {
@@ -105,78 +97,37 @@ export class HelmetAuditoryDetailPage {
       }, 500)
     }
 
-    private downloadCsv() {
-      const headers = 'Tipo,conteo\n';
+    downloadCsv() {
+      this.confirmDialogService
+      .presentAlert('¿Desea descargar en formato CSV?', () => {
+        const headers = 'Tipo,conteo\n';
 
-      const data = 'Sin Casco,' + this.counts[0].users_count + '\nCon Casco,' + this.counts[0].helmets_count;
+        const data = 'Sin Casco,' + this.counts[0].users_count + '\nCon Casco,' + this.counts[0].helmets_count;
 
-      const blob = new Blob([`${headers}${data}`], {
-        type: "text/csv"
+        const blob = new Blob([`${headers}${data}`], {
+          type: "text/csv"
+        });
+
+        this.platformDownloadService.downloadBlob(blob, this.auditoryTitle, 'csv');
       });
-
-      const filename = `data.csv`;
-
-      if ((window.navigator as any).msSaveOrOpenBlob) {
-        (window.navigator as any).msSaveBlob(blob, filename);
-        this.loadingService.dismissLoading();
-      } else {
-        const downloadLink = window.document.createElement('a');
-        const contentTypeHeader = 'text/csv';
-        downloadLink.href = window.URL.createObjectURL(
-          new Blob([blob], { type: contentTypeHeader })
-        );
-        downloadLink.download = filename;
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
-        this.loadingService.dismissLoading();
-      }
 
     }
 
-    donwnloadPdf() {
-      this.loadingService.showLoading();
-      this.auditoryService
-        .downloadPdf(this.auditoryId)
-        .subscribe({
-          next: async res => {
-            const blob = res;
+    downloadPdf() {
+      this.confirmDialogService
+      .presentAlert('¿Desea descargar en formato PDF?', () => {
+        this.loadingService.showLoading();
+        this.auditoryService
+          .downloadPdf(this.auditoryId)
+          .subscribe({
+            next: async res => this.platformDownloadService.downloadBlob(res, this.auditoryTitle, 'pdf'),
+            error: err => this.responseService.onError(err, 'No se pudo descargar el levantamiento')
+          });
+        });
+    }
 
-            const find = ' ';
-            const re = new RegExp(find, 'g');
-            const filePath = `${this.auditoryTitle.replace(re, '-')}.pdf`;
-
-            const fileReader = new FileReader();
-
-            fileReader.readAsDataURL(blob);
-
-            fileReader.onloadend = async () => {
-              const base64Data: any = fileReader.result;
-
-              Filesystem.writeFile({
-                path: filePath,
-                data: base64Data,
-                directory: Directory.Cache,
-              }).then(() => {
-                return Filesystem.getUri({
-                  directory: Directory.Cache,
-                  path: filePath
-                });
-              })
-                .then((uriResult) => {
-                  return Share.share({
-                    title: filePath,
-                    text: filePath,
-                    url: uriResult.uri,
-                  });
-                }).then(() => {
-                  this.loadingService.dismissLoading();
-                })
-                .catch(err => this.responseService.onError(err, 'No se pudo descargar el levantamiento'));
-            }
-          },
-          error: err => this.responseService.onError(err, 'No se pudo descargar el levantamiento')
-        })
+    onGoingBack() {
+      this.router.navigateByUrl(this.backUrl);
     }
 
 }

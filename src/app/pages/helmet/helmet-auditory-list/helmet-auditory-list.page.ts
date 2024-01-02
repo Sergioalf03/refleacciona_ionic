@@ -247,7 +247,7 @@ export class HelmetAuditoryListPage {
     this.router.navigateByUrl(URI_HELMET_COUNT_FORM(id));
   }
 
-  private onRemoteDetail(id: string) {
+  onRemoteDetail(id: string) {
     this.router.navigateByUrl(URI_HELMET_DETAIL(id));
   }
 

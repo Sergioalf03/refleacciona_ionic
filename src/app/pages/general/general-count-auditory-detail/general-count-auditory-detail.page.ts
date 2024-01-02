@@ -6,6 +6,7 @@ import { DIRECTIONS } from 'src/app/core/constants/directions';
 import { URI_GENERAL_COUNT_LIST } from 'src/app/core/constants/uris';
 import { VEHICLE_TYPES } from 'src/app/core/constants/vehicle-types';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
+import { DownloadPlatformService } from 'src/app/core/controllers/download-platform.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { MapService } from 'src/app/core/controllers/map.service';
@@ -22,16 +23,6 @@ const vehicleTypes = VEHICLE_TYPES;
 export class GeneralCountAuditoryDetailPage {
 
   backUrl = URI_GENERAL_COUNT_LIST('remote');
-  customButton = {
-    click: async () => {
-      this.confirmDialogService
-        .presentAlert('¿Desea descargar el levantamiento?', () => {
-          this.downloadCsv();
-
-        })
-    },
-    icon: 'cloud-download',
-  }
 
   names = [
     'Urbano',
@@ -75,6 +66,7 @@ export class GeneralCountAuditoryDetailPage {
     // private platform: Platform,
     private router: Router,
     private confirmDialogService: ConfirmDialogService,
+    private platformDownloadService: DownloadPlatformService,
   ) { }
 
   ionViewWillEnter() {
@@ -125,89 +117,48 @@ export class GeneralCountAuditoryDetailPage {
     }, 500)
   }
 
-  private downloadCsv() {
-    const headers = 'Tipo,conteo\n';
+  downloadCsv() {
+    this.confirmDialogService
+      .presentAlert('¿Desea descargar en formato CSV?', () => {
+        const headers = 'Tipo,conteo\n';
 
-    const data = `${this.names[0]},${this.counts[0].count1}\n` +
-    `${this.names[1]},${this.counts[0].count2}\n` +
-    `${this.names[2]},${this.counts[0].count3}\n` +
-    `${this.names[3]},${this.counts[0].count4}\n` +
-    `${this.names[4]},${this.counts[0].count5}\n` +
-    `${this.names[5]},${this.counts[0].count6}\n` +
-    `${this.names[6]},${this.counts[0].count7}\n` +
-    `${this.names[7]},${this.counts[0].count8}\n` +
-    `${this.names[8]},${this.counts[0].count9}\n` +
-    `${this.names[9]},${this.counts[0].count10}\n` +
-    `${this.names[10]},${this.counts[0].count11}\n` +
-    `${this.names[11]},${this.counts[0].count12}`;
+        const data = `${this.names[0]},${this.counts[0].count1}\n` +
+        `${this.names[1]},${this.counts[0].count2}\n` +
+        `${this.names[2]},${this.counts[0].count3}\n` +
+        `${this.names[3]},${this.counts[0].count4}\n` +
+        `${this.names[4]},${this.counts[0].count5}\n` +
+        `${this.names[5]},${this.counts[0].count6}\n` +
+        `${this.names[6]},${this.counts[0].count7}\n` +
+        `${this.names[7]},${this.counts[0].count8}\n` +
+        `${this.names[8]},${this.counts[0].count9}\n` +
+        `${this.names[9]},${this.counts[0].count10}\n` +
+        `${this.names[10]},${this.counts[0].count11}\n` +
+        `${this.names[11]},${this.counts[0].count12}`;
 
-    const blob = new Blob([`${headers}${data}`], {
-      type: "text/csv"
-    });
+        const blob = new Blob([`${headers}${data}`], {
+          type: "text/csv"
+        });
 
-    const filename = `data.csv`;
+        this.platformDownloadService.downloadBlob(blob, this.auditoryTitle, 'csv');
 
-    if ((window.navigator as any).msSaveOrOpenBlob) {
-      (window.navigator as any).msSaveBlob(blob, filename);
-      this.loadingService.dismissLoading();
-    } else {
-      const downloadLink = window.document.createElement('a');
-      const contentTypeHeader = 'text/csv';
-      downloadLink.href = window.URL.createObjectURL(
-        new Blob([blob], { type: contentTypeHeader })
-      );
-      downloadLink.download = filename;
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
-      this.loadingService.dismissLoading();
-    }
-
+      });
   }
 
   downloadPdf() {
-    this.loadingService.showLoading();
-          this.auditoryService
-            .downloadPdf(this.auditoryId)
-            .subscribe({
-              next: async (res: any) => {
-                const blob = res;
+    this.confirmDialogService
+      .presentAlert('¿Desea descargar en formato PDF?', () => {
+      this.loadingService.showLoading();
+            this.auditoryService
+              .downloadPdf(this.auditoryId)
+              .subscribe({
+                next: async res => this.platformDownloadService.downloadBlob(res, this.auditoryTitle, 'pdf'),
+                error: (err: any) => this.responseService.onError(err, 'No se pudo descargar el levantamiento')
+              });
+      });
+  }
 
-                const find = ' ';
-                const re = new RegExp(find, 'g');
-                const filePath = `${this.auditoryTitle.replace(re, '-')}.pdf`;
-
-                const fileReader = new FileReader();
-
-                fileReader.readAsDataURL(blob);
-
-                fileReader.onloadend = async () => {
-                  const base64Data: any = fileReader.result;
-
-                  Filesystem.writeFile({
-                    path: filePath,
-                    data: base64Data,
-                    directory: Directory.Cache,
-                  }).then(() => {
-                    return Filesystem.getUri({
-                      directory: Directory.Cache,
-                      path: filePath
-                    });
-                  })
-                    .then((uriResult) => {
-                      return Share.share({
-                        title: filePath,
-                        text: filePath,
-                        url: uriResult.uri,
-                      });
-                    }).then(() => {
-                      this.loadingService.dismissLoading();
-                    })
-                    .catch(err => this.responseService.onError(err, 'No se pudo descargar el levantamiento'));
-                }
-              },
-              error: (err: any) => this.responseService.onError(err, 'No se pudo descargar el levantamiento')
-            })
+  onGoingBack() {
+    this.router.navigateByUrl(this.backUrl);
   }
 
 }
