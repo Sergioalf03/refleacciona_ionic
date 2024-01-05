@@ -128,7 +128,6 @@ export class AuditoryDetailPage {
   public downloadCsv() {
     this.confirmDialogService
       .presentAlert('¿Desea descargar en formato CSV?', () => {
-        this.loadingService.showLoading();
         const headers = 'Sección,SubSección,Identificador,Pregunta,Respuesta\n';
 
         const data = this.auditorySections.map((s: any) => s.answers.map((a: any) => `${s.name},${s.subname ? s.subname : '-' },${a.uid},${a.sentence.replace(',', ';')},${a.formattedAnswer}`).join('\n')).join('\n');
