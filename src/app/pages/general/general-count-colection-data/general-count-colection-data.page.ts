@@ -75,7 +75,7 @@ export class GeneralCountColectionDataPage implements OnInit {
 
   onFinish() {
     this.confirmDialogService
-      .presentAlert('Desea terminar el levantamiento', () => {
+      .presentAlert('¿Desea terminar el registro?', () => {
         this.loadingService.showLoading();
         this.generalCountAuditoryService
           .finishAuditory(this.auditoryId)
@@ -83,7 +83,7 @@ export class GeneralCountColectionDataPage implements OnInit {
             next: (updateRes) => {
               if (updateRes !== DATABASE_WAITING_MESSAGE) {
                 this.loadingService.dismissLoading();
-                this.responseService.onSuccessAndRedirect(URI_GENERAL_COUNT_LIST('local'), 'Levantamiento actualizado');
+                this.responseService.onSuccessAndRedirect(URI_GENERAL_COUNT_LIST('local'), 'Registro terminado');
               }
             },
             error: err => {

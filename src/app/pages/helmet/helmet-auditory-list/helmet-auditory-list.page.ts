@@ -87,7 +87,7 @@ export class HelmetAuditoryListPage {
 
   private onUpload(id: string) {
     this.confirmDialogService
-      .presentAlert('Una vez enviado el levantamiento no se podrá modificar. ¿Desea continuar?', () => {
+      .presentAlert('Una vez enviado el registro no se podrá modificar. ¿Desea continuar?', () => {
         this.loadingService.showLoading();
 
         this.auditoryService
@@ -223,21 +223,21 @@ export class HelmetAuditoryListPage {
   }
 
   private onDelete(id: string) {
-    this.confirmDialogService.presentAlert('¿Desea eliminar el levantamiento?', () => {
+    this.confirmDialogService.presentAlert('¿Desea eliminar el registro?', () => {
       this.loadingService.showLoading();
       this.auditoryService
         .deleteLocal(id)
         .subscribe({
           next: (rm) => {
             if (rm !== DATABASE_WAITING_MESSAGE) {
-              this.responseService.onSuccess('levantamiento eliminado');
+              this.responseService.onSuccess('Registro eliminado');
               setTimeout(() => {
                 this.fetchLocalList();
               }, 100)
             }
           },
           error: err => {
-            this.responseService.onError(err, 'No se pudo eliminar el levantamiento');
+            this.responseService.onError(err, 'No se pudo eliminar el registro');
           }
         })
     });
@@ -253,7 +253,7 @@ export class HelmetAuditoryListPage {
 
   private onDownloadPdf(id: string, title: string) {
     this.confirmDialogService
-      .presentAlert('¿Desea descargar el levantamiento?', () => {
+      .presentAlert('¿Desea descargar el archivo?', () => {
         this.loadingService.showLoading();
         this.auditoryService
           .downloadPdf(id)
@@ -305,7 +305,7 @@ export class HelmetAuditoryListPage {
               //     }).then(() => {
               //       this.loadingService.dismissLoading();
               //     })
-              //     .catch(err => this.responseService.onError(err, 'No se pudo descargar el levantamiento'));
+              //     .catch(err => this.responseService.onError(err, 'No se pudo descargar el archivo'));
               // }
             },
             error: err => this.responseService.onError(err, 'No se pudo descargar la auditoría')

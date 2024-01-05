@@ -86,7 +86,7 @@ export class BeltAuditoryListPage {
 
   private onUpload(id: string) {
     this.confirmDialogService
-      .presentAlert('Una vez enviado el levantamiento no se podrá modificar. ¿Desea continuar?', () => {
+      .presentAlert('Una vez enviado el registro no se podrá modificar. ¿Desea continuar?', () => {
         this.loadingService.showLoading();
 
         this.auditoryService
@@ -239,21 +239,21 @@ export class BeltAuditoryListPage {
   }
 
   private onDelete(id: string) {
-    this.confirmDialogService.presentAlert('¿Desea eliminar el levantamiento?', () => {
+    this.confirmDialogService.presentAlert('¿Desea eliminar el registro?', () => {
       this.loadingService.showLoading();
       this.auditoryService
         .deleteLocal(id)
         .subscribe({
           next: (rm) => {
             if (rm !== DATABASE_WAITING_MESSAGE) {
-              this.responseService.onSuccess('levantamiento eliminado');
+              this.responseService.onSuccess('registro eliminado');
               setTimeout(() => {
                 this.fetchLocalList();
               }, 100)
             }
           },
           error: err => {
-            this.responseService.onError(err, 'No se pudo eliminar el levantamiento');
+            this.responseService.onError(err, 'No se pudo eliminar el registro');
           }
         })
     });
@@ -269,7 +269,7 @@ export class BeltAuditoryListPage {
 
   private onDownloadPdf(id: string, title: string) {
     this.confirmDialogService
-      .presentAlert('¿Desea descargar el levantamiento?', () => {
+      .presentAlert('¿Desea descargar el registro?', () => {
         this.loadingService.showLoading();
         this.auditoryService
           .downloadPdf(id)

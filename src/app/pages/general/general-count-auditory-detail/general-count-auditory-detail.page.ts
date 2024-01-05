@@ -109,8 +109,6 @@ export class GeneralCountAuditoryDetailPage {
 
     this.counts = data.counts;
 
-    console.log(this.counts)
-
     this.mapService.setCenter(+this.auditoryLat, +this.auditoryLng, true);
     setTimeout(() => {
       this.loadingService.dismissLoading();
@@ -152,7 +150,7 @@ export class GeneralCountAuditoryDetailPage {
               .downloadPdf(this.auditoryId)
               .subscribe({
                 next: async res => this.platformDownloadService.downloadBlob(res, this.auditoryTitle, 'pdf'),
-                error: (err: any) => this.responseService.onError(err, 'No se pudo descargar el levantamiento')
+                error: (err: any) => this.responseService.onError(err, 'No se pudo descargar el archivo')
               });
       });
   }

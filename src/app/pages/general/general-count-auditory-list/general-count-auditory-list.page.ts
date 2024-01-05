@@ -233,21 +233,21 @@ export class GeneralCountAuditoryListPage {
   }
 
   private onDelete(id: string) {
-    this.confirmDialogService.presentAlert('¿Desea eliminar el levantamiento?', () => {
+    this.confirmDialogService.presentAlert('¿Desea eliminar el registro?', () => {
       this.loadingService.showLoading();
       this.auditoryService
         .deleteLocal(id)
         .subscribe({
           next: (rm) => {
             if (rm !== DATABASE_WAITING_MESSAGE) {
-              this.responseService.onSuccess('levantamiento eliminado');
+              this.responseService.onSuccess('Registro eliminado');
               setTimeout(() => {
                 this.fetchLocalList();
               }, 100)
             }
           },
           error: err => {
-            this.responseService.onError(err, 'No se pudo eliminar el levantamiento');
+            this.responseService.onError(err, 'No se pudo eliminar el registro');
           }
         })
     });
@@ -263,7 +263,7 @@ export class GeneralCountAuditoryListPage {
 
   private onDownloadPdf(id: string, title: string) {
     this.confirmDialogService
-      .presentAlert('¿Desea descargar el levantamiento?', () => {
+      .presentAlert('¿Desea descargar el conteo?', () => {
         this.loadingService.showLoading();
         this.auditoryService
           .downloadPdf(id)

@@ -7,7 +7,7 @@
   <form *ngIf="form" [formGroup]="form" (ngSubmit)="onSubmit()">
 
     <div class="mx-2 mt-4">
-      <h1>{{formActionText}} Levantamiento</h1>
+      <h1>{{formActionText}} Uso de Casco</h1>
 
       <ion-item class="mt-4 txtInput">
         <ion-label position="floating">*Título</ion-label>
@@ -20,7 +20,7 @@
       </ion-item>
 
       <ion-item class="mt-2 txtInput">
-        <ion-label position="floating">Fecha</ion-label>
+        <ion-label position="floating">*Fecha</ion-label>
         <ion-input
           [clearInput]="true"
           formControlName="date"
@@ -30,7 +30,7 @@
       </ion-item>
 
       <ion-item class="mt-2 txtInput">
-        <ion-label position="floating">Hora</ion-label>
+        <ion-label position="floating">*Hora</ion-label>
         <ion-input
           [clearInput]="true"
           formControlName="time"

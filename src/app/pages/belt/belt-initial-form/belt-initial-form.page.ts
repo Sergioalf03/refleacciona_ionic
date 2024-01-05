@@ -50,15 +50,23 @@ export class BeltInitialFormPage implements OnInit {
 
 
   private initForm() {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    now.setSeconds(0);
+
+    const splitedDate = now.toISOString().split('T');
+
+    const splitedTime = splitedDate[1].split('.');
+
     this.form = new FormGroup({
       title: new FormControl('', {
         validators: [Validators.required]
       }),
       description: new FormControl(''),
-      date: new FormControl('', {
+      date: new FormControl(splitedDate[0], {
         validators: [Validators.required, Validators.minLength(1)]
       }),
-      time: new FormControl('', {
+      time: new FormControl(splitedTime[0], {
         validators: [Validators.required, Validators.minLength(1)]
       }),
       lat: new FormControl(''),
@@ -99,7 +107,7 @@ export class BeltInitialFormPage implements OnInit {
                                     if (photo !== DATABASE_WAITING_MESSAGE) {
                                       count++;
                                       if (count === this.ImageSrc.length) {
-                                        this.responseService.onSuccessAndRedirect(URI_BELT_COUNT_FORM(this.auditoryId), 'Levantamiento guardado');
+                                        this.responseService.onSuccessAndRedirect(URI_BELT_COUNT_FORM(this.auditoryId), 'Registro guardado');
                                       }
                                     }
                                   },
@@ -112,7 +120,7 @@ export class BeltInitialFormPage implements OnInit {
                         }, 100 * index);
                       });
                     } else {
-                      this.responseService.onSuccessAndRedirect(URI_BELT_COUNT_FORM(this.auditoryId), 'Levantamiento guardado');
+                      this.responseService.onSuccessAndRedirect(URI_BELT_COUNT_FORM(this.auditoryId), 'Registro guardado');
                     }
                   }
 
@@ -133,7 +141,7 @@ export class BeltInitialFormPage implements OnInit {
         next: (updateRes) => {
           if (updateRes !== DATABASE_WAITING_MESSAGE) {
             this.hideMap = true;
-            this.responseService.onSuccessAndRedirect(URI_BELT_LIST('local'), 'Levantamiento actualizada');
+            this.responseService.onSuccessAndRedirect(URI_BELT_LIST('local'), 'Registro actualizado');
           }
         },
         error: err => {

@@ -88,13 +88,11 @@ export class GeneralCountCountFormPage implements OnInit {
   }
 
   increaseUrban() {
-    console.log('single click')
     this.urbanCount++;
     this.disableUrbanDecrease = false;
   }
 
   decreaseUrban() {
-    console.log('double click')
     if (this.urbanCount > 0) {
       this.urbanCount--;
       this.disableUrbanDecrease = this.urbanCount === 0;

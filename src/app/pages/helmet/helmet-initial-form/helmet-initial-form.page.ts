@@ -50,15 +50,23 @@ export class HelmetInitialFormPage implements OnInit {
 
 
   private initForm() {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    now.setSeconds(0);
+
+    const splitedDate = now.toISOString().split('T');
+
+    const splitedTime = splitedDate[1].split('.');
+
     this.form = new FormGroup({
       title: new FormControl('', {
         validators: [Validators.required]
       }),
       description: new FormControl(''),
-      date: new FormControl('', {
+      date: new FormControl(splitedDate[0], {
         validators: [Validators.required, Validators.minLength(1)]
       }),
-      time: new FormControl('', {
+      time: new FormControl(splitedTime[0], {
         validators: [Validators.required, Validators.minLength(1)]
       }),
       lat: new FormControl(''),
@@ -132,7 +140,7 @@ export class HelmetInitialFormPage implements OnInit {
         next: (updateRes) => {
           if (updateRes !== DATABASE_WAITING_MESSAGE) {
             this.hideMap = true;
-            this.responseService.onSuccessAndRedirect(URI_HELMET_LIST('local'), 'Levantamiento actualizado');
+            this.responseService.onSuccessAndRedirect(URI_HELMET_LIST('local'), 'Registro actualizado');
           }
         },
         error: err => {

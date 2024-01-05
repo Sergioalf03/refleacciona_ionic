@@ -121,7 +121,7 @@ export class HelmetAuditoryDetailPage {
           .downloadPdf(this.auditoryId)
           .subscribe({
             next: async res => this.platformDownloadService.downloadBlob(res, this.auditoryTitle, 'pdf'),
-            error: err => this.responseService.onError(err, 'No se pudo descargar el levantamiento')
+            error: err => this.responseService.onError(err, 'No se pudo descargar el archivo')
           });
         });
     }

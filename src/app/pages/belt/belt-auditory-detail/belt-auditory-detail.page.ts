@@ -124,7 +124,7 @@ export class BeltAuditoryDetailPage {
           .downloadPdf(this.auditoryId)
           .subscribe({
             next: async res => this.platformDownloadService.downloadBlob(res, this.auditoryTitle, 'pdf'),
-            error: (err: any) => this.responseService.onError(err, 'No se pudo descargar el levantamiento')
+            error: (err: any) => this.responseService.onError(err, 'No se pudo descargar el archivo')
           });
       });
   }

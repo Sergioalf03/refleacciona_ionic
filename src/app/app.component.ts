@@ -35,21 +35,21 @@ export class AppComponent implements OnInit {
       const logged = await this.sessionService.isLoggedIn();
       if (logged) {
         await this.sessionService.setValuesFromStorage();
-        this.sessionService
-          .validToken()
-          .subscribe({
-            next: res => {
+        // this.sessionService
+        //   .validToken()
+        //   .subscribe({
+        //     next: res => {
               this.responseService.onSuccessAndRedirect(URI_HOME(), '/NA');
 
-                this.sessionService
-                  .getUserData()
-                  .subscribe({
-                    next: res => this.responseService.onSuccess('/NA'),
-                    error: err => this.responseService.onError(err, 'No se pudieron recuperar los datos')
-                  })
-              },
-              error: err => this.responseService.onError(err, 'No se pudo verificar'),
-            });
+                // this.sessionService
+                //   .getUserData()
+                //   .subscribe({
+                //     next: res => this.responseService.onSuccess('/NA'),
+                //     error: err => this.responseService.onError(err, 'No se pudieron recuperar los datos')
+                //   })
+        //       },
+        //       error: err => this.responseService.onError(err, 'No se pudo verificar'),
+        //     });
       }
     });
 

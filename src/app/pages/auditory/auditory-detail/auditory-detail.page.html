@@ -1,9 +1,31 @@
 <ion-content>
 
-  <app-header-buttons
-    [backUrl]="backUrl"
-    [customButton]="customButton"
-  ></app-header-buttons>
+  <div class="row mt-2 mx-0">
+    <div *ngIf="backUrl" class="col">
+      <ion-button size="small" (click)="onGoingBack()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </div>
+    <div class="col text-end">
+      <ion-button id="c1" size="small">
+        <ion-icon slot="icon-only" name="cloud-download"></ion-icon>
+      </ion-button>
+      <ion-popover trigger="c1" [dismissOnSelect]="true" triggerAction="click">
+        <ng-template>
+          <ion-content>
+            <ion-list lines="none">
+              <ion-item button (click)="downloadPdf()">
+                <ion-label>Descargar PDF</ion-label>
+              </ion-item>
+              <ion-item button (click)="downloadCsv()">
+                <ion-label>Descargar CSV</ion-label>
+              </ion-item>
+            </ion-list>
+          </ion-content>
+        </ng-template>
+      </ion-popover>
+    </div>
+  </div>
 
   <div class="mx-2 mt-4">
     <h1>{{ auditoryTitle }}</h1>

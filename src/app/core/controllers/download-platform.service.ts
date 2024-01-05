@@ -53,7 +53,7 @@ export class DownloadPlatformService {
           }).then(() => {
             this.loadingService.dismissLoading();
           })
-          .catch(err => this.responseService.onError(err, 'No se pudo descargar el levantamiento'));
+          .catch(err => this.responseService.onError(err, 'No se pudo descargar el archivo'));
       }
     } else {
 

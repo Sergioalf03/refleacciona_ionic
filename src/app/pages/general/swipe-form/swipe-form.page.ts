@@ -83,11 +83,9 @@ export class SwipeFormPage implements AfterViewInit {
           this.generalCountCollectionService
             .getCountForm(this.auditoryId)
             .subscribe({
-              next: result =>  {
-                console.log(result)
+              next: result => {
                 if (result !== 'W' && result.values.length > 0) {
                   const count = result.values[0];
-                  console.log(count)
 
                   this.counts = [
                     count.count1,
@@ -143,7 +141,6 @@ export class SwipeFormPage implements AfterViewInit {
   }
 
   countChange(toAdd: number) {
-    console.log(toAdd, this.counts[this.count])
     if (toAdd === -1) {
       if (this.counts[this.count] > 0) {
         this.counts[this.count] += toAdd;
