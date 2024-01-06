@@ -17,13 +17,8 @@ import { HammerGestureConfig, HAMMER_GESTURE_CONFIG,  } from '@angular/platform-
 import { DOCUMENT } from '@angular/common';
 import { Console } from 'console';
 
-import * as Hammer from 'hammerjs';
 
-  export class HammerConfig extends HammerGestureConfig {
-    override overrides = <any>{
-      'swipe': { direction: Hammer.DIRECTION_ALL }
-    };
-  }
+
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -38,10 +33,7 @@ import * as Hammer from 'hammerjs';
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptorService, multi: true },
     SQLiteService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    {
-      provide: HAMMER_GESTURE_CONFIG,
-      useClass: HammerConfig
-    }
+
   ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
