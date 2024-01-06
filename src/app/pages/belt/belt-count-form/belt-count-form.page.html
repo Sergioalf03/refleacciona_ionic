@@ -1,0 +1,132 @@
+<ion-content >
+  <app-header-buttons
+    [backUrl]="backUrl"
+    homeUrl="/home"
+  ></app-header-buttons>
+
+  <div class="mx-2 mt-4 mb-3">
+    <h1>Registros de uso de cinturón</h1>
+  </div>
+
+  <div class="my-3 mx-2 text-justify">
+    <p>
+      Ubicado en un cruce específico, indique la cantidad de personas con y sin cinturón y silla de retención.
+    </p>
+  </div>
+
+  <!-- <div class="mx-2 ion-text-center ion-text-center">
+    <h3>Dirección</h3>
+  </div>
+
+  <div class="row">
+    <div class="col-6 p-4 pt-0 pe-2">
+      <div class="card ion-button bg-primary">
+        <div (click)="originSelector.open()" class="ion-text-center mt-4 mb-2">
+          <ion-icon color="light" size="large" name="log-out"></ion-icon>
+          <p class="text-light">{{ originDirection }}</p>
+        </div>
+      </div>
+
+      <ion-select #originSelector [hidden]="true" [mode]="'ios'" (ionChange)="onOriginDismiss($event)" interface="action-sheet">
+        <ion-select-option *ngFor="let direction of directions" [value]="direction.id">{{ direction.text }}</ion-select-option>
+      </ion-select>
+    </div>
+    <div class="col-6 p-4 pt-0 pt-0 ps-2">
+      <div class="card button bg-primary">
+        <div (click)="destinationSelector.open()" class="ion-text-center mt-4 mb-2">
+          <ion-icon color="light" size="large" name="log-in"></ion-icon>
+          <p class="text-light">{{ destinationDirection }}</p>
+        </div>
+      </div>
+
+      <ion-select #destinationSelector [hidden]="true" [mode]="'ios'" (ionChange)="onDestinationDismiss($event)" interface="action-sheet">
+        <ion-select-option *ngFor="let direction of directions" [value]="direction.id">{{ direction.text }}</ion-select-option>
+      </ion-select>
+    </div>
+  </div> -->
+
+  <div class="mx-2 mt-1 ion-text-center">
+    <h3>Sin cinturón: {{ beltlessCount }}</h3>
+  </div>
+
+  <div class="row">
+    <div class="col-6 p-4 pt-0 pe-2">
+      <div [ngClass]="{ 'bg-secondary': disableBeltUserDecrease, 'bg-primary': !disableBeltUserDecrease }" class="card ion-button">
+        <div (click)="decreaseBeltUsers()" class="ion-text-center mt-4 mb-2">
+          <ion-icon color="light" size="large" name="remove"></ion-icon>
+          <p class="text-light">Decrementar</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 p-4 pt-0 ps-2">
+      <div class="card button bg-primary">
+        <div (click)="increaseBeltUsers()" class="ion-text-center mt-4 mb-2">
+          <ion-icon color="light" size="large" name="add"></ion-icon>
+          <p class="text-light">Incrementar</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mx-2 mt-1 ion-text-center">
+    <h3>Con cinturón: {{ beltCount }} </h3>
+  </div>
+
+  <div class="row">
+    <div class="col-6 p-4 pt-0 pe-2">
+      <div [ngClass]="{ 'bg-secondary': disableBeltDecrease, 'bg-primary': !disableBeltDecrease }" class="card ion-button">
+        <div (click)="decreaseBelts()" class="ion-text-center mt-4 mb-2">
+          <ion-icon color="light" size="large" name="remove"></ion-icon>
+          <p class="text-light">Decrementar</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 p-4 pt-0 ps-2">
+      <div class="card button bg-primary">
+        <div (click)="increaseBelts()" class="ion-text-center mt-4 mb-2">
+          <ion-icon color="light" size="large" name="add"></ion-icon>
+          <p class="text-light">Incrementar</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mx-2 mt-1 ion-text-center">
+    <h3>Con silla de retención: {{ chairCount }} </h3>
+  </div>
+
+  <div class="row">
+    <div class="col-6 p-4 pt-0 pe-2">
+      <div [ngClass]="{ 'bg-secondary': disableChairDecrease, 'bg-primary': !disableChairDecrease }" class="card ion-button">
+        <div (click)="decreaseChairs()" class="ion-text-center mt-4 mb-2">
+          <ion-icon color="light" size="large" name="remove"></ion-icon>
+          <p class="text-light">Decrementar</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 p-4 pt-0 ps-2">
+      <div class="card button bg-primary">
+        <div (click)="increaseChairs()" class="ion-text-center mt-4 mb-2">
+          <ion-icon color="light" size="large" name="add"></ion-icon>
+          <p class="text-light">Incrementar</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</ion-content>
+
+<ion-footer>
+  <div class="row p-2">
+    <div class="col">
+      <ion-button color="danger" expand="block" (click)="onCancel()">
+        CANCELAR
+      </ion-button>
+    </div>
+    <div class="col">
+      <ion-button [disabled]="!canSubmit" expand="block" (click)="onSubmit()">
+        {{submitButtonText}}
+      </ion-button>
+    </div>
+  </div>
+</ion-footer>

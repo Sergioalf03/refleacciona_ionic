@@ -1,0 +1,74 @@
+<ion-content>
+
+  <div class="row mt-2 mx-0">
+    <div *ngIf="backUrl" class="col">
+      <ion-button size="small" (click)="onGoingBack()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </div>
+    <div class="col text-end">
+      <ion-button id="c1" size="small">
+        <ion-icon slot="icon-only" name="cloud-download"></ion-icon>
+      </ion-button>
+      <ion-popover trigger="c1" [dismissOnSelect]="true" triggerAction="click">
+        <ng-template>
+          <ion-content>
+            <ion-list lines="none">
+              <ion-item button (click)="downloadPdf()">
+                <ion-label>Descargar PDF</ion-label>
+              </ion-item>
+              <ion-item button (click)="downloadCsv()">
+                <ion-label>Descargar CSV</ion-label>
+              </ion-item>
+            </ion-list>
+          </ion-content>
+        </ng-template>
+      </ion-popover>
+    </div>
+  </div>
+
+  <!-- <div class="row mt-2 mx-0">
+
+  </div> -->
+
+
+  <div class="mx-2 mt-4">
+    <h1>{{ auditoryTitle }}</h1>
+
+    <p class="mt-4" *ngIf="auditoryDate"><strong>Fecha:</strong> {{ auditoryDate }} {{ auditoryTime }}</p>
+    <p *ngIf="auditoryDescription"><strong>Descripción:</strong> {{ auditoryDescription }}</p>
+
+    <p>
+      <strong>Ubicación:</strong>
+      <app-map></app-map>
+    </p>
+
+    <p *ngIf="auditoyrEvidences.length > 0">
+      <strong class="mt-2">Fotografías del entorno:</strong>
+      <img width="100%" *ngFor="let url of auditoyrEvidences" class="mb-2" [src]="url">
+    </p>
+
+
+
+    <div class="row" *ngIf="counts[0]">
+      <div class="col-12 p-4">
+
+      <ion-item class="mt-2 txtInput ion-no-padding ion-no-margin">
+        <ion-label>
+          <h2 class="text-start ps-2">Sin Casco: {{ counts[0].users_count }} </h2>
+        </ion-label>
+      </ion-item>
+
+      <ion-item class="mt-2 txtInput ion-no-padding ion-no-margin">
+        <ion-label>
+          <h2 class="text-start ps-2">Con Casco: {{ counts[0].helmets_count }} </h2>
+        </ion-label>
+      </ion-item>
+
+  </div>
+  </div>
+
+
+  </div>
+
+</ion-content>

@@ -53,12 +53,9 @@ export class GeneralCountAuditoryService {
         next: res => {
           if (res !== DATABASE_WAITING_MESSAGE) {
             const auditoryResult: any[] = [];
-            console.log(res);
             if (res.values && res.values.length > 0) {
               res.values.forEach((auditory: any, i: number, arr: any[]) => {
                 setTimeout(() => {
-
-                  console.log(auditory.countId)
 
                   auditoryResult.push({
                     id: auditory.id,
