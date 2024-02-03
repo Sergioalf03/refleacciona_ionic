@@ -132,7 +132,7 @@ export class AuditoryFormPage implements OnInit {
                                         },
                                       })
 
-                                    }, 50 * index);
+                                    }, 100 * index);
                                   })
                                   .catch(err => this.responseService.onError(err, 'No se pudo guardar la imagen'));
 

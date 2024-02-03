@@ -188,6 +188,8 @@ export class HelmetAuditoryListPage {
       });
   }
 
+  blobUrl = '';
+
   private async uploadAuditoryEvidence(arr: any, index: number, externalId: string) {
     const resultPromise = new Promise(async (res, rej) => {
       if (index === arr.length) {
@@ -196,6 +198,9 @@ export class HelmetAuditoryListPage {
 
       const ImageSrc = await this.photoService.getLocalAuditoryEvidenceUri(arr[index].dir).then(photo => photo.uri);
       const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => r.blob());
+
+      this.blobUrl = URL.createObjectURL(blob) // blob is the Blob object
+      console.log(blob);
 
       this.auditoryEvidenceService
         .uploadImage(blob, externalId, arr[index].creation_date, arr[index].dir)

@@ -66,18 +66,36 @@ export class DatabaseService {
 
     connection?.query(query)
       .then(async (result) => {
-        await connection.isDBOpen() ? connection
-          .close()
-          .then(async () => {
-            data.next(result);
-          }).catch(e => this.responseService.onError(e, 'No se pudo ejecutar el query')) : true;
+        await connection.isDBOpen()
+          .then(c => {
+            console.log(c)
+            connection
+              .close()
+              .then(async () => {
+                data.next(result);
+              })
+              .catch(e => {
+                data.next('unclosed');
+                console.log(query);
+                console.log('1 No se cerró la conexión');
+              })
+          });
       })
       .catch(async (e) => {
-        await connection.isDBOpen() ? connection
-          .close()
-          .then(async () => {
-            data.next(`error: ${e.message}`);
-          }).catch(e => this.responseService.onError(e, 'No se pudo ejecutar el query')) : true;
+        await connection.isDBOpen()
+          .then(c => {
+            console.log(c)
+            connection
+              .close()
+              .then(async () => {
+                data.next(`error: ${e.message}`);
+              })
+              .catch(e => {
+                data.next('unclosed');
+                console.log(query);
+                console.log('2 No se cerró la conexión');
+              });
+          });
       });
   }
 

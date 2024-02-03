@@ -81,51 +81,57 @@ export class BeltInitialFormPage implements OnInit {
         next: (save) => {
           if (save !== DATABASE_WAITING_MESSAGE) {
 
-            this.auditoryService
-              .getLastSavedId()
-              .subscribe({
-                next: async res => {
-                  if (res !== DATABASE_WAITING_MESSAGE) {
-                    this.hideMap = true;
-                    this.auditoryId = res.values[0].id;
+            setTimeout(() => {
+              this.auditoryService
+                .getLastSavedId()
+                .subscribe({
+                  next: async res => {
+                    if (res !== DATABASE_WAITING_MESSAGE) {
 
-                    let count = 0;
+                      setTimeout(() => {
+                        this.hideMap = true;
+                        this.auditoryId = res.values[0].id;
 
-                    if (this.ImageSrc.length > 0) {
-                      this.ImageSrc.forEach(async (src: any, index: number) => {
-                        setTimeout(async () => {
-                          const blob = src.trueb64;
-                          // const blob = await fetch(src.base64).then(r => r.blob());
+                        let count = 0;
 
-                          this.photoService
-                            .saveLocalBeltAuditoryEvidence(blob, this.auditoryId)
-                            .then(photoId => {
-                              this.auditoryEvidenceService
-                                .localSave({ auditoryId: this.auditoryId, dir: photoId })
-                                .subscribe({
-                                  next: async photo => {
-                                    if (photo !== DATABASE_WAITING_MESSAGE) {
-                                      count++;
-                                      if (count === this.ImageSrc.length) {
-                                        this.responseService.onSuccessAndRedirect(URI_BELT_COUNT_FORM(this.auditoryId), 'Registro guardado');
-                                      }
-                                    }
-                                  },
-                                  error: err => {
-                                    this.responseService.onError(err, 'No se pudo guardar una imagen')
-                                  },
+                        if (this.ImageSrc.length > 0) {
+                          this.ImageSrc.forEach(async (src: any, index: number) => {
+
+                              const blob = await fetch(src.base64).then(r => r.blob());
+
+                              this.photoService
+                                .saveLocalBeltAuditoryEvidence(blob, this.auditoryId)
+                                .then(photoId => {
+
+                                  setTimeout(async () => {
+                                    this.auditoryEvidenceService
+                                      .localSave({ auditoryId: this.auditoryId, dir: photoId })
+                                      .subscribe({
+                                        next: async photo => {
+                                          if (photo !== DATABASE_WAITING_MESSAGE) {
+                                            count++;
+                                            if (count === this.ImageSrc.length) {
+                                              this.responseService.onSuccessAndRedirect(URI_BELT_COUNT_FORM(this.auditoryId), 'Registro guardado');
+                                            }
+                                          }
+                                        },
+                                        error: err => {
+                                          this.responseService.onError(err, 'No se pudo guardar una imagen')
+                                        },
+                                      });
+                                  }, 100 * index);
                                 })
-                            })
-                            .catch();
-                        }, 100 * index);
-                      });
-                    } else {
-                      this.responseService.onSuccessAndRedirect(URI_BELT_COUNT_FORM(this.auditoryId), 'Registro guardado');
+                                .catch(err => this.responseService.onError(err, 'No se pudo guardar la imagen'));
+                          });
+                        } else {
+                          this.responseService.onSuccessAndRedirect(URI_BELT_COUNT_FORM(this.auditoryId), 'Registro guardado');
+                        }
+                      }, 20)
                     }
-                  }
 
-                }
-              });
+                  }
+                });
+              }, 20)
           }
       },
       error: err => {
@@ -388,7 +394,6 @@ export class BeltInitialFormPage implements OnInit {
           id: '',
           url: this.sanitization.bypassSecurityTrustUrl(res.webPath || ''),
           base64: res.webPath || '',
-          trueb64: res.base64String,
           expand: {
             width: '25%'
           },

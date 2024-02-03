@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ActionSheetController, Platform, isPlatform } from '@ionic/angular';
-import { URI_HELMET_COLLECION_DETAIL, URI_HELMET_COUNT_FORM, URI_HELMET_LIST, URI_HOME } from 'src/app/core/constants/uris';
+import { ActionSheetController, isPlatform } from '@ionic/angular';
+import {  URI_HELMET_COUNT_FORM, URI_HELMET_LIST, URI_HOME } from 'src/app/core/constants/uris';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
@@ -81,50 +81,60 @@ export class HelmetInitialFormPage implements OnInit {
         next: (save) => {
           if (save !== DATABASE_WAITING_MESSAGE) {
 
+            setTimeout(() => {
             this.helmetAuditoryService
               .getLastSavedId()
               .subscribe({
                 next: async res => {
                   if (res !== DATABASE_WAITING_MESSAGE) {
-                    this.hideMap = true;
-                    this.auditoryId = res.values[0].id;
 
-                    let count = 0;
+                    setTimeout(() => {
+                      this.hideMap = true;
+                      this.auditoryId = res.values[0].id;
 
-                    if (this.ImageSrc.length > 0) {
-                      this.ImageSrc.forEach(async (src: any, index: number) => {
-                        setTimeout(async () => {
+                      let count = 0;
+
+                      if (this.ImageSrc.length > 0) {
+                        console.log(this.ImageSrc);
+                        this.ImageSrc.forEach(async (src: any, index: number) => {
+
                           const blob = await fetch(src.base64).then(r => r.blob());
 
                           this.photoService
                             .saveLocalHelmetAuditoryEvidence(blob, this.auditoryId)
                             .then(photoId => {
-                              this.helmetAuditoryEvidenceService
-                                .localSave({ auditoryId: this.auditoryId, dir: photoId })
-                                .subscribe({
-                                  next: async photo => {
-                                    if (photo !== DATABASE_WAITING_MESSAGE) {
-                                      count++;
-                                      if (count === this.ImageSrc.length) {
-                                        this.responseService.onSuccessAndRedirect(URI_HELMET_COUNT_FORM(this.auditoryId), 'Levantmiento guardado');
+
+                              setTimeout(async () => {
+                                this.helmetAuditoryEvidenceService
+                                  .localSave({ auditoryId: this.auditoryId, dir: photoId })
+                                  .subscribe({
+                                    next: async photo => {
+                                      console.log(photo)
+
+                                      if (photo !== DATABASE_WAITING_MESSAGE) {
+                                        count++;
+                                        if (count === this.ImageSrc.length) {
+                                          this.responseService.onSuccessAndRedirect(URI_HELMET_COUNT_FORM(this.auditoryId), 'Levantmiento guardado');
+                                        }
                                       }
-                                    }
-                                  },
-                                  error: err => {
-                                    this.responseService.onError(err, 'No se pudo guardar una imagen')
-                                  },
-                                })
+                                    },
+                                    error: err => {
+                                      this.responseService.onError(err, 'No se pudo guardar una imagen')
+                                    },
+                                  })
+                              }, 100 * index);
                             })
-                            .catch();
-                        }, 100 * index);
-                      });
-                    } else {
-                      this.responseService.onSuccessAndRedirect(URI_HELMET_COUNT_FORM(this.auditoryId), 'Levantmiento guardado');
-                    }
+                            .catch(err => this.responseService.onError(err, 'No se pudo guardar la imagen'));
+                        });
+                      } else {
+                        this.responseService.onSuccessAndRedirect(URI_HELMET_COUNT_FORM(this.auditoryId), 'Levantmiento guardado');
+                      }
+                    }, 20)
                   }
 
                 }
               });
+            }, 20);
           }
         },
         error: err => {
