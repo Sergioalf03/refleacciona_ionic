@@ -15,6 +15,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Capacitor } from '@capacitor/core';
 import { URI_AUDITORY_LIST, URI_HOME, URI_QUESTION_FORM } from 'src/app/core/constants/uris';
 import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
+import { Directory, Filesystem } from '@capacitor/filesystem';
 
 @Component({
   selector: 'app-auditory-form',
@@ -152,6 +153,46 @@ export class AuditoryFormPage implements OnInit {
           this.responseService.onError(err, 'No se pudo guardar')
         },
       })
+  }
+
+  private savePhoto(data: any, photoId: string) {
+    Filesystem.readFile({
+      path: data.path!
+    })
+    .then((rAB64) => {
+      const fileName = new Date().getTime() + '.jpeg';
+      Filesystem.writeFile({
+        path: `saveTest/${this.auditoryId}/${photoId}`,
+        data: rAB64.data,
+        directory: Directory.Data
+      }).then((resfWF) => {
+
+        const lastItems = rAB64.data.slice(-2)
+        let y: number = 0
+
+        if (lastItems === '==' || lastItems === '=') {
+          y = lastItems === '==' ? 2 : 1;
+        }
+
+        const size: number = ((rAB64.data as string).length * (3 / 4)) - y
+
+        // this.cameraService.uploadPhoto((rAB64.data as string), index, this.vehicleId, fileName, size)
+        //   .subscribe({
+        //     next: res => this.responseService.onSuccess('La fotografía se subio exitosamente'),
+        //     error: err => {
+        //       this.imgSrcs[index] = '../assets/img/photo.png'
+        //       this.responseService.onError(err, 'Ocurrio un error al subir la fotografía')
+        //     }
+        //   })
+
+      })
+        .catch((errfWF) => {
+          this.responseService.onError(errfWF, 'Ocurrio un error al guardar la imagen')
+        })
+    })
+    .catch((errAB64) => {
+      this.responseService.onError(errAB64, 'No se pudo obtener la información en base64 de la fotografía')
+    })
   }
 
   private updateAuditory(auditory: any) {
@@ -413,6 +454,7 @@ export class AuditoryFormPage implements OnInit {
             expand: {
               width: '25%'
             },
+            result: res,
           });
       } else {
         const img = res.webPath || '';

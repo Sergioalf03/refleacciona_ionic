@@ -175,6 +175,11 @@ export class PhotoService {
 
   private async readAsBase64(blob: any) {
     return await this.convertBlobToBase64(blob) as string;
+
+    // Filesystem.readFile({
+    //   path: data.path!
+    // })
+    //   .then((rAB64) => {
   }
 
   private convertBlobToBase64 = (blob: Blob) => new Promise((resolve, reject) => {
