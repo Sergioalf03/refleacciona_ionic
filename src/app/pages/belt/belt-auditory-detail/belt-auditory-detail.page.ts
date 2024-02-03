@@ -105,7 +105,7 @@ export class BeltAuditoryDetailPage {
       .presentAlert('¿Desea descargar en formato CSV?', () => {
         const headers = 'Tipo,conteo\n';
 
-        const data = 'Sin Cinturón,' + this.counts[0].adults_count + '\nCon Cinturón,' + this.counts[0].adults_count + '\nCon Silla de Retención,' + this.counts[0].adults_count + '\n';
+        const data = 'Sin Cinturón,' + this.counts[0].adults_count + '\nCon Cinturón,' + this.counts[0].belts_count + '\nCon Silla de Retención,' + this.counts[0].chairs_count + '\n';
 
         const blob = new Blob([`${headers}${data}`], {
           type: "text/csv"

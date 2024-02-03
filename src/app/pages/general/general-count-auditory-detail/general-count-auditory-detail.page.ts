@@ -36,7 +36,7 @@ export class GeneralCountAuditoryDetailPage {
     'Monovolumen',
     'SUV',
     'Furgoneta',
-    'Pickup'
+    'Pickup',
   ];
 
   auditoryId = '0';
