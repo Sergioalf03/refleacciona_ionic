@@ -98,10 +98,10 @@ export class GeneralCountAuditoryFormPage implements OnInit {
                           console.log(this.ImageSrc);
                           this.ImageSrc.forEach(async (src: any, index: number) => {
 
-                              const blob = await fetch(src.base64).then(r => r.blob());
+                              // const blob = await fetch(src.base64).then(r => r.blob());
 
                               this.photoService
-                                .saveLocalGeneralCountAuditoryEvidence(blob, this.auditoryId)
+                                .saveLocalGeneralCountAuditoryEvidence(src.result, this.auditoryId)
                                 .then(photoId => {
 
                                   setTimeout(async () => {
@@ -341,15 +341,16 @@ export class GeneralCountAuditoryFormPage implements OnInit {
             expand: {
               width: '25%'
             },
+            result: res,
           });
         }
       } else {
         for (let index = 0; index < res.photos.length; index++) {
           const img = res.photos[index].webPath;
-          const blob = await fetch(img).then(r => r.blob());
+          // const blob = await fetch(img).then(r => r.blob());
 
           this.photoService
-            .saveLocalGeneralCountAuditoryEvidence(blob, this.auditoryId)
+            .saveLocalGeneralCountAuditoryEvidence(res, this.auditoryId)
             .then(photoId => {
               if (photoId !== DATABASE_WAITING_MESSAGE) {
                 this.generalCountAuditoryEvidenceService
@@ -369,6 +370,7 @@ export class GeneralCountAuditoryFormPage implements OnInit {
                                   expand: {
                                     width: '25%'
                                   },
+                                  result: res,
                                 });
                               }
                             }
@@ -396,13 +398,14 @@ export class GeneralCountAuditoryFormPage implements OnInit {
           expand: {
             width: '25%'
           },
+          result: res,
         });
       } else {
         const img = res.webPath || '';
-        const blob = await fetch(img).then(r => r.blob());
+        // const blob = await fetch(img).then(r => r.blob());
 
         this.photoService
-          .saveLocalGeneralCountAuditoryEvidence(blob, this.auditoryId)
+          .saveLocalGeneralCountAuditoryEvidence(res, this.auditoryId)
           .then(photoId => {
             if (photoId !== DATABASE_WAITING_MESSAGE) {
               this.generalCountAuditoryEvidenceService
@@ -422,6 +425,7 @@ export class GeneralCountAuditoryFormPage implements OnInit {
                                 expand: {
                                   width: '25%'
                                 },
+                                result: res,
                               });
                             }
                           }

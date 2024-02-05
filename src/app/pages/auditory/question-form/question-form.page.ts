@@ -361,10 +361,10 @@ export class QuestionFormPage implements OnInit {
     this.photoService.openGallery().then(async res => {
       for (let forIndex = 0; forIndex < res.photos.length; forIndex++) {
         const img = res.photos[forIndex].webPath;
-        const blob = await fetch(img).then(r => r.blob());
+        // const blob = await fetch(img).then(r => r.blob());
 
         this.photoService
-          .saveLocalAnswerEvidence(blob, this.auditoryId, this.sectionId)
+          .saveLocalAnswerEvidence(res, this.auditoryId, this.sectionId)
           .then(photoId => {
             this.answerEvidenceService
               .localSave({
@@ -402,10 +402,10 @@ export class QuestionFormPage implements OnInit {
   fromCamera(index: number, questionId: string) {
     this.photoService.takePicture().then(async res => {
       const img = res.webPath || '';
-      const blob = await fetch(img).then(r => r.blob());
+      // const blob = await fetch(img).then(r => r.blob());
 
       this.photoService
-        .saveLocalAnswerEvidence(blob, this.auditoryId, this.sectionId)
+        .saveLocalAnswerEvidence(res, this.auditoryId, this.sectionId)
         .then(photoId => {
           this.answerEvidenceService
             .localSave({

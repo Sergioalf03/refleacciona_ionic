@@ -28,60 +28,60 @@ export class PhotoService {
   };
 
   async saveLocalLogo(photo: any) {
-    const base64Data = await this.readAsBase64(photo);
+    const base64 = await this.readAsBase64(photo);
 
     // Write the file to the data directory
     const fileName = 'logo.jpeg';
     const savedFile = await Filesystem.writeFile({
       path: fileName,
-      data: base64Data,
+      data: base64.data,
       directory: Directory.Data
     });
   }
 
   async saveLocalAuditoryEvidence(photo: any, id: string) {
-    const base64Data = await this.readAsBase64(photo);
+    const base64 = await this.readAsBase64(photo);
 
     const fileName = `${id}-AUD${this.generateName()}`;
     const savedFile = await Filesystem.writeFile({
       path: fileName,
-      data: base64Data,
+      data: base64.data,
       directory: Directory.Data
     });
 
     return fileName;
   }
   async saveLocalHelmetAuditoryEvidence(photo: any, id: string) {
-    const base64Data = await this.readAsBase64(photo);
+    const base64 = await this.readAsBase64(photo);
 
     const fileName = `${id}-HEL${this.generateName()}`;
     const savedFile = await Filesystem.writeFile({
       path: fileName,
-      data: base64Data,
+      data: base64.data,
       directory: Directory.Data
     });
 
     return fileName;
   }
   async saveLocalBeltAuditoryEvidence(photo: any, id: string) {
-    // const base64Data = await this.readAsBase64(photo);
+    const base64 = await this.readAsBase64(photo);
 
     const fileName = `${id}-BEL${this.generateName()}`;
     const savedFile = await Filesystem.writeFile({
       path: fileName,
-      data: photo,
+      data: base64.data,
       directory: Directory.Data
     });
 
     return fileName;
   }
   async saveLocalGeneralCountAuditoryEvidence(photo: any, id: string) {
-    // const base64Data = await this.readAsBase64(photo);
+    const base64 = await this.readAsBase64(photo);
 
     const fileName = `${id}-GCO${this.generateName()}`;
     const savedFile = await Filesystem.writeFile({
       path: fileName,
-      data: photo,
+      data: base64.data,
       directory: Directory.Data
     });
 
@@ -91,12 +91,12 @@ export class PhotoService {
   }
 
   async saveLocalAnswerEvidence(photo: any, auditoryId: string, sectionId: string) {
-    const base64Data = await this.readAsBase64(photo);
+    const base64 = await this.readAsBase64(photo);
 
     const fileName = `${auditoryId}-ANS${sectionId}-${this.generateName()}`;
     const savedFile = await Filesystem.writeFile({
       path: fileName,
-      data: base64Data,
+      data: base64.data,
       directory: Directory.Data
     });
 
@@ -106,7 +106,7 @@ export class PhotoService {
   getLocalAuditoryEvidence(id: string) {
     return Filesystem.readFile({
       path: id,
-      encoding: Encoding.UTF8,
+      // encoding: Encoding.UTF8,
       directory: Directory.Data
     })
   }
@@ -173,12 +173,13 @@ export class PhotoService {
     })
   }
 
-  private async readAsBase64(blob: any) {
-    return await this.convertBlobToBase64(blob) as string;
+  private async readAsBase64(data: any) {
+    console.log(data);
+    // return await this.convertBlobToBase64(blob) as string;
 
-    // Filesystem.readFile({
-    //   path: data.path!
-    // })
+    return await Filesystem.readFile({
+      path: data.path!
+    })
     //   .then((rAB64) => {
   }
 

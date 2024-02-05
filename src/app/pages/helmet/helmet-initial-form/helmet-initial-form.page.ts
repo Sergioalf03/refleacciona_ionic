@@ -95,13 +95,12 @@ export class HelmetInitialFormPage implements OnInit {
                       let count = 0;
 
                       if (this.ImageSrc.length > 0) {
-                        console.log(this.ImageSrc);
                         this.ImageSrc.forEach(async (src: any, index: number) => {
 
-                          const blob = await fetch(src.base64).then(r => r.blob());
+                          // const blob = await fetch(src.base64).then(r => r.blob());
 
                           this.photoService
-                            .saveLocalHelmetAuditoryEvidence(blob, this.auditoryId)
+                            .saveLocalHelmetAuditoryEvidence(src.result, this.auditoryId)
                             .then(photoId => {
 
                               setTimeout(async () => {
@@ -342,15 +341,16 @@ export class HelmetInitialFormPage implements OnInit {
             expand: {
               width: '25%'
             },
+            result: res,
           });
         }
       } else {
         for (let index = 0; index < res.photos.length; index++) {
           const img = res.photos[index].webPath;
-          const blob = await fetch(img).then(r => r.blob());
+          // const blob = await fetch(img).then(r => r.blob());
 
           this.photoService
-            .saveLocalHelmetAuditoryEvidence(blob, this.auditoryId)
+            .saveLocalHelmetAuditoryEvidence(res, this.auditoryId)
             .then(photoId => {
               if (photoId !== DATABASE_WAITING_MESSAGE) {
                 this.helmetAuditoryEvidenceService
@@ -370,6 +370,7 @@ export class HelmetInitialFormPage implements OnInit {
                                   expand: {
                                     width: '25%'
                                   },
+                                  result: res,
                                 });
                               }
                             }
@@ -397,13 +398,14 @@ export class HelmetInitialFormPage implements OnInit {
           expand: {
             width: '25%'
           },
+          result: res,
         });
       } else {
         const img = res.webPath || '';
-        const blob = await fetch(img).then(r => r.blob());
+        // const blob = await fetch(img).then(r => r.blob());
 
         this.photoService
-          .saveLocalHelmetAuditoryEvidence(blob, this.auditoryId)
+          .saveLocalHelmetAuditoryEvidence(res, this.auditoryId)
           .then(photoId => {
             if (photoId !== DATABASE_WAITING_MESSAGE) {
               this.helmetAuditoryEvidenceService
@@ -423,6 +425,7 @@ export class HelmetInitialFormPage implements OnInit {
                                 expand: {
                                   width: '25%'
                                 },
+                                result: res,
                               });
                             }
                           }

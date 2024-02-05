@@ -93,7 +93,7 @@ export class AuditoryDetailPage {
     this.auditoryLat = data.auditory.lat;
     this.auditoryLng = data.auditory.lng;
 
-    this.auditoyrEvidences = data.auditory.evidences.map((e: any) => `${STORAGE_URL}/auditories/${e.dir}.jpeg`)
+    this.auditoyrEvidences = data.auditory.evidences.map((e: any) => `${STORAGE_URL}/auditories/${e.dir}`)
 
     this.auditorySections = data.sections;
 
@@ -122,7 +122,7 @@ export class AuditoryDetailPage {
   }
 
   answerEvicenceUrl(dir: string) {
-    return `${STORAGE_URL}/answers/${dir}.jpeg`;
+    return `${STORAGE_URL}/answers/${dir}`;
   }
 
   public downloadCsv() {

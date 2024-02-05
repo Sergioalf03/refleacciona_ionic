@@ -11,8 +11,6 @@ import { AuditoryEvidenceService } from 'src/app/services/auditory-evidence.serv
 import { PhotoService } from 'src/app/core/controllers/photo.service';
 import { AnswerEvidenceService } from 'src/app/services/answer-evidence.service';
 import { URI_AUDITORY_DETAIL, URI_AUDITORY_FORM, URI_HOME, URI_QUESTION_FORM } from 'src/app/core/constants/uris';
-import { Directory, Filesystem } from '@capacitor/filesystem';
-import { Share } from '@capacitor/share';
 import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
 
 @Component({
@@ -192,11 +190,11 @@ export class AuditoryListPage implements OnInit {
         return res(true);
       }
 
-      const ImageSrc = await this.photoService.getLocalAuditoryEvidenceUri(arr[index].dir).then(photo => photo.uri);
-      const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => r.blob());
+      const ImageSrc = await this.photoService.getLocalAuditoryEvidence(arr[index].dir).then(photo => photo);
+      // const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => r.blob());
 
       this.auditoryEvidenceService
-        .uploadImage(blob, externalId, arr[index].creation_date, arr[index].dir)
+        .uploadImage((ImageSrc.data as string), externalId, arr[index].creation_date, arr[index].dir)
         .subscribe({
           next: () => {
             this.photoService
@@ -267,11 +265,11 @@ export class AuditoryListPage implements OnInit {
         return res(true);
       }
 
-      const ImageSrc = await this.photoService.getLocalAnswerEvidenceUri(arr[index].dir).then(photo => photo.uri);
-      const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => r.blob());
+      const ImageSrc = await this.photoService.getLocalAnswerEvidence(arr[index].dir).then(photo => photo);
+      // const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => r.blob());
 
       this.answerEvidenceService
-        .uploadImage(blob, extenalId, arr[index].question_id, arr[index].creation_date, arr[index].dir)
+        .uploadImage((ImageSrc.data as string), extenalId, arr[index].question_id, arr[index].creation_date, arr[index].dir)
         .subscribe({
           next: () => {
 

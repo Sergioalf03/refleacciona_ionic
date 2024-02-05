@@ -10,9 +10,6 @@ import { PhotoService } from 'src/app/core/controllers/photo.service';
 import { HelmetAuditoryEvidenceService } from 'src/app/services/helmet-auditory-evidence.service';
 import { HelmetAuditoryService } from 'src/app/services/helmet-auditory.service';
 import { HelmetCollectionService } from 'src/app/services/helmet-collection.service';
-import { Capacitor } from '@capacitor/core';
-import { Directory, Filesystem } from '@capacitor/filesystem';
-import { Share } from '@capacitor/share';
 
 @Component({
   selector: 'app-helmet-auditory-list',
@@ -196,14 +193,15 @@ export class HelmetAuditoryListPage {
         return res(true);
       }
 
-      const ImageSrc = await this.photoService.getLocalAuditoryEvidenceUri(arr[index].dir).then(photo => photo.uri);
-      const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => r.blob());
+      const ImageSrc = await this.photoService.getLocalAuditoryEvidence(arr[index].dir).then(photo => photo);
 
-      this.blobUrl = URL.createObjectURL(blob) // blob is the Blob object
-      console.log(blob);
+      // const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => r.blob());
+
+      // this.blobUrl = URL.createObjectURL(blob) // blob is the Blob object
+      // console.log(blob);
 
       this.auditoryEvidenceService
-        .uploadImage(blob, externalId, arr[index].creation_date, arr[index].dir)
+        .uploadImage((ImageSrc.data as string), externalId, arr[index].creation_date, arr[index].dir)
         .subscribe({
           next: () => {
             this.photoService

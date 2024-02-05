@@ -90,7 +90,7 @@ export class BeltAuditoryDetailPage {
     this.auditoryLat = data.lat;
     this.auditoryLng = data.lng;
 
-    this.auditoyrEvidences = data.evidences.map((e: any) => `${STORAGE_URL}/belt/${e.dir}.jpeg`);
+    this.auditoyrEvidences = data.evidences.map((e: any) => `${STORAGE_URL}/belt/${e.dir}`);
 
     this.counts = data.counts;
 

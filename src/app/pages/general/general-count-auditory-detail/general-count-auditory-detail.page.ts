@@ -105,7 +105,7 @@ export class GeneralCountAuditoryDetailPage {
     this.auditoryLat = data.lat;
     this.auditoryLng = data.lng;
 
-    this.auditoyrEvidences = data.evidences.map((e: any) => `${STORAGE_URL}/general/${e.dir}.jpeg`);
+    this.auditoyrEvidences = data.evidences.map((e: any) => `${STORAGE_URL}/general/${e.dir}`);
 
     this.counts = data.counts;
 

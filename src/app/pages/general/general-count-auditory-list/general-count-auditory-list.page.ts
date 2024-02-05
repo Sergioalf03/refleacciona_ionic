@@ -1,11 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Capacitor } from '@capacitor/core';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { ActionSheetController, Platform } from '@ionic/angular';
 import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
-import { URI_GENERAL_COUNT_COLLECION_DETAIL, URI_GENERAL_COUNT_COUNT_FORM, URI_GENERAL_COUNT_DETAIL, URI_GENERAL_COUNT_FORM, URI_HOME } from 'src/app/core/constants/uris';
+import {  URI_GENERAL_COUNT_COUNT_FORM, URI_GENERAL_COUNT_DETAIL, URI_GENERAL_COUNT_FORM, URI_HOME } from 'src/app/core/constants/uris';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
@@ -202,13 +201,13 @@ export class GeneralCountAuditoryListPage {
         return res(true);
       }
 
-      const ImageSrc = await this.photoService.getLocalAuditoryEvidenceUri(arr[index].dir).then(photo => photo.uri);
-      const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => {
-        return r.blob()
-      });
+      const ImageSrc = await this.photoService.getLocalAuditoryEvidence(arr[index].dir).then(photo => photo);
+      // const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => {
+      //   return r.blob()
+      // });
 
       this.auditoryEvidenceService
-        .uploadImage(blob, externalId, arr[index].creation_date, arr[index].dir)
+        .uploadImage((ImageSrc.data as string), externalId, arr[index].creation_date, arr[index].dir)
         .subscribe({
           next: () => {
             this.photoService
