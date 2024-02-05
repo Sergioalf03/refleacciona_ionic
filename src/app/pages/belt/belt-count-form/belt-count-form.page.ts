@@ -218,6 +218,7 @@ export class BeltCountFormPage implements OnInit {
               if (res !== DATABASE_WAITING_MESSAGE) {
 
                 this.loadingService.dismissLoading();
+                this.resetVariables();
                 this.router.navigateByUrl(URI_BELT_LIST('local'));
               }
             },
@@ -234,6 +235,7 @@ export class BeltCountFormPage implements OnInit {
               if (res !== DATABASE_WAITING_MESSAGE) {
 
                 this.loadingService.dismissLoading();
+                this.resetVariables();
                 this.router.navigateByUrl(URI_BELT_LIST('local'));
               }
             },
@@ -246,7 +248,18 @@ export class BeltCountFormPage implements OnInit {
 
   }
 
+  resetVariables() {
+    this.auditoryId = '0';
+    this.originId = 0;
+    this.destinationId = 0;
+    this.beltlessCount = 0;
+    this.beltCount = 0;
+    this.chairChairlessCount = 0;
+    this.chairCount = 0;
+  }
+
   onCancel() {
+    this.resetVariables();
     this.router.navigateByUrl(URI_BELT_LIST('local'));
   }
 

@@ -159,6 +159,7 @@ export class HelmetCountFormPage implements OnInit {
               if (res !== DATABASE_WAITING_MESSAGE) {
 
                 this.loadingService.dismissLoading();
+                this.resetVeriables();
                 this.router.navigateByUrl(URI_HELMET_LIST('local'));
               }
             },
@@ -174,6 +175,7 @@ export class HelmetCountFormPage implements OnInit {
               if (res !== DATABASE_WAITING_MESSAGE) {
 
                 this.loadingService.dismissLoading();
+                this.resetVeriables();
                 this.router.navigateByUrl(URI_HELMET_LIST('local'));
               }
             },
@@ -187,7 +189,16 @@ export class HelmetCountFormPage implements OnInit {
   }
 
   onCancel() {
+    this.resetVeriables();
     this.router.navigateByUrl(URI_HELMET_LIST('local'));
+  }
+
+  resetVeriables() {
+    this.auditoryId = '0';
+    this.originId = 0;
+    this.destinationId = 0;
+    this.helmetlessCount = 0;
+    this.helmetCount = 0;
   }
 
 }

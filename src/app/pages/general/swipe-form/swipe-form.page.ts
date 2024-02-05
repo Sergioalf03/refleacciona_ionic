@@ -16,7 +16,6 @@ const colors: any[] = [
   { name: 'white', backgroundCode: '#FFFFFF', textCode: 'black' },
 ]
 
-import { Gesture, GestureController, GestureDetail, IonCard } from '@ionic/angular';
 import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
 import { URI_GENERAL_COUNT_LIST } from 'src/app/core/constants/uris';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
@@ -191,4 +190,10 @@ export class SwipeFormPage implements AfterViewInit {
       }
     })
   }
+
+  resetVariables() {
+    this.counts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    this.auditoryId = '0';
+  }
+
 }
