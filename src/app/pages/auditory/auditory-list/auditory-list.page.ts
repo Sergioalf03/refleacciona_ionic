@@ -190,7 +190,7 @@ export class AuditoryListPage implements OnInit {
         return res(true);
       }
 
-      const ImageSrc = await this.photoService.getLocalAuditoryEvidence(arr[index].dir).then(photo => photo);
+      const ImageSrc = await this.photoService.getLocalEvidence(arr[index].dir).then(photo => photo);
       // const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => r.blob());
 
       this.auditoryEvidenceService
@@ -198,7 +198,7 @@ export class AuditoryListPage implements OnInit {
         .subscribe({
           next: () => {
             this.photoService
-              .removeLocalAuditoryEvidence(arr[index].dir)
+              .removeLocalEvidence(arr[index].dir)
               .then(() => {
                 this.auditoryEvidenceService
                   .localRemove(arr[index].dir)
@@ -225,7 +225,6 @@ export class AuditoryListPage implements OnInit {
         next: async evidences => {
           if (evidences !== DATABASE_WAITING_MESSAGE) {
 
-            setTimeout(() => {
               this.uploadAnswersEvidence(evidences.values, 0, extenalId)
                 .then(result => {
 
@@ -252,8 +251,7 @@ export class AuditoryListPage implements OnInit {
                         }
                       }
                     });
-                })
-            }, 20);
+                });
           }
         }
       });
@@ -265,7 +263,7 @@ export class AuditoryListPage implements OnInit {
         return res(true);
       }
 
-      const ImageSrc = await this.photoService.getLocalAnswerEvidence(arr[index].dir).then(photo => photo);
+      const ImageSrc = await this.photoService.getLocalEvidence(arr[index].dir).then(photo => photo);
       // const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => r.blob());
 
       this.answerEvidenceService
@@ -274,7 +272,7 @@ export class AuditoryListPage implements OnInit {
           next: () => {
 
             this.photoService
-              .removeLocalAnswerEvidence(arr[index].dir)
+              .removeLocalEvidence(arr[index].dir)
               .then(() => {
                 this.answerEvidenceService
                   .localRemove(arr[index].dir)
@@ -282,9 +280,8 @@ export class AuditoryListPage implements OnInit {
                     next: dlt => {
                       if (dlt !== DATABASE_WAITING_MESSAGE) {
 
-                        setTimeout(() => {
                           this.uploadAnswersEvidence(arr, index + 1, extenalId).then(r => res(r));
-                        }, 20);
+
                       }
                     }
                   });
@@ -332,6 +329,7 @@ export class AuditoryListPage implements OnInit {
             next: res => {
               const blob = res;
               const filename = `data.pdf`;
+
               if ((window.navigator as any).msSaveOrOpenBlob) {
                 (window.navigator as any).msSaveBlob(blob, filename);
               } else {
@@ -345,39 +343,6 @@ export class AuditoryListPage implements OnInit {
                 downloadLink.click();
                 document.body.removeChild(downloadLink);
               }
-              // const blob = res;
-              // const find = ' ';
-              //   const re = new RegExp(find, 'g');
-              //   const filePath = `${title.replace(re, '-')}.pdf`;
-
-              //   const fileReader = new FileReader();
-
-              //   fileReader.readAsDataURL(blob);
-
-              //   fileReader.onloadend = async () => {
-              //     const base64Data: any = fileReader.result;
-
-              //     Filesystem.writeFile({
-              //       path: filePath,
-              //       data: base64Data,
-              //       directory: Directory.Cache,
-              //     }).then(() => {
-              //       return Filesystem.getUri({
-              //         directory: Directory.Cache,
-              //         path: filePath
-              //       });
-              //     })
-              //     .then((uriResult) => {
-              //       return Share.share({
-              //         title: filePath,
-              //         text: filePath,
-              //         url: uriResult.uri,
-              //       });
-              //     }).then(() => {
-              //       this.loadingService.dismissLoading();
-              //     })
-              //       .catch(err => this.responseService.onError(err, 'No se pudo descargar la auditoría'));
-              //   }
             },
             error: err => this.responseService.onError(err, 'No se pudo descargar la auditoría')
           })

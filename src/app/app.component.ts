@@ -35,36 +35,26 @@ export class AppComponent implements OnInit {
       const logged = await this.sessionService.isLoggedIn();
       if (logged) {
         await this.sessionService.setValuesFromStorage();
-        // this.sessionService
-        //   .validToken()
-        //   .subscribe({
-        //     next: res => {
-              this.responseService.onSuccessAndRedirect(URI_HOME(), '/NA');
-
-                // this.sessionService
-                //   .getUserData()
-                //   .subscribe({
-                //     next: res => this.responseService.onSuccess('/NA'),
-                //     error: err => this.responseService.onError(err, 'No se pudieron recuperar los datos')
-                //   })
-        //       },
-        //       error: err => this.responseService.onError(err, 'No se pudo verificar'),
-        //     });
+        this.responseService.onSuccessAndRedirect(URI_HOME(), '/NA');
       }
     });
 
     this.platform.ready().then(async () => {
-      this.sqlite.initializePlugin().then(async (ret) => {
-        this.initPlugin = ret;
-        if (this.sqlite.platform === "web") {
-          this.isWeb = true;
-          await customElements.whenDefined('jeep-sqlite');
-          const jeepSqliteEl = document.querySelector('jeep-sqlite');
-          if (jeepSqliteEl != null) {
-            await this.sqlite.initWebStore();
+      this.sqlite.initializePlugin()
+        .then(async (ret) => {
+          this.initPlugin = ret;
+          if (this.sqlite.platform === "web") {
+            this.isWeb = true;
+            await customElements.whenDefined('jeep-sqlite');
+            const jeepSqliteEl = document.querySelector('jeep-sqlite');
+            if (jeepSqliteEl != null) {
+              await this.sqlite.initWebStore();
+            }
           }
-        }
-      });
+        })
+        .catch(error => {
+          console.log('No se pudo inicializar sqlite')
+        });
     });
   }
 

@@ -200,7 +200,7 @@ export class BeltAuditoryListPage {
         return res(true);
       }
 
-      const ImageSrc = await this.photoService.getLocalAuditoryEvidence(arr[index].dir).then(photo => photo);
+      const ImageSrc = await this.photoService.getLocalEvidence(arr[index].dir).then(photo => photo);
 
       // const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => r.blob());
 
@@ -209,7 +209,7 @@ export class BeltAuditoryListPage {
         .subscribe({
           next: () => {
             this.photoService
-              .removeLocalAuditoryEvidence(arr[index].dir)
+              .removeLocalEvidence(arr[index].dir)
               .then(() => {
                 this.auditoryEvidenceService
                   .localRemove(arr[index].dir)

@@ -296,7 +296,7 @@ export class QuestionFormPage implements OnInit {
                           this.ImageSrc.forEach((img, i) => {
                             if (!!img.id) {
                               this.photoService
-                                .getLocalAnswerEvidenceUri(img.id)
+                                .getLocalEvidenceUri(img.id)
                                 .then((photo: any) => {
                                   this.ImageSrc[i].url = Capacitor.convertFileSrc(photo.uri)
                                 });
@@ -306,7 +306,7 @@ export class QuestionFormPage implements OnInit {
                           this.ImageSrc.forEach((img, i) => {
                             if (!!img.id) {
                               this.photoService
-                                .getLocalAnswerEvidence(img.id)
+                                .getLocalEvidence(img.id)
                                 .then((photo: any) => {
                                   this.ImageSrc[i].url = this.sanitization.bypassSecurityTrustUrl('data:image/jpeg;base64,' + photo.data);
                                 });
@@ -364,7 +364,7 @@ export class QuestionFormPage implements OnInit {
         // const blob = await fetch(img).then(r => r.blob());
 
         this.photoService
-          .saveLocalAnswerEvidence(res, this.auditoryId, this.sectionId)
+          .saveLocalAnswerEvidence(res.photos[forIndex], this.auditoryId, this.sectionId)
           .then(photoId => {
             this.answerEvidenceService
               .localSave({
@@ -380,10 +380,10 @@ export class QuestionFormPage implements OnInit {
                       this.answerEvidenceService
                         .getLastInsertedDir()
                         .subscribe({
-                          next: async (res: any) => {
-                            if (res !== DATABASE_WAITING_MESSAGE) {
+                          next: async (res1: any) => {
+                            if (res1 !== DATABASE_WAITING_MESSAGE) {
                               this.ImageSrc[index].url = this.sanitization.bypassSecurityTrustUrl(img);
-                              this.ImageSrc[index].id = res.values[0].dir;
+                              this.ImageSrc[index].id = res1.values[0].dir;
                             }
                           }
                         });
@@ -407,6 +407,7 @@ export class QuestionFormPage implements OnInit {
       this.photoService
         .saveLocalAnswerEvidence(res, this.auditoryId, this.sectionId)
         .then(photoId => {
+          if (photoId !== DATABASE_WAITING_MESSAGE) {
           this.answerEvidenceService
             .localSave({
               auditoryId: this.auditoryId,
@@ -421,10 +422,10 @@ export class QuestionFormPage implements OnInit {
                     this.answerEvidenceService
                       .getLastInsertedDir()
                       .subscribe({
-                        next: async (res: any) => {
-                          if (res !== DATABASE_WAITING_MESSAGE) {
+                        next: async (res2: any) => {
+                          if (res2 !== DATABASE_WAITING_MESSAGE) {
                             this.ImageSrc[index].url = this.sanitization.bypassSecurityTrustUrl(img);
-                            this.ImageSrc[index].id = res.values[0].dir;
+                            this.ImageSrc[index].id = res2.values[0].dir;
                           }
                         }
                       });
@@ -434,7 +435,8 @@ export class QuestionFormPage implements OnInit {
               error: err => {
                 this.responseService.onError(err, 'No se pudo guardar una imagen')
               },
-            })
+            });
+          }
         });
     });
   }
@@ -443,7 +445,7 @@ export class QuestionFormPage implements OnInit {
     this.confirmDialogService.presentAlert('¿Desea eliminar la imagen?', () => {
 
       this.photoService
-        .removeLocalAnswerEvidence(this.ImageSrc[index].id)
+        .removeLocalEvidence(this.ImageSrc[index].id)
         .then(() => {
           this.ImageSrc[index] = {
             canTakePickture: true,
@@ -494,7 +496,7 @@ export class QuestionFormPage implements OnInit {
           setTimeout(() => {
             if (this.ImageSrc[i].id && this.ImageSrc[i].id !== '') {
               this.photoService
-                .removeLocalAnswerEvidence(this.ImageSrc[i].id)
+                .removeLocalEvidence(this.ImageSrc[i].id)
                 .then(() => {
                   this.answerService
                     .deleteAnswer(this.questions[i].id, this.auditoryId)

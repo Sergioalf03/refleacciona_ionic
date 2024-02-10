@@ -25,6 +25,7 @@ export class ProfilePage {
   txtButtonEnter = 'GUARDAR';
   ImageSrc = '';
   ImageSafeSrc: SafeUrl = '';
+  imageData!: any;
 
   constructor(
     private sessionService: SessionService,
@@ -97,18 +98,34 @@ export class ProfilePage {
           .subscribe({
             next: async (res: any) => {
               if (this.ImageSrc) {
-                const blob = await fetch(this.ImageSrc).then(r => r.blob());
-                this.sessionService
-                  .uploadLogo(blob)
-                  .subscribe({
-                    next: async (res: any) => {
-                      this.photoService.saveLocalLogo(blob);
-                      this.httpResponseService.onSuccess('Actualización exitosa')
-                    },
-                    error: err => {
-                      this.httpResponseService.onError(err, 'No se pudo guardar la imagen');
-                    },
-                })
+                console.log('save photo')
+                this.photoService
+                  .saveLocalLogo(this.imageData)
+                  .then(() => {
+                    console.log('saved photo')
+                    setTimeout(() => {
+                      this.photoService
+                        .getLocalLogo()
+                        .then(photo => {
+                          console.log('fetched photo')
+                          setTimeout(() => {
+                            this.sessionService
+                              .uploadLogo((photo.data as string))
+                              .subscribe({
+                                next: async (res: any) => {
+                                  console.log('uploaded photo')
+                                  this.httpResponseService.onSuccess('Actualización exitosa')
+                                },
+                                error: err => {
+                                  this.httpResponseService.onError(err, 'No se pudo subir la imagen');
+                                },
+                              });
+                          }, 100)
+                        })
+                        .catch(err => this.httpResponseService.onError(err, 'No se pudo recuperar la imagen'));
+                    }, 100)
+                  })
+                  .catch(err => this.httpResponseService.onError(err, 'No se pudo guardar la imagen'));
               } else {
                 this.httpResponseService.onSuccess('Actualización exitosa')
               }
@@ -130,6 +147,7 @@ export class ProfilePage {
     this.photoService.openGallery().then(async res => {
       this.ImageSafeSrc = this.sanitization.bypassSecurityTrustUrl(res.photos[0].webPath);
       this.ImageSrc = res.photos[0].webPath;
+      this.imageData = res.photos[0];
     });
   }
 

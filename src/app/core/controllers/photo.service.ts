@@ -27,120 +27,57 @@ export class PhotoService {
     });
   };
 
-  async saveLocalLogo(photo: any) {
+  async saveImage(fileName: string, photo: any) {
     const base64 = await this.readAsBase64(photo);
 
-    // Write the file to the data directory
-    const fileName = 'logo.jpeg';
     const savedFile = await Filesystem.writeFile({
       path: fileName,
       data: base64.data,
       directory: Directory.Data
     });
+
+    return fileName;
+  }
+
+  async saveLocalLogo(photo: any) {
+    return await this.saveImage('logo.jpeg', photo);
   }
 
   async saveLocalAuditoryEvidence(photo: any, id: string) {
-    const base64 = await this.readAsBase64(photo);
-
-    const fileName = `${id}-AUD${this.generateName()}`;
-    const savedFile = await Filesystem.writeFile({
-      path: fileName,
-      data: base64.data,
-      directory: Directory.Data
-    });
-
-    return fileName;
+    return await this.saveImage(`${id}-AUD${this.generateName()}`, photo);
   }
+
   async saveLocalHelmetAuditoryEvidence(photo: any, id: string) {
-    const base64 = await this.readAsBase64(photo);
-
-    const fileName = `${id}-HEL${this.generateName()}`;
-    const savedFile = await Filesystem.writeFile({
-      path: fileName,
-      data: base64.data,
-      directory: Directory.Data
-    });
-
-    return fileName;
+    return await this.saveImage(`${id}-HEL${this.generateName()}`, photo);
   }
+
   async saveLocalBeltAuditoryEvidence(photo: any, id: string) {
-    const base64 = await this.readAsBase64(photo);
-
-    const fileName = `${id}-BEL${this.generateName()}`;
-    const savedFile = await Filesystem.writeFile({
-      path: fileName,
-      data: base64.data,
-      directory: Directory.Data
-    });
-
-    return fileName;
+    return await this.saveImage(`${id}-BEL${this.generateName()}`, photo);
   }
+
   async saveLocalGeneralCountAuditoryEvidence(photo: any, id: string) {
-    const base64 = await this.readAsBase64(photo);
-
-    const fileName = `${id}-GCO${this.generateName()}`;
-    const savedFile = await Filesystem.writeFile({
-      path: fileName,
-      data: base64.data,
-      directory: Directory.Data
-    });
-
-
-
-    return fileName;
+    return await this.saveImage(`${id}-GCO${this.generateName()}`, photo);
   }
 
   async saveLocalAnswerEvidence(photo: any, auditoryId: string, sectionId: string) {
-    const base64 = await this.readAsBase64(photo);
-
-    const fileName = `${auditoryId}-ANS${sectionId}-${this.generateName()}`;
-    const savedFile = await Filesystem.writeFile({
-      path: fileName,
-      data: base64.data,
-      directory: Directory.Data
-    });
-
-    return fileName;
+    return await this.saveImage(`${auditoryId}-ANS${sectionId}-${this.generateName()}`, photo);
   }
 
-  getLocalAuditoryEvidence(id: string) {
+  getLocalEvidence(id: string) {
     return Filesystem.readFile({
       path: id,
-      // encoding: Encoding.UTF8,
       directory: Directory.Data
     })
   }
 
-  getLocalAuditoryEvidenceUri(id: string) {
+  getLocalEvidenceUri(id: string) {
     return Filesystem.getUri({
       path: id,
       directory: Directory.Data
     })
   }
 
-  getLocalAnswerEvidence(id: string) {
-    return Filesystem.readFile({
-      path: id,
-      encoding: Encoding.UTF8,
-      directory: Directory.Data
-    })
-  }
-
-  getLocalAnswerEvidenceUri(id: string) {
-    return Filesystem.getUri({
-      path: id,
-      directory: Directory.Data
-    })
-  }
-
-  removeLocalAuditoryEvidence(dir: string) {
-    return Filesystem.deleteFile({
-      path: dir,
-      directory: Directory.Data
-    })
-  }
-
-  removeLocalAnswerEvidence(dir: string) {
+  removeLocalEvidence(dir: string) {
     return Filesystem.deleteFile({
       path: dir,
       directory: Directory.Data
@@ -158,78 +95,18 @@ export class PhotoService {
     return `${text}.png`;
   }
 
-  getLocalLogo() {
-    return Filesystem.readFile({
-      path: 'logo.jpeg',
-      encoding: Encoding.UTF8,
-      directory: Directory.Data
-    })
+  async getLocalLogo() {
+    return await this.getLocalEvidence('logo.jpeg');
   }
 
-  getLocalLogoUri() {
-    return Filesystem.getUri({
-      path: 'logo.jpeg',
-      directory: Directory.Data
-    })
+  async getLocalLogoUri() {
+    return await this.getLocalEvidenceUri('logo.jpeg');
   }
 
   private async readAsBase64(data: any) {
-    console.log(data);
-    // return await this.convertBlobToBase64(blob) as string;
-
     return await Filesystem.readFile({
       path: data.path!
     })
-    //   .then((rAB64) => {
   }
 
-  private convertBlobToBase64 = (blob: Blob) => new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onerror = reject;
-    reader.onload = () => {
-      resolve(reader.result);
-    };
-    reader.readAsDataURL(blob);
-  });
-
-  async onTakePicture(index: number) {
-    // const actionSheet = await this.actionSheetController.create({
-    //   header: 'Opciones',
-    //   buttons: [
-    //     {
-    //       text: 'Cámara',
-    //       icon: 'camera-outline',
-    //       handler: () => this.cameraService.takePicture()
-    //         .then((result: any) => {
-    //           if (result) {
-
-    //             this.loadingService.showLoading();
-    //             this.locationService
-    //               .getLocation()
-    //               .then((locationRes: any) => this.uploadImage(index, result.dataUrl, locationRes))
-    //               .catch(err => this.responseHandlerService.errorResponse(err, 'No se pudo obtener la ubicación del dispositivo'));
-    //           }
-    //         })
-    //         .catch(err => this.responseHandlerService.errorResponse(err, 'No se pudo obtener la imagen'))
-    //     },
-    //     {
-    //       text: 'Galería',
-    //       icon: 'image-outline',
-    //       handler: () => this.cameraService.openGallery()
-    //         .then((result: any) => {
-    //           if (result) {
-    //             this.uploadImage(index, result.dataUrl);
-    //           }
-    //         })
-    //         .catch(err => this.responseHandlerService.errorResponse(err, 'No se pudo obtener la imagen')),
-    //     },
-    //     {
-    //       text: 'Regresar',
-    //       icon: 'return-up-back-outline',
-    //     }
-    //   ],
-    // });
-
-    // await actionSheet.present();
-  }
 }

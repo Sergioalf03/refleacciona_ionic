@@ -153,7 +153,7 @@ export class AuditoryService {
       .subscribe(directories => {
         if (directories !== DATABASE_WAITING_MESSAGE) {
           directories.values.forEach((dir: any) => {
-            this.photoService.removeLocalAuditoryEvidence(dir.dir)
+            this.photoService.removeLocalEvidence(dir.dir)
           });
           this.databaseService
             .executeQuery(`DELETE FROM auditory_evidences WHERE auditory_id = ${id}`)
@@ -166,7 +166,7 @@ export class AuditoryService {
                     .subscribe(directories2 => {
                       if (directories2 !== DATABASE_WAITING_MESSAGE) {
                         directories2.values.forEach((dir: any) => {
-                          this.photoService.removeLocalAnswerEvidence(dir.dir)
+                          this.photoService.removeLocalEvidence(dir.dir)
                         });
 
                         setTimeout(() => {
