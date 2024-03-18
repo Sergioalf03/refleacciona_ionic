@@ -93,6 +93,13 @@ export class SessionService {
       );
   }
 
+  getUserHomeData() {
+    return {
+      userName: this.userName,
+      photo: '',
+    }
+  }
+
   getUserData() {
     return this.httpService
       .get('/user-data')

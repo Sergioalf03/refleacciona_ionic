@@ -37,6 +37,8 @@ export class PhotoService {
       data: base64Data,
       directory: Directory.Data
     });
+
+    return fileName;
   }
 
   async saveLocalAuditoryEvidence(photo: any, id: string) {

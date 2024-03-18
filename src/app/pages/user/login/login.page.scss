@@ -18,3 +18,21 @@ img {
 .txt-pwd:active {
     color: chocolate;
 }
+
+input {
+  border-radius: 15px;
+}
+
+.custom-btn {
+    display: block;
+    width: 100%;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #EC6A5C;
+    color: #000;
+    border: none;
+    border-radius: 15px;
+    /* Adjust the border-radius to control the roundness */
+    font-weight: bold;
+    cursor: pointer;
+}

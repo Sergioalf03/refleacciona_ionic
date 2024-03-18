@@ -16,7 +16,7 @@ import { SessionService } from 'src/app/core/controllers/session.service';
 export class LoginPage {
 
   user: any = {};
-  txtButtonEnter = 'INGRESAR';
+  txtButtonEnter = 'Log In';
 
   constructor(
     private router:Router,
@@ -41,7 +41,7 @@ export class LoginPage {
 
   onLogin( formLogin: NgForm ) {
     if (formLogin.invalid) { return; }
-    this.txtButtonEnter = 'Cargando...';
+    this.txtButtonEnter = 'Loading...';
     this.loadingService.showLoading();
 
     this.user['deviceId'] = this.randomService.generate(128);
@@ -65,7 +65,7 @@ export class LoginPage {
   resetForm(form?: NgForm) {
     if(form){form.reset();}
 
-    this.txtButtonEnter = 'INGRESAR';
+    this.txtButtonEnter = 'Log In';
   }
 
 }

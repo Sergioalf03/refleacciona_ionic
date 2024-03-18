@@ -76,9 +76,15 @@ export class ProfilePage {
       })
 
 
-    this.photoService.getLocalLogoUri().then(photo => {
-      this.ImageSafeSrc = Capacitor.convertFileSrc(photo.uri)
-    });
+      if (isPlatform('hybrid')) {
+        this.photoService.getLocalLogoUri().then(photo => {
+          this.ImageSafeSrc = Capacitor.convertFileSrc(photo.uri)
+        })
+      } else {
+        this.photoService.getLocalLogo().then(photo => {
+          this.ImageSafeSrc = 'data:image/png;base64,' + photo.data;
+        });
+      }
 
   }
 
@@ -98,17 +104,24 @@ export class ProfilePage {
             next: async (res: any) => {
               if (this.ImageSrc) {
                 const blob = await fetch(this.ImageSrc).then(r => r.blob());
-                this.sessionService
-                  .uploadLogo(blob)
-                  .subscribe({
-                    next: async (res: any) => {
-                      this.photoService.saveLocalLogo(blob);
-                      this.httpResponseService.onSuccess('Actualización exitosa')
-                    },
-                    error: err => {
-                      this.httpResponseService.onError(err, 'No se pudo guardar la imagen');
-                    },
-                })
+
+                this.photoService
+                  .saveLocalLogo(blob)
+                  .then(file => {
+                    console.log(file);
+                    this.sessionService
+                      .uploadLogo(blob)
+                      .subscribe({
+                        next: async (res: any) => {
+                          this.httpResponseService.onSuccess('Actualización exitosa')
+                        },
+                        error: err => {
+                          this.httpResponseService.onError(err, 'No se pudo guardar la imagen');
+                        },
+                      })
+
+
+                  })
               } else {
                 this.httpResponseService.onSuccess('Actualización exitosa')
               }

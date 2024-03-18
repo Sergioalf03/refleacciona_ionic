@@ -1,0 +1,23 @@
+.circular-shadow-blue {
+  font-size: 50px;
+  // box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  color: #2CAFC0;
+}
+
+input {
+  border-radius: 15px;
+}
+
+.custom-btn {
+  display: block;
+  width: 100%;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #2CAFC0;
+  color: #000;
+  border: none;
+  border-radius: 15px;
+  /* Adjust the border-radius to control the roundness */
+  font-weight: bold;
+  cursor: pointer;
+}

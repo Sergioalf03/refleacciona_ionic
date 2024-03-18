@@ -14,6 +14,7 @@ import { AuthService } from 'src/app/services/auth.service';
 @Component({
   selector: 'app-register',
   templateUrl: './register.page.html',
+  styleUrls: ['./register.page.scss'],
 })
 export class RegisterPage {
 
@@ -21,7 +22,7 @@ export class RegisterPage {
   backUri = URI_LOGIN();
 
   user: any = {};
-  txtButtonEnter = 'GUARDAR';
+  txtButtonEnter = 'Sign Up';
 
   constructor(
     private randomService: RandomStringService,

@@ -6,7 +6,8 @@ import { StorageService } from './core/controllers/storage.service';
 import { Storage } from '@ionic/storage-angular';
 import { Platform } from '@ionic/angular';
 import { SQLiteService } from './core/controllers/sqlite.service';
-import { URI_HOME } from './core/constants/uris';
+import { URI_AUDITORY_LIST, URI_BELT_LIST, URI_GENERAL_COUNT_LIST, URI_HELMET_LIST, URI_HOME } from './core/constants/uris';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -25,6 +26,7 @@ export class AppComponent implements OnInit {
     private sqlite: SQLiteService,
     private storage: Storage,
     private platform: Platform,
+    private router: Router,
   ) {}
 
   async ngOnInit() {
@@ -66,6 +68,22 @@ export class AppComponent implements OnInit {
         }
       });
     });
+  }
+
+  onAuditoryList() {
+    this.router.navigateByUrl(URI_AUDITORY_LIST('local'));
+  }
+
+  onHelmetList() {
+    this.router.navigateByUrl(URI_HELMET_LIST('local'));
+  }
+
+  onBeltList() {
+    this.router.navigateByUrl(URI_BELT_LIST('local'));
+  }
+
+  onGeneralCountList() {
+    this.router.navigateByUrl(URI_GENERAL_COUNT_LIST('local'));
   }
 
 }
