@@ -1,0 +1,48 @@
+<div class="row mt-3 mb-0">
+          <div class="col-9 text-start">
+            <ul class="list-group list-group-horizontal list-group-flush">
+              <li class="list-group-item bg-transparent border-0 px-0">
+
+                <i *ngIf="!ImageSafeSrc" class="fa-solid fa-circle-user icon-shadow mx-0"></i>
+
+                <ion-avatar *ngIf="ImageSafeSrc">
+                  <img  width="100%"  [src]="ImageSafeSrc">
+                </ion-avatar>
+
+              </li>
+              <li class="list-group-item bg-transparent border-0 text pt-4 coolor">
+
+
+                {{ userName }}
+              </li>
+            </ul>
+
+
+          </div>
+
+          <div class="col-3 text-end">
+            <button id="click-trigger" class="btn custom-white-btn p-0 m-0 px-2  mt-2">
+              <i class="fa-solid fa-gear p-0 m-0 mt-2"></i>
+            </button>
+
+            <!-- <ion-button id="click-trigger" size="small">
+          <ion-icon slot="icon-only" name="person"></ion-icon>
+        </ion-button>
+         -->
+        <ion-popover trigger="click-trigger" [dismissOnSelect]="true" triggerAction="click">
+          <ng-template>
+            <ion-content>
+              <ion-list lines="none">
+                <ion-item class="p-0 m-0" button (click)="onOpenUser()">
+                  <p class="text">Datos de Usuario</p>
+                </ion-item>
+
+                <ion-item class="p-0 m-0" button (click)="onLogout()">
+                  <p class="text">Salir</p>
+                </ion-item>
+              </ion-list>
+            </ion-content>
+          </ng-template>
+        </ion-popover>
+          </div>
+        </div>

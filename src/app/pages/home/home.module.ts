@@ -6,6 +6,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { HomePage } from './home.page';
 import { RouterModule, Routes } from '@angular/router';
+import { ProfileHeaderModule } from 'src/app/components/profile-header/profile-header.module';
 
 const routes: Routes = [
   {
@@ -20,6 +21,7 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
+    ProfileHeaderModule,
   ],
   declarations: [HomePage]
 })

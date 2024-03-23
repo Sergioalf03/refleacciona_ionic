@@ -158,3 +158,18 @@ ion-input.custom-input {
   font-size: 14px;
 }
 
+.title-text-size {
+  font-size: 34px;
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 36px;
+}
+
+.white-bg {
+  background-color: #F4F4F4;
+}
+
+ion-content::part(background) {
+  background: #F4F4F4;
+}

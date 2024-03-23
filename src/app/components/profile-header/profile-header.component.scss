@@ -1,0 +1,17 @@
+.icon-shadow {
+  font-size: 50px;
+  // box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  color: #000;
+}
+
+.custom-white-btn {
+  width: auto;
+  font-size: 24px;
+  background-color: #FFF;
+  color: #000;
+  border: 1px solid white;
+  border-radius: 20px;
+  /* Adjust the border-radius to control the roundness */
+  font-weight: normal;
+  cursor: pointer;
+}

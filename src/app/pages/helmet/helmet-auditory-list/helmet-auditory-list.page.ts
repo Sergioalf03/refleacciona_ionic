@@ -11,15 +11,16 @@ import { HelmetAuditoryEvidenceService } from 'src/app/services/helmet-auditory-
 import { HelmetAuditoryService } from 'src/app/services/helmet-auditory.service';
 import { HelmetCollectionService } from 'src/app/services/helmet-collection.service';
 import { Capacitor } from '@capacitor/core';
-import { Directory, Filesystem } from '@capacitor/filesystem';
-import { Share } from '@capacitor/share';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-helmet-auditory-list',
   templateUrl: './helmet-auditory-list.page.html',
+  styleUrls: ['./helmet-auditory-list.page.scss'],
 })
 export class HelmetAuditoryListPage {
 
+  listObservable = new BehaviorSubject<{ list: any[], type: number }>({ list: [], type: 0 });
   auditories: any[] = [];
   sendedList = false;
   loading = false;
@@ -28,6 +29,8 @@ export class HelmetAuditoryListPage {
     click: () => this.router.navigateByUrl(this.formUri),
     icon: 'add',
   }
+
+  showList = false;
 
   backUri = URI_HOME();
   formUri = URI_HELMET_FORM('00');
@@ -55,6 +58,7 @@ export class HelmetAuditoryListPage {
   }
 
   async ionViewWillEnter() {
+
     this.route
       .paramMap
       .subscribe({
@@ -73,11 +77,15 @@ export class HelmetAuditoryListPage {
       }).unsubscribe();
   }
 
+  ionViewWillLeave() {
+    this.showList = false;
+  }
+
   onGoingHome() {
     this.router.navigateByUrl(this.backUri);
   }
 
-  private onEdit(id: string) {
+  onEdit(id: string) {
     this.router.navigateByUrl(URI_HELMET_FORM(id));
   }
 
@@ -85,7 +93,7 @@ export class HelmetAuditoryListPage {
     this.router.navigateByUrl(URI_HELMET_FORM('00'));
   }
 
-  private onUpload(id: string) {
+  onUpload = (id: string) => {
     this.confirmDialogService
       .presentAlert('Una vez enviado el registro no se podrá modificar. ¿Desea continuar?', () => {
         this.loadingService.showLoading();
@@ -222,32 +230,34 @@ export class HelmetAuditoryListPage {
     return resultPromise;
   }
 
-  private onDelete(id: string) {
-    this.confirmDialogService.presentAlert('¿Desea eliminar el registro?', () => {
-      this.loadingService.showLoading();
-      this.auditoryService
-        .deleteLocal(id)
-        .subscribe({
-          next: (rm) => {
-            if (rm !== DATABASE_WAITING_MESSAGE) {
-              this.responseService.onSuccess('Registro eliminado');
-              setTimeout(() => {
-                this.fetchLocalList();
-              }, 100)
+  onDelete = (id: string) => {
+    console.log('delete')
+    this.confirmDialogService
+      .presentAlert('¿Desea eliminar el registro?', () => {
+        this.loadingService.showLoading();
+        this.auditoryService
+          .deleteLocal(id)
+          .subscribe({
+            next: (rm) => {
+              if (rm !== DATABASE_WAITING_MESSAGE) {
+                this.responseService.onSuccess('Registro eliminado');
+                setTimeout(() => {
+                  this.fetchLocalList();
+                }, 100)
+              }
+            },
+            error: err => {
+              this.responseService.onError(err, 'No se pudo eliminar el registro');
             }
-          },
-          error: err => {
-            this.responseService.onError(err, 'No se pudo eliminar el registro');
-          }
-        })
-    });
+          })
+      });
   }
 
-  private onDetail(id: string) {
+  onDetail = (id: string) => {
     this.router.navigateByUrl(URI_HELMET_COUNT_FORM(id));
   }
 
-  onRemoteDetail(id: string) {
+  onRemoteDetail = (id: string) => {
     this.router.navigateByUrl(URI_HELMET_DETAIL(id));
   }
 
@@ -395,20 +405,21 @@ export class HelmetAuditoryListPage {
 
   fetchLocalList() {
     this.sendedList = false;
-    this.loadingService.showLoading();
-    this.loading = true;
+    // this.loadingService.showLoading();
+    // this.loading = true;
 
     this.auditoryService
       .getLocalList()
       .subscribe({
         next: res => {
           if (res !== DATABASE_WAITING_MESSAGE) {
-            this.auditories = res.map((a: any) => ({
-              ...a,
-              statusWord: a.status === 1 ? 'En progreso' : 'Terminada',
-            }));
-            this.loading = false;
-            this.loadingService.dismissLoading();
+            this.listObservable.next({
+              list: res.map((a: any) => ({
+                ...a,
+                statusWord: a.status === 1 ? 'En progreso' : 'Terminada',
+              })),
+              type: 1,
+            });
           }
         },
         error: err => {
@@ -425,11 +436,13 @@ export class HelmetAuditoryListPage {
       .getRemoteList()
       .subscribe({
         next: res => {
-          this.sendedList = true;
-          this.auditories = res.data.map((a: any) => ({
-            ...a,
-            statusWord: 'Enviado',
-          }));
+          this.listObservable.next({
+            list: res.data.map((a: any) => ({
+              ...a,
+              statusWord: 'Enviado',
+            })),
+            type: 2,
+          });
           this.loadingService.dismissLoading();
         },
         error: err => {

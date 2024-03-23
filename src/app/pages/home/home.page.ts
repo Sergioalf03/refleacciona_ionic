@@ -31,8 +31,7 @@ export class HomePage {
   handlerPermissions: any;
   initPlugin: boolean = false;
 
-  userName = 'Sara J.';
-  ImageSafeSrc = '';
+  showProfileHeader = false;
 
   constructor(
     private sessionService: SessionService,
@@ -43,7 +42,7 @@ export class HomePage {
     private confirmDialogService: ConfirmDialogService,
     private loadingService: LoadingService,
     private platform: Platform,
-    private photoService: PhotoService,
+
     // private androidPermissions: AndroidPermissions,
   ) {
 
@@ -70,33 +69,14 @@ export class HomePage {
 
   }
 
-  ionViewDidEnter() {
-    const homeUserData = this.sessionService.getUserHomeData();
-
-    const whereToSlice = homeUserData.userName.indexOf(' ');
-    let replacedName = homeUserData.userName.substring(0, whereToSlice + 2) + '.';
-
-    if (replacedName.length > 15) {
-      replacedName = replacedName.substring(0, 15) + '...';
-    }
-
-    this.userName = replacedName;
-
-    if (isPlatform('hybrid')) {
-      this.photoService.getLocalLogoUri().then(photo => {
-        this.ImageSafeSrc = Capacitor.convertFileSrc(photo.uri)
-      })
-    } else {
-      this.photoService.getLocalLogo().then(photo => {
-        this.ImageSafeSrc = 'data:image/png;base64,' + photo.data;
-      });
-    }
-
-
-    if (!this.versionService.checked) {
-      this.onFetchUpdate(false);
-    }
+  ionViewWillEnter() {
+    this.showProfileHeader = true;
   }
+
+  ionViewWillLeave() {
+    this.showProfileHeader = false;
+  }
+
 
   private importQuestions(questions: any[], sectionsQuery: string, version: number) {
     let query = '';
