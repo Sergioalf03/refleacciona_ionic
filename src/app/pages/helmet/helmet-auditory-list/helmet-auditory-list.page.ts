@@ -68,11 +68,11 @@ export class HelmetAuditoryListPage {
       }).unsubscribe();
   }
 
-  onEdit(id: string) {
+  onEdit = (id: string) => {
     this.router.navigateByUrl(URI_HELMET_FORM(id));
   }
 
-  onNewAuditory() {
+  onNewAuditory = () => {
     this.router.navigateByUrl(URI_HELMET_FORM('00'));
   }
 

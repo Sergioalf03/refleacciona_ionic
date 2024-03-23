@@ -1,11 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { ActionSheetController, Platform } from '@ionic/angular';
+import { BehaviorSubject } from 'rxjs';
 import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
-import { URI_GENERAL_COUNT_COLLECION_DETAIL, URI_GENERAL_COUNT_COUNT_FORM, URI_GENERAL_COUNT_DETAIL, URI_GENERAL_COUNT_FORM, URI_HOME } from 'src/app/core/constants/uris';
+import { URI_GENERAL_COUNT_COUNT_FORM, URI_GENERAL_COUNT_DETAIL, URI_GENERAL_COUNT_FORM, URI_HOME } from 'src/app/core/constants/uris';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
@@ -17,17 +18,12 @@ import { GeneralCountCollectionService } from 'src/app/services/general-count-co
 @Component({
   selector: 'app-general-count-auditory-list',
   templateUrl: './general-count-auditory-list.page.html',
+  styleUrls: ['./general-count-auditory-list.page.scss'],
 })
 export class GeneralCountAuditoryListPage {
 
-  auditories: any[] = [];
+  listObservable = new BehaviorSubject<{ list: any[], type: number }>({ list: [], type: 0 });
   sendedList = false;
-  loading = false;
-
-  customButton = {
-    click: () => this.router.navigateByUrl(this.formUri),
-    icon: 'add',
-  }
 
   backUri = URI_HOME();
   formUri = URI_GENERAL_COUNT_FORM('00');
@@ -73,19 +69,15 @@ export class GeneralCountAuditoryListPage {
       }).unsubscribe();
   }
 
-  onGoingHome() {
-    this.router.navigateByUrl(this.backUri);
-  }
-
-  private onEdit(id: string) {
+  onEdit = (id: string) => {
     this.router.navigateByUrl(URI_GENERAL_COUNT_FORM(id));
   }
 
-  onNewAuditory() {
+  onNewAuditory = () => {
     this.router.navigateByUrl(URI_GENERAL_COUNT_FORM('00'));
   }
 
-  private onUpload(id: string) {
+  onUpload = (id: string) => {
     this.confirmDialogService
       .presentAlert('Una vez enviado el conteo no se podrá modificar. ¿Desea continuar?', () => {
         this.loadingService.showLoading();
@@ -232,7 +224,7 @@ export class GeneralCountAuditoryListPage {
     return resultPromise;
   }
 
-  private onDelete(id: string) {
+  onDelete = (id: string) => {
     this.confirmDialogService.presentAlert('¿Desea eliminar el registro?', () => {
       this.loadingService.showLoading();
       this.auditoryService
@@ -253,172 +245,29 @@ export class GeneralCountAuditoryListPage {
     });
   }
 
-  private onDetail(id: string) {
+  onDetail = (id: string) => {
     this.router.navigateByUrl(URI_GENERAL_COUNT_COUNT_FORM(id));
   }
 
-  onRemoteDetail(id: string) {
+  onRemoteDetail = (id: string) => {
     this.router.navigateByUrl(URI_GENERAL_COUNT_DETAIL(id));
   }
 
-  private onDownloadPdf(id: string, title: string) {
-    this.confirmDialogService
-      .presentAlert('¿Desea descargar el conteo?', () => {
-        this.loadingService.showLoading();
-        this.auditoryService
-          .downloadPdf(id)
-          .subscribe({
-            next: res => {
-              // const blob = res;
-              // const filename = `data.pdf`;
-              // if ((window.navigator as any).msSaveOrOpenBlob) {
-              //   (window.navigator as any).msSaveBlob(blob, filename);
-              // } else {
-              //   const downloadLink = window.document.createElement('a');
-              //   const contentTypeHeader = 'application/pdf';
-              //   downloadLink.href = window.URL.createObjectURL(
-              //     new Blob([blob], { type: contentTypeHeader })
-              //   );
-              //   downloadLink.download = filename;
-              //   document.body.appendChild(downloadLink);
-              //   downloadLink.click();
-              //   document.body.removeChild(downloadLink);
-              // }
-              const blob = res;
-              const find = ' ';
-              const re = new RegExp(find, 'g');
-              const filePath = `${title.replace(re, '-')}.pdf`;
-
-              const fileReader = new FileReader();
-
-              fileReader.readAsDataURL(blob);
-
-              fileReader.onloadend = async () => {
-                const base64Data: any = fileReader.result;
-
-                Filesystem.writeFile({
-                  path: filePath,
-                  data: base64Data,
-                  directory: Directory.Cache,
-                }).then(() => {
-                  return Filesystem.getUri({
-                    directory: Directory.Cache,
-                    path: filePath
-                  });
-                })
-                  .then((uriResult) => {
-                    return Share.share({
-                      title: filePath,
-                      text: filePath,
-                      url: uriResult.uri,
-                    });
-                  }).then(() => {
-                    this.loadingService.dismissLoading();
-                  })
-                  .catch(err => this.responseService.onError(err, 'No se pudo descargar la auditoría'));
-              }
-            },
-            error: err => this.responseService.onError(err, 'No se pudo descargar la auditoría')
-          })
-      })
-  }
-
-  async presentActionSheetOptions(auditory: any) {
-
-    const buttons = this.sendedList ?
-      [
-        {
-          text: 'Ver Conteo',
-          handler: () => this.onRemoteDetail(auditory.id),
-        },
-        {
-          text: 'Descargar Conteo',
-          handler: () => this.onDownloadPdf(auditory.id, auditory.title),
-        },
-        {
-          text: 'Cerrar',
-          role: 'cancel',
-          data: {
-            action: 'cancel',
-          },
-        },
-      ] :
-      !!auditory.countId ?
-        [
-          {
-            text: 'Envíar Conteo',
-            handler: () => this.onUpload(auditory.id),
-          },
-          {
-            text: 'Actualizar Conteo',
-            handler: () => this.onDetail(auditory.id),
-          },
-          {
-            text: 'Actualizar catos generales',
-            handler: () => this.onEdit(auditory.id),
-          },
-          {
-            text: 'Eliminar Conteo',
-            role: 'destructive',
-            handler: () => this.onDelete(auditory.id),
-          },
-          {
-            text: 'Cerrar',
-            role: 'cancel',
-            data: {
-              action: 'cancel',
-            },
-          },
-        ]:
-        [
-          {
-            text: 'Actualizar Conteo',
-            handler: () => this.onDetail(auditory.id),
-          },
-          {
-            text: 'Actualizar datos generales',
-            handler: () => this.onEdit(auditory.id),
-          },
-          {
-            text: 'Eliminar Conteo',
-            role: 'destructive',
-            handler: () => this.onDelete(auditory.id),
-          },
-          {
-            text: 'Cerrar',
-            role: 'cancel',
-            data: {
-              action: 'cancel',
-            },
-          },
-        ];
-
-    const actionSheet = await this.actionSheetCtrl.create({
-      header: 'Opciones',
-      mode: 'ios',
-      buttons: buttons,
-    });
-
-    await actionSheet.present();
-  }
-
-
   fetchLocalList() {
     this.sendedList = false;
-    this.loadingService.showLoading();
-    this.loading = true;
 
     this.auditoryService
       .getLocalList()
       .subscribe({
         next: res => {
           if (res !== DATABASE_WAITING_MESSAGE) {
-            this.auditories = res.map((a: any) => ({
-              ...a,
-              statusWord: a.status === 1 ? 'En progreso' : 'Terminada',
-            }));
-            this.loading = false;
-            this.loadingService.dismissLoading();
+            this.listObservable.next({
+              list: res.map((a: any) => ({
+                ...a,
+                statusWord: a.status === 1 ? 'En progreso' : 'Terminada',
+              })),
+              type: 1,
+            });
           }
         },
         error: err => {
@@ -435,11 +284,13 @@ export class GeneralCountAuditoryListPage {
       .getRemoteList()
       .subscribe({
         next: res => {
-          this.sendedList = true;
-          this.auditories = res.data.map((a: any) => ({
-            ...a,
-            statusWord: 'Enviado',
-          }));
+          this.listObservable.next({
+            list: res.data.map((a: any) => ({
+              ...a,
+              statusWord: 'Enviado',
+            })),
+            type: 2,
+          });
           this.loadingService.dismissLoading();
         },
         error: err => {

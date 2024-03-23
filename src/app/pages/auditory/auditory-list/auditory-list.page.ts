@@ -39,7 +39,6 @@ export class AuditoryListPage {
     private loadingService: LoadingService,
     private router: Router,
     private confirmDialogService: ConfirmDialogService,
-    private actionSheetCtrl: ActionSheetController,
     private route: ActivatedRoute,
     private platform: Platform,
   ) {
