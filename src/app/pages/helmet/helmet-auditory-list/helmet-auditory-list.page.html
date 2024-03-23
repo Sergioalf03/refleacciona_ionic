@@ -1,6 +1,7 @@
 <ion-content class="m-0 p-0">
   <app-generic-list
     [title]="'Uso de casco'"
+    [descrciption]="'Realiza un conteo de los motociclistas con y sin casco que pasan por una calle'"
     [type]="1"
     [listObservable]="listObservable"
     [create]="onNewAuditory"
@@ -15,54 +16,11 @@
 <ion-footer>
   <ion-row>
     <ion-col >
-      <button class="btn custom-gray-btn" [disabled]="!sendedList" (click)="fetchLocalList()">Sin Enviar</button>
+      <button class="btn custom-black-btn" [disabled]="!sendedList" (click)="fetchLocalList()">Sin Enviar</button>
     </ion-col>
 
     <ion-col>
-      <button class="btn custom-gray-btn" [disabled]="sendedList" (click)="fetchRemoteList()">Enviadas</button>
+      <button class="btn custom-black-btn" [disabled]="sendedList" (click)="fetchRemoteList()">Enviadas</button>
     </ion-col>
   </ion-row>
 </ion-footer>
-<!-- <ion-content >
-  <app-header-buttons
-    [customButton]="customButton"
-    [backUrl]="backUri"
-  ></app-header-buttons>
-
-  <div class="mx-2 mt-2">
-    <h1>Uso de casco</h1>
-
-    <div class="text-center" *ngIf="!loading && auditories.length === 0">
-      <h4 class="mt-2" >Sin conteos</h4>
-      <ion-button (click)="onNewAuditory()">Iniciar uno nuevo</ion-button>
-    </div>
-
-    <ion-item *ngFor="let aud of auditories" class="mt-2 txtInput">
-      <ion-label>
-        <h2 class="text-start">Título: {{ aud.title }}</h2>
-        <p *ngIf="aud.date">Fecha: {{ aud.date }}</p>
-        <p>Estado: {{ aud.statusWord }}</p>
-      </ion-label>
-
-      <ion-button *ngIf="!sendedList" (click)="presentActionSheetOptions(aud)" slot="end" size="small">
-        <ion-icon slot="icon-only" name="menu"></ion-icon>
-      </ion-button>
-      <ion-button *ngIf="sendedList" (click)="onRemoteDetail(aud.id)" slot="end" size="small">
-        <ion-icon slot="icon-only" name="eye"></ion-icon>
-      </ion-button>
-    </ion-item>
-  </div>
-
-</ion-content>
-
-<ion-footer>
-  <ion-row>
-    <ion-col >
-      <ion-button expand="full" [disabled]="!sendedList" (click)="fetchLocalList()">SIN ENVIAR</ion-button>
-    </ion-col>
-
-    <ion-col>
-      <ion-button expand="full" [disabled]="sendedList" (click)="fetchRemoteList()">ENVIADAS</ion-button>
-    </ion-col>
-  </ion-row>
-</ion-footer> -->

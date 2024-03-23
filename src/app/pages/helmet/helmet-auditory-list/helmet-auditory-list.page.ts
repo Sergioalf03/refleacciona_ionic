@@ -21,16 +21,7 @@ import { BehaviorSubject } from 'rxjs';
 export class HelmetAuditoryListPage {
 
   listObservable = new BehaviorSubject<{ list: any[], type: number }>({ list: [], type: 0 });
-  auditories: any[] = [];
   sendedList = false;
-  loading = false;
-
-  customButton = {
-    click: () => this.router.navigateByUrl(this.formUri),
-    icon: 'add',
-  }
-
-  showList = false;
 
   backUri = URI_HOME();
   formUri = URI_HELMET_FORM('00');
@@ -75,14 +66,6 @@ export class HelmetAuditoryListPage {
           }
         }
       }).unsubscribe();
-  }
-
-  ionViewWillLeave() {
-    this.showList = false;
-  }
-
-  onGoingHome() {
-    this.router.navigateByUrl(this.backUri);
   }
 
   onEdit(id: string) {
@@ -261,152 +244,8 @@ export class HelmetAuditoryListPage {
     this.router.navigateByUrl(URI_HELMET_DETAIL(id));
   }
 
-  private onDownloadPdf(id: string, title: string) {
-    this.confirmDialogService
-      .presentAlert('¿Desea descargar el archivo?', () => {
-        this.loadingService.showLoading();
-        this.auditoryService
-          .downloadPdf(id)
-          .subscribe({
-            next: res => {
-              const blob = res;
-              const filename = `data.pdf`;
-              if ((window.navigator as any).msSaveOrOpenBlob) {
-                (window.navigator as any).msSaveBlob(blob, filename);
-              } else {
-                const downloadLink = window.document.createElement('a');
-                const contentTypeHeader = 'application/pdf';
-                downloadLink.href = window.URL.createObjectURL(
-                  new Blob([blob], { type: contentTypeHeader })
-                );
-                downloadLink.download = filename;
-                document.body.appendChild(downloadLink);
-                downloadLink.click();
-                document.body.removeChild(downloadLink);
-              }
-              // const blob = res;
-              // const find = ' ';
-              // const re = new RegExp(find, 'g');
-              // const filePath = `${title.replace(re, '-')}.pdf`;
-
-              // const fileReader = new FileReader();
-
-              // fileReader.readAsDataURL(blob);
-
-              // fileReader.onloadend = async () => {
-              //   const base64Data: any = fileReader.result;
-
-              //   Filesystem.writeFile({
-              //     path: filePath,
-              //     data: base64Data,
-              //     directory: Directory.Cache,
-              //   }).then(() => {
-              //     return Filesystem.getUri({
-              //       directory: Directory.Cache,
-              //       path: filePath
-              //     });
-              //   })
-              //     .then((uriResult) => {
-              //       return Share.share({
-              //         title: filePath,
-              //         text: filePath,
-              //         url: uriResult.uri,
-              //       });
-              //     }).then(() => {
-              //       this.loadingService.dismissLoading();
-              //     })
-              //     .catch(err => this.responseService.onError(err, 'No se pudo descargar el archivo'));
-              // }
-            },
-            error: err => this.responseService.onError(err, 'No se pudo descargar la auditoría')
-          })
-      })
-  }
-
-  async presentActionSheetOptions(auditory: any) {
-
-    const buttons = this.sendedList ?
-      [
-        {
-          text: 'Ver Conteo',
-          handler: () => this.onRemoteDetail(auditory.id),
-        },
-        {
-          text: 'Descargar Conteo',
-          handler: () => this.onDownloadPdf(auditory.id, auditory.title),
-        },
-        {
-          text: 'Cerrar',
-          role: 'cancel',
-          data: {
-            action: 'cancel',
-          },
-        },
-      ] :
-      !!auditory.countId ?
-        [
-          {
-            text: 'Envíar Conteo',
-            handler: () => this.onUpload(auditory.id),
-          },
-          {
-            text: 'Actualizar Conteo',
-            handler: () => this.onDetail(auditory.id),
-          },
-          {
-            text: 'Actualizar Datos Generales',
-            handler: () => this.onEdit(auditory.id),
-          },
-          {
-            text: 'Eliminar Conteo',
-            role: 'destructive',
-            handler: () => this.onDelete(auditory.id),
-          },
-          {
-            text: 'Cerrar',
-            role: 'cancel',
-            data: {
-              action: 'cancel',
-            },
-          },
-        ] :
-        [
-          {
-            text: 'Actualizar Conteo',
-            handler: () => this.onDetail(auditory.id),
-          },
-          {
-            text: 'Actualizar Datos Generales',
-            handler: () => this.onEdit(auditory.id),
-          },
-          {
-            text: 'Eliminar Conteo',
-            role: 'destructive',
-            handler: () => this.onDelete(auditory.id),
-          },
-          {
-            text: 'Cerrar',
-            role: 'cancel',
-            data: {
-              action: 'cancel',
-            },
-          },
-        ];
-
-    const actionSheet = await this.actionSheetCtrl.create({
-      header: 'Opciones',
-      mode: 'ios',
-      buttons: buttons,
-    });
-
-    await actionSheet.present();
-  }
-
-
   fetchLocalList() {
     this.sendedList = false;
-    // this.loadingService.showLoading();
-    // this.loading = true;
 
     this.auditoryService
       .getLocalList()

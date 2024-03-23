@@ -14,21 +14,17 @@ import { URI_AUDITORY_DETAIL, URI_AUDITORY_FORM, URI_HOME, URI_QUESTION_FORM } f
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-auditory-list',
   templateUrl: './auditory-list.page.html',
+  styleUrls: ['./auditory-list.page.scss'],
 })
-export class AuditoryListPage implements OnInit {
+export class AuditoryListPage {
 
-  auditories: any[] = [];
+  listObservable = new BehaviorSubject<{ list: any[], type: number }>({ list: [], type: 0 });
   sendedList = false;
-  loading = false;
-
-  customButton = {
-    click: () => this.router.navigateByUrl(this.formUri),
-    icon: 'add',
-  }
 
   backUri = URI_HOME();
   formUri = URI_AUDITORY_FORM('00');
@@ -52,11 +48,10 @@ export class AuditoryListPage implements OnInit {
       .subscribeWithPriority(9999, () => {
         this.router.navigateByUrl(this.backUri);
         return;
-        // processNextHandler();
       });
   }
 
-  ngOnInit() {
+  async ionViewWillEnter() {
     this.route
       .paramMap
       .subscribe({
@@ -75,27 +70,20 @@ export class AuditoryListPage implements OnInit {
       }).unsubscribe();
   }
 
-  async ionViewWillEnter() {
 
-  }
-
-  onGoingHome() {
-    this.router.navigateByUrl(this.backUri);
-  }
-
-  private onEdit(id: string) {
+  onEdit = (id: string) => {
     this.router.navigateByUrl(URI_AUDITORY_FORM(id));
   }
 
-  private onEditAnswers(id: string, lastIndex: number) {
-    this.router.navigateByUrl(URI_QUESTION_FORM('1', id, `${lastIndex}`));
+  onEditAnswers = (id: string) => {
+    this.router.navigateByUrl(URI_QUESTION_FORM('1', id, `0`));
   }
 
-  onNewAuditory() {
+  onNewAuditory = () => {
     this.router.navigateByUrl(URI_AUDITORY_FORM('00'));
   }
 
-  private onUpload(id: string) {
+  onUpload = (id: string) => {
     this.confirmDialogService
       .presentAlert('Una vez enviada la auditoría no se podrá modificar. ¿Desea continuar?', () => {
         this.loadingService.showLoading();
@@ -299,7 +287,7 @@ export class AuditoryListPage implements OnInit {
     return resultPromise;
   }
 
-  private onDelete(id: string) {
+  onDelete = (id: string) => {
     this.confirmDialogService.presentAlert('¿Desea eliminar la auditoría?', () => {
       this.loadingService.showLoading();
       this.auditoryService
@@ -320,198 +308,25 @@ export class AuditoryListPage implements OnInit {
     });
   }
 
-  onRemoteDetail(id: string) {
+  onRemoteDetail = (id: string) => {
     this.router.navigateByUrl(URI_AUDITORY_DETAIL(id));
   }
 
-  private onDownloadPdf(id: string, title: string) {
-    this.confirmDialogService
-      .presentAlert('¿Desea descargar la auditoría?', () => {
-        this.loadingService.showLoading();
-        this.auditoryService
-          .downloadPdf(id)
-          .subscribe({
-            next: res => {
-              const blob = res;
-              const filename = `data.pdf`;
-              if ((window.navigator as any).msSaveOrOpenBlob) {
-                (window.navigator as any).msSaveBlob(blob, filename);
-              } else {
-                const downloadLink = window.document.createElement('a');
-                const contentTypeHeader = 'application/pdf';
-                downloadLink.href = window.URL.createObjectURL(
-                  new Blob([blob], { type: contentTypeHeader })
-                );
-                downloadLink.download = filename;
-                document.body.appendChild(downloadLink);
-                downloadLink.click();
-                document.body.removeChild(downloadLink);
-              }
-              // const blob = res;
-              // const find = ' ';
-              //   const re = new RegExp(find, 'g');
-              //   const filePath = `${title.replace(re, '-')}.pdf`;
-
-              //   const fileReader = new FileReader();
-
-              //   fileReader.readAsDataURL(blob);
-
-              //   fileReader.onloadend = async () => {
-              //     const base64Data: any = fileReader.result;
-
-              //     Filesystem.writeFile({
-              //       path: filePath,
-              //       data: base64Data,
-              //       directory: Directory.Cache,
-              //     }).then(() => {
-              //       return Filesystem.getUri({
-              //         directory: Directory.Cache,
-              //         path: filePath
-              //       });
-              //     })
-              //     .then((uriResult) => {
-              //       return Share.share({
-              //         title: filePath,
-              //         text: filePath,
-              //         url: uriResult.uri,
-              //       });
-              //     }).then(() => {
-              //       this.loadingService.dismissLoading();
-              //     })
-              //       .catch(err => this.responseService.onError(err, 'No se pudo descargar la auditoría'));
-              //   }
-            },
-            error: err => this.responseService.onError(err, 'No se pudo descargar la auditoría')
-          })
-      })
-  }
-
-  async presentActionSheetOptions(auditory: any) {
-
-    const buttons = this.sendedList ?
-    [
-      {
-        text: 'Ver',
-        handler: () => this.onRemoteDetail(auditory.id),
-      },
-      {
-        text: 'Descargar',
-        handler: () => this.onDownloadPdf(auditory.id, auditory.title),
-      },
-      {
-        text: 'Cerrar',
-        role: 'cancel',
-        data: {
-          action: 'cancel',
-        },
-      },
-    ] :
-    auditory.status === 1 ?
-      auditory.answersCompleted ? [
-        {
-          text: 'Actualizar datos generales',
-          handler: () => this.onEdit(auditory.id),
-        },
-        {
-          text: 'Actualizar Respuestas',
-          handler: () => this.onEditAnswers(auditory.id, 1),
-        },
-        // {
-        //   text: 'Finalizar auditoría',
-        //   handler: () => this.onFinish(auditory.id),
-        // },
-        {
-          text: 'Eliminar Auditoría',
-          role: 'destructive',
-          handler: () => this.onDelete(auditory.id),
-        },
-        {
-          text: 'Cerrar',
-          role: 'cancel',
-          data: {
-            action: 'cancel',
-          },
-        },
-      ] :
-      [
-          {
-            text: 'Actualizar datos generales',
-            handler: () => this.onEdit(auditory.id),
-          },
-          {
-            text: 'Actualizar Respuestas',
-            handler: () => this.onEditAnswers(auditory.id, auditory.lastIndex),
-          },
-          {
-            text: 'Eliminar Auditoría',
-            role: 'destructive',
-            handler: () => this.onDelete(auditory.id),
-          },
-          {
-            text: 'Cerrar',
-            role: 'cancel',
-            data: {
-              action: 'cancel',
-            },
-          },
-      ] :
-      [
-        {
-          text: 'Actualizar datos generales',
-          handler: () => this.onEdit(auditory.id),
-        },
-        {
-          text: 'Actualizar Respuestas',
-          handler: () => this.onEditAnswers(auditory.id, 1),
-        },
-        // {
-        //   text: 'Actualizar comentario final',
-        //   handler: () => this.onFinish(auditory.id),
-        // },
-        {
-          text: 'Envíar Auditoría',
-          handler: () => this.onUpload(auditory.id),
-        },
-        {
-          text: 'Eliminar Auditoría',
-          role: 'destructive',
-          handler: () => this.onDelete(auditory.id),
-        },
-        {
-          text: 'Cerrar',
-          role: 'cancel',
-          data: {
-            action: 'cancel',
-          },
-        },
-      ];
-
-    const actionSheet = await this.actionSheetCtrl.create({
-      header: 'Opciones',
-      mode: 'ios',
-      buttons: buttons,
-    });
-
-    await actionSheet.present();
-  }
-
-
   fetchLocalList() {
     this.sendedList = false;
-    this.loadingService.showLoading();
-    this.loading = true;
 
     this.auditoryService
       .getLocalList()
       .subscribe({
         next: res => {
           if (res !== DATABASE_WAITING_MESSAGE) {
-            this.auditories = res.map((a: any) => ({
-              ...a,
-              statusWord: a.status === 1 ? 'En progreso' : 'Terminada',
-            }));
-            this.loading = false;
-            this.loadingService.dismissLoading();
+            this.listObservable.next({
+              list: res.map((a: any) => ({
+                ...a,
+                statusWord: a.status === 1 ? 'En progreso' : 'Terminada',
+              })),
+              type: 1,
+            });
           }
         },
         error: err => {
@@ -528,11 +343,13 @@ export class AuditoryListPage implements OnInit {
       .getRemoteList()
       .subscribe({
         next: res => {
-          this.sendedList = true;
-          this.auditories = res.data.map((a: any) => ({
-            ...a,
-            statusWord: a.status === 1 ? 'En progreso' : 'Terminada',
-          }));
+          this.listObservable.next({
+            list: res.data.map((a: any) => ({
+              ...a,
+              statusWord: 'Enviado',
+            })),
+            type: 2,
+          });
           this.loadingService.dismissLoading();
         },
         error: err => {

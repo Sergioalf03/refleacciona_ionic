@@ -21,6 +21,7 @@ export class GenericListComponent implements OnInit {
   @Input() editValues: any;
   @Input() create: any;
   @Input() detail: any;
+  @Input() descrciption: any;
 
   list: any[] = [];
 

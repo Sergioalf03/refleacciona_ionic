@@ -12,7 +12,7 @@
           <div class="col">
             <div class=" mb-0 title-text-size">{{ title }}</div>
 
-            <p class="text text-mini coolor mt-0">Lorem ipsum</p>
+            <p class="text text-mini coolor mt-0">{{ descrciption }}</p>
           </div>
         </div>
 
@@ -52,16 +52,16 @@
           <div class="card-body">
 
             <div class="row mt-0">
-              <div class="col-9">
+              <div class="col-10">
                 <h5 class="text text-start text-white mb-0 pb-0">{{element.title}}</h5>
 
                 <p class="text text-mini text-white coolor mt-0 mb-0 pb-0">{{ element.date }}</p>
               </div>
 
-              <div class="col-3 text-end">
+              <div class="col-2 text-end px-0">
                 <button
                   *ngIf="sendedList"
-                  class="btn px-3 mt-1"
+                  class="btn px-3 mt-1 me-2"
                   [ngClass]="{
                     'custom-red-btn': type === 0,
                     'custom-yellow-btn': type === 1,
