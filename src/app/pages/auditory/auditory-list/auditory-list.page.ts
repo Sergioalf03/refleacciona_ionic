@@ -11,8 +11,6 @@ import { AuditoryEvidenceService } from 'src/app/services/auditory-evidence.serv
 import { PhotoService } from 'src/app/core/controllers/photo.service';
 import { AnswerEvidenceService } from 'src/app/services/answer-evidence.service';
 import { URI_AUDITORY_DETAIL, URI_AUDITORY_FORM, URI_HOME, URI_QUESTION_FORM } from 'src/app/core/constants/uris';
-import { Directory, Filesystem } from '@capacitor/filesystem';
-import { Share } from '@capacitor/share';
 import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
 import { BehaviorSubject } from 'rxjs';
 

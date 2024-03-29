@@ -1,0 +1,21 @@
+input {
+  border-radius: 15px;
+}
+
+.custom-white-btn {
+  width: auto;
+  background-color: #FFF;
+  color: #000;
+  border: 1px solid #000;
+  border-radius: 30px;
+  cursor: pointer;
+}
+
+.custom-white-btn-no-border {
+  width: auto;
+  background-color: #FFF;
+  color: #000;
+  border: 1px solid #FFF;
+  border-radius: 30px;
+  cursor: pointer;
+}

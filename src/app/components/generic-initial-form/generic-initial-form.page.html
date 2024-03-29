@@ -1,0 +1,99 @@
+
+<div class=" m-0 p-0">
+
+  <div class="col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4 col-xxl-3 offset-xxl-auto mr-auto mb-4">
+
+    <div class="mx-5">
+      <button class="btn custom-white-btn mt-4">
+        <i class="fa-solid fa-arrow-left" style="font-size: 15spx;"></i>
+      </button>
+
+      <!-- <app-profile-header *ngIf="showProfileHeader"></app-profile-header> -->
+
+      <div class="row mt-5">
+        <div class="col">
+          <!-- <div class=" mb-0 title-text-size">{{ title }}</div> -->
+          <div class=" mb-0 title-text-size">Nueva Auditoría</div>
+
+          <p class="text text-mini coolor mt-0">Indique la información para identificar su auditoría</p>
+        </div>
+      </div>
+
+
+      <div class="input-with-icon mt-4">
+
+        <input
+          name="title"
+          formControlName="title"
+          type="text"
+          placeholder="*Título"
+          class="form-control py-3 px-4"
+        >
+
+          <i class="fa-regular fa-message"></i>
+      </div>
+
+      <div class="input-with-icon mt-3">
+
+        <input
+          name="date"
+          formControlName="date"
+          type="date"
+          placeholder="*Fecha"
+          class="form-control py-3 px-4"
+        >
+
+          <i class="fa-regular fa-calendar"></i>
+
+      </div>
+
+      <div class="input-with-icon mt-3">
+
+        <input
+          name="time"
+          formControlName="time"
+          type="time"
+          placeholder="*Hora"
+        >
+
+          <i class="fa-regular fa-clock"></i>
+      </div>
+
+      <div class="input-with-icon mt-3">
+
+        <text-area
+          name="description"
+          formControlName="description"
+          type="text"
+          placeholder="*Ubicación"
+          class="form-control py-3 px-4"
+          rows="3"
+        ></text-area>
+
+          <i class="fa-solid fa-location-dot"></i>
+      </div>
+
+      <div class="input-with-icon mt-3">
+
+        <input
+          name="email"
+          type="email"
+          placeholder="Descripción"
+          class="form-control py-3 px-4"
+          required
+          pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+
+          <i class="fa-regular fa-pen-to-square"></i>
+      </div>
+
+      <div class="text-end">
+        <button class="btn custom-white-btn-no-border mt-4">
+          Siguiente
+          <i class="fa-solid fa-chevron-right" style="font-size: 15spx;"></i>
+        </button>
+      </div>
+
+
+    </div>
+  </div>
+</div>

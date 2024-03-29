@@ -139,7 +139,11 @@ const routes: Routes = [
   {
     path: URI_GENERAL_COUNT_COUNT_FORM(':id'),
     loadChildren: () => import('./pages/general/swipe-form/swipe-form.module').then( m => m.SwipeFormPageModule)
+  },  {
+    path: 'generic-initial-form',
+    loadChildren: () => import('./components/generic-initial-form/generic-initial-form.module').then( m => m.GenericInitialFormPageModule)
   },
+
 
 ];
 

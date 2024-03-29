@@ -1,26 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Geolocation } from '@capacitor/geolocation';
+import { Capacitor } from '@capacitor/core';
 import { ActionSheetController, isPlatform } from '@ionic/angular';
-import { URI_BELT_COUNT_FORM, URI_BELT_LIST, URI_HOME } from 'src/app/core/constants/uris';
+import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
+import { URI_HOME } from 'src/app/core/constants/uris';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { MapService } from 'src/app/core/controllers/map.service';
 import { PhotoService } from 'src/app/core/controllers/photo.service';
 import { ValidFormService } from 'src/app/core/controllers/valid-form.service';
-import { Geolocation } from '@capacitor/geolocation';
-import { BeltAuditoryService } from 'src/app/services/belt-auditory.service';
-import { BeltAuditoryEvidenceService } from 'src/app/services/belt-auditory-evidence.service';
-import { Capacitor } from '@capacitor/core';
-import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
 
 @Component({
-  selector: 'app-belt-initial-form',
-  templateUrl: './belt-initial-form.page.html',
+  selector: 'app-generic-initial-form',
+  templateUrl: './generic-initial-form.page.html',
+  styleUrls: ['./generic-initial-form.page.scss'],
 })
-export class BeltInitialFormPage implements OnInit {
+export class GenericInitialFormPage implements OnInit {
 
   formActionText = 'Nuevo';
   SubmitButtonText = 'Comenzar';
@@ -33,21 +32,23 @@ export class BeltInitialFormPage implements OnInit {
 
   ImageSrc: any[] = [];
 
+  @Input() toFormUrl!: (id: string) => string;
+  @Input() toListUrl!: (id: string) => string;
+  @Input() service!: any;
+  @Input() evidenceService!: any;
+
   constructor(
-    private auditoryService: BeltAuditoryService,
-    private auditoryEvidenceService: BeltAuditoryEvidenceService,
-    private router: Router,
+    private responseService: HttpResponseService,
+    private photoService: PhotoService,
+    private mapService: MapService,
+    private loadingService: LoadingService,
     private route: ActivatedRoute,
     private validFormService: ValidFormService,
-    private responseService: HttpResponseService,
-    private mapService: MapService,
-    private photoService: PhotoService,
     private confirmDialogService: ConfirmDialogService,
+    private router: Router,
     private actionSheetCtrl: ActionSheetController,
-    private loadingService: LoadingService,
     private sanitization: DomSanitizer,
   ) { }
-
 
   private initForm() {
     const now = new Date();
@@ -75,16 +76,16 @@ export class BeltInitialFormPage implements OnInit {
   }
 
   private async createAuditory(auditory: any) {
-    this.auditoryService
+    this.service
       .localSave(auditory)
       .subscribe({
-        next: (save) => {
+        next: (save: any) => {
           if (save !== DATABASE_WAITING_MESSAGE) {
 
-            this.auditoryService
+            this.service
               .getLastSavedId()
               .subscribe({
-                next: async res => {
+                next: async (res: any) => {
                   if (res !== DATABASE_WAITING_MESSAGE) {
                     this.hideMap = true;
                     this.auditoryId = res.values[0].id;
@@ -97,21 +98,21 @@ export class BeltInitialFormPage implements OnInit {
                           const blob = src.trueb64;
                           // const blob = await fetch(src.base64).then(r => r.blob());
 
-                          this.photoService
+                          this.service
                             .saveLocalBeltAuditoryEvidence(blob, this.auditoryId)
-                            .then(photoId => {
-                              this.auditoryEvidenceService
+                            .then((photoId: any) => {
+                              this.evidenceService
                                 .localSave({ auditoryId: this.auditoryId, dir: photoId })
                                 .subscribe({
-                                  next: async photo => {
+                                  next: async (photo: any) => {
                                     if (photo !== DATABASE_WAITING_MESSAGE) {
                                       count++;
                                       if (count === this.ImageSrc.length) {
-                                        this.responseService.onSuccessAndRedirect(URI_BELT_COUNT_FORM(this.auditoryId), 'Registro guardado');
+                                        this.responseService.onSuccessAndRedirect(this.toFormUrl(this.auditoryId), 'Registro guardado');
                                       }
                                     }
                                   },
-                                  error: err => {
+                                  error: (err: any) => {
                                     this.responseService.onError(err, 'No se pudo guardar una imagen')
                                   },
                                 })
@@ -120,31 +121,31 @@ export class BeltInitialFormPage implements OnInit {
                         }, 100 * index);
                       });
                     } else {
-                      this.responseService.onSuccessAndRedirect(URI_BELT_COUNT_FORM(this.auditoryId), 'Registro guardado');
+                      this.responseService.onSuccessAndRedirect(this.toFormUrl(this.auditoryId), 'Registro guardado');
                     }
                   }
 
                 }
               });
           }
-      },
-      error: err => {
-        this.responseService.onError(err, 'No se pudo guardar')
-      },
-    })
+        },
+        error: (err: any) => {
+          this.responseService.onError(err, 'No se pudo guardar')
+        },
+      })
   }
 
   private updateAuditory(auditory: any) {
-    this.auditoryService
+    this.service
       .updateLocal(this.auditoryId, auditory)
       .subscribe({
-        next: (updateRes) => {
+        next: (updateRes: any) => {
           if (updateRes !== DATABASE_WAITING_MESSAGE) {
             this.hideMap = true;
-            this.responseService.onSuccessAndRedirect(URI_BELT_LIST('local'), 'Registro actualizado');
+            this.responseService.onSuccessAndRedirect(this.toListUrl('local'), 'Registro actualizado');
           }
         },
-        error: err => {
+        error: (err: any) => {
           this.responseService.onError(err, 'No se pudo actualizar')
         },
       })
@@ -152,7 +153,7 @@ export class BeltInitialFormPage implements OnInit {
   }
 
   private setAuditory(auditory: any) {
-    this.backUrl = URI_BELT_LIST('local');
+    this.backUrl = this.toListUrl('local');
     this.form.setValue({
       title: auditory.title,
       description: auditory.description,
@@ -162,10 +163,10 @@ export class BeltInitialFormPage implements OnInit {
       lng: auditory.lng,
     });
 
-    this.auditoryEvidenceService
+    this.evidenceService
       .getEvidencesByAuditory(this.auditoryId)
       .subscribe({
-        next: res => {
+        next: (res: any) => {
           if (res !== DATABASE_WAITING_MESSAGE) {
             if (isPlatform('hybrid')) {
               res.values.forEach(async (row: any) => {
@@ -219,7 +220,7 @@ export class BeltInitialFormPage implements OnInit {
           // this.hideMap = false;
           let id = paramMap.get('id') || '0';
           if (id === '00') {
-            this.backUrl = URI_BELT_LIST('local');
+            this.backUrl = this.toListUrl('local');
             id = '0';
           }
           if (id !== '0') {
@@ -227,15 +228,15 @@ export class BeltInitialFormPage implements OnInit {
             this.auditoryId = id;
             this.formActionText = 'Actualizando';
             this.SubmitButtonText = 'Guardar';
-            this.auditoryService
+            this.service
               .getLocalForm(this.auditoryId)
               .subscribe({
-                next: res => {
+                next: (res: any) => {
                   if (res !== DATABASE_WAITING_MESSAGE) {
                     this.setAuditory(res.values[0]);
                   }
                 },
-                error: err => {
+                error: (err: any) => {
                   this.responseService.onError(err, 'No se pudieron recuperar los datos');
                 },
               })
@@ -275,12 +276,12 @@ export class BeltInitialFormPage implements OnInit {
             lng: this.form.controls['lng'].value,
           };
 
-        if (this.auditoryId === '0') {
-          this.createAuditory(auditory);
-        } else {
-          this.updateAuditory(auditory);
-        }
-      })
+          if (this.auditoryId === '0') {
+            this.createAuditory(auditory);
+          } else {
+            this.updateAuditory(auditory);
+          }
+        })
     }
   }
 
@@ -344,12 +345,12 @@ export class BeltInitialFormPage implements OnInit {
             .saveLocalBeltAuditoryEvidence(blob, this.auditoryId)
             .then(photoId => {
               if (photoId !== DATABASE_WAITING_MESSAGE) {
-                this.auditoryEvidenceService
+                this.evidenceService
                   .localSave({ auditoryId: this.auditoryId, dir: photoId })
                   .subscribe({
-                    next: async save => {
+                    next: async (save: any) => {
                       if (save !== DATABASE_WAITING_MESSAGE) {
-                        this.auditoryEvidenceService
+                        this.evidenceService
                           .getLastInsertedDir()
                           .subscribe({
                             next: async (res2: any) => {
@@ -367,7 +368,7 @@ export class BeltInitialFormPage implements OnInit {
                           });
                       }
                     },
-                    error: err => {
+                    error: (err: any) => {
                       this.responseService.onError(err, 'No se pudo guardar una imagen')
                     },
                   })
@@ -390,7 +391,7 @@ export class BeltInitialFormPage implements OnInit {
             width: '25%'
           },
         });
-      }  else {
+      } else {
         const img = res.webPath || '';
         const blob = await fetch(img).then(r => r.blob());
 
@@ -398,12 +399,12 @@ export class BeltInitialFormPage implements OnInit {
           .saveLocalBeltAuditoryEvidence(blob, this.auditoryId)
           .then(photoId => {
             if (photoId !== DATABASE_WAITING_MESSAGE) {
-              this.auditoryEvidenceService
+              this.evidenceService
                 .localSave({ auditoryId: this.auditoryId, dir: photoId })
                 .subscribe({
-                  next: async save => {
+                  next: async (save: any) => {
                     if (save !== DATABASE_WAITING_MESSAGE) {
-                      this.auditoryEvidenceService
+                      this.evidenceService
                         .getLastInsertedDir()
                         .subscribe({
                           next: async (res2: any) => {
@@ -421,7 +422,7 @@ export class BeltInitialFormPage implements OnInit {
                         });
                     }
                   },
-                  error: err => {
+                  error: (err: any) => {
                     this.responseService.onError(err, 'No se pudo guardar una imagen')
                   },
                 });
@@ -471,7 +472,7 @@ export class BeltInitialFormPage implements OnInit {
   onRemove(dir: string, index: number) {
     this.confirmDialogService.presentAlert('¿Desea eliminar la imagen?', () => {
       if (!!dir) {
-        this.auditoryEvidenceService
+        this.evidenceService
           .localRemove(dir)
           .subscribe({
             next: () => {

@@ -4,15 +4,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { AuditoryFormPage } from './auditory-form.page';
-import { MapModule } from 'src/app/components/map/map.module';
+import { GenericInitialFormPage } from './generic-initial-form.page';
 import { RouterModule, Routes } from '@angular/router';
-import { GenericInitialFormPageModule } from 'src/app/components/generic-initial-form/generic-initial-form.module';
 
 const routes: Routes = [
   {
     path: '',
-    component: AuditoryFormPage
+    component: GenericInitialFormPage
   }
 ];
 
@@ -20,12 +18,10 @@ const routes: Routes = [
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
-    MapModule,
-    GenericInitialFormPageModule,
   ],
-  declarations: [AuditoryFormPage]
+  declarations: [GenericInitialFormPage],
+  exports: [GenericInitialFormPage],
 })
-export class AuditoryFormPageModule {}
+export class GenericInitialFormPageModule {}
