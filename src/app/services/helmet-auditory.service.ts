@@ -109,7 +109,7 @@ export class HelmetAuditoryService {
       .subscribe(directories => {
         if (directories !== DATABASE_WAITING_MESSAGE) {
           directories.values.forEach((dir: any) => {
-            this.photoService.removeLocalAuditoryEvidence(dir.dir)
+            this.photoService.removeLocalEvidence(dir.dir)
           });
           this.databaseService
             .executeQuery(`DELETE FROM helmet_auditory_evidences WHERE helmet_auditory_id = ${id}`)

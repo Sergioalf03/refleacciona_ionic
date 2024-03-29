@@ -109,7 +109,7 @@ export class BeltAuditoryService {
       .subscribe(directories => {
         if (directories !== DATABASE_WAITING_MESSAGE) {
           directories.values.forEach((dir: any) => {
-            this.photoService.removeLocalAuditoryEvidence(dir.dir)
+            this.photoService.removeLocalEvidence(dir.dir)
           });
           this.databaseService
             .executeQuery(`DELETE FROM belt_auditory_evidences WHERE belt_auditory_id = ${id}`)

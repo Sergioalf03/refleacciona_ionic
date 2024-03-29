@@ -25,6 +25,7 @@ export class ProfilePage {
   txtButtonEnter = 'GUARDAR';
   ImageSrc = '';
   ImageSafeSrc: SafeUrl = '';
+  imageData!: any;
 
   constructor(
     private sessionService: SessionService,
@@ -135,8 +136,6 @@ export class ProfilePage {
     }
   }
 
-
-
   onGoingHome() {
     this.router.navigateByUrl(this.backUri);
   }
@@ -145,7 +144,7 @@ export class ProfilePage {
     this.photoService.openGallery().then(async res => {
       this.ImageSafeSrc = this.sanitization.bypassSecurityTrustUrl(res.photos[0].webPath);
       this.ImageSrc = res.photos[0].webPath;
-
+      this.imageData = res.photos[0];
     });
   }
 

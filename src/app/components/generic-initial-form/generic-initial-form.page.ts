@@ -170,7 +170,7 @@ export class GenericInitialFormPage implements OnInit {
           if (res !== DATABASE_WAITING_MESSAGE) {
             if (isPlatform('hybrid')) {
               res.values.forEach(async (row: any) => {
-                this.photoService.getLocalAuditoryEvidenceUri(row.dir).then(photo => {
+                this.photoService.getLocalEvidenceUri(row.dir).then(photo => {
                   this.ImageSrc.push({
                     id: row.dir,
                     url: Capacitor.convertFileSrc(photo.uri),
@@ -183,7 +183,7 @@ export class GenericInitialFormPage implements OnInit {
               });
             } else {
               res.values.forEach(async (row: any) => {
-                this.photoService.getLocalAuditoryEvidence(row.dir).then(photo => {
+                this.photoService.getLocalEvidence(row.dir).then(photo => {
                   const file = 'data:image/png;base64,' + photo.data;
                   this.ImageSrc.push({
                     id: row.dir,
@@ -477,7 +477,7 @@ export class GenericInitialFormPage implements OnInit {
           .subscribe({
             next: () => {
               this.photoService
-                .removeLocalAuditoryEvidence(dir)
+                .removeLocalEvidence(dir)
                 .then(() => this.ImageSrc.splice(index, 1));
             }
           })

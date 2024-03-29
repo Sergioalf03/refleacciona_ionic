@@ -10,7 +10,6 @@ import { PhotoService } from 'src/app/core/controllers/photo.service';
 import { HelmetAuditoryEvidenceService } from 'src/app/services/helmet-auditory-evidence.service';
 import { HelmetAuditoryService } from 'src/app/services/helmet-auditory.service';
 import { HelmetCollectionService } from 'src/app/services/helmet-collection.service';
-import { Capacitor } from '@capacitor/core';
 import { BehaviorSubject } from 'rxjs';
 
 @Component({
@@ -179,21 +178,27 @@ export class HelmetAuditoryListPage {
       });
   }
 
+  blobUrl = '';
+
   private async uploadAuditoryEvidence(arr: any, index: number, externalId: string) {
     const resultPromise = new Promise(async (res, rej) => {
       if (index === arr.length) {
         return res(true);
       }
 
-      const ImageSrc = await this.photoService.getLocalAuditoryEvidenceUri(arr[index].dir).then(photo => photo.uri);
-      const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => r.blob());
+      const ImageSrc = await this.photoService.getLocalEvidence(arr[index].dir).then(photo => photo);
+
+      // const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => r.blob());
+
+      // this.blobUrl = URL.createObjectURL(blob) // blob is the Blob object
+      // console.log(blob);
 
       this.auditoryEvidenceService
-        .uploadImage(blob, externalId, arr[index].creation_date, arr[index].dir)
+        .uploadImage((ImageSrc.data as string), externalId, arr[index].creation_date, arr[index].dir)
         .subscribe({
           next: () => {
             this.photoService
-              .removeLocalAuditoryEvidence(arr[index].dir)
+              .removeLocalEvidence(arr[index].dir)
               .then(() => {
                 this.auditoryEvidenceService
                   .localRemove(arr[index].dir)

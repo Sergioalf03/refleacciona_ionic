@@ -1,8 +1,5 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Capacitor } from '@capacitor/core';
-import { Directory, Filesystem } from '@capacitor/filesystem';
-import { Share } from '@capacitor/share';
 import { ActionSheetController, Platform } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
@@ -194,17 +191,17 @@ export class GeneralCountAuditoryListPage {
         return res(true);
       }
 
-      const ImageSrc = await this.photoService.getLocalAuditoryEvidenceUri(arr[index].dir).then(photo => photo.uri);
-      const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => {
-        return r.blob()
-      });
+      const ImageSrc = await this.photoService.getLocalEvidence(arr[index].dir).then(photo => photo);
+      // const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => {
+      //   return r.blob()
+      // });
 
       this.auditoryEvidenceService
-        .uploadImage(blob, externalId, arr[index].creation_date, arr[index].dir)
+        .uploadImage((ImageSrc.data as string), externalId, arr[index].creation_date, arr[index].dir)
         .subscribe({
           next: () => {
             this.photoService
-              .removeLocalAuditoryEvidence(arr[index].dir)
+              .removeLocalEvidence(arr[index].dir)
               .then(() => {
                 this.auditoryEvidenceService
                   .localRemove(arr[index].dir)

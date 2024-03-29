@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ActionSheetController, Platform } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
@@ -189,25 +189,16 @@ export class BeltAuditoryListPage {
         return res(true);
       }
 
-      const imageData = await this.photoService.getLocalAuditoryEvidence(arr[index].dir).then(photo => photo.data);
+      const ImageSrc = await this.photoService.getLocalEvidence(arr[index].dir).then(photo => photo);
 
-      const mimeString = imageData.split(',')[0].split(':')[1].split(';')[0];
-      const ab = new ArrayBuffer(imageData.length);
-      const ia = new Uint8Array(ab);
-
-      for (let i = 0; i < mimeString.length; i++) {
-          ia[i] = mimeString.charCodeAt(i);
-      }
-
-      const blob = new Blob([ab], {type: mimeString});
       // const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => r.blob());
 
       this.auditoryEvidenceService
-        .uploadImage(blob, externalId, arr[index].creation_date, arr[index].dir)
+        .uploadImage((ImageSrc.data as string), externalId, arr[index].creation_date, arr[index].dir)
         .subscribe({
           next: () => {
             this.photoService
-              .removeLocalAuditoryEvidence(arr[index].dir)
+              .removeLocalEvidence(arr[index].dir)
               .then(() => {
                 this.auditoryEvidenceService
                   .localRemove(arr[index].dir)

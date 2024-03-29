@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ActionSheetController, Platform, isPlatform } from '@ionic/angular';
-import { URI_HELMET_COLLECION_DETAIL, URI_HELMET_COUNT_FORM, URI_HELMET_LIST, URI_HOME } from 'src/app/core/constants/uris';
+import { ActionSheetController, isPlatform } from '@ionic/angular';
+import {  URI_HELMET_COUNT_FORM, URI_HELMET_LIST, URI_HOME } from 'src/app/core/constants/uris';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
@@ -81,50 +81,59 @@ export class HelmetInitialFormPage implements OnInit {
         next: (save) => {
           if (save !== DATABASE_WAITING_MESSAGE) {
 
+            setTimeout(() => {
             this.helmetAuditoryService
               .getLastSavedId()
               .subscribe({
                 next: async res => {
                   if (res !== DATABASE_WAITING_MESSAGE) {
-                    this.hideMap = true;
-                    this.auditoryId = res.values[0].id;
 
-                    let count = 0;
+                    setTimeout(() => {
+                      this.hideMap = true;
+                      this.auditoryId = res.values[0].id;
 
-                    if (this.ImageSrc.length > 0) {
-                      this.ImageSrc.forEach(async (src: any, index: number) => {
-                        setTimeout(async () => {
-                          const blob = await fetch(src.base64).then(r => r.blob());
+                      let count = 0;
+
+                      if (this.ImageSrc.length > 0) {
+                        this.ImageSrc.forEach(async (src: any, index: number) => {
+
+                          // const blob = await fetch(src.base64).then(r => r.blob());
 
                           this.photoService
-                            .saveLocalHelmetAuditoryEvidence(blob, this.auditoryId)
+                            .saveLocalHelmetAuditoryEvidence(src.result, this.auditoryId)
                             .then(photoId => {
-                              this.helmetAuditoryEvidenceService
-                                .localSave({ auditoryId: this.auditoryId, dir: photoId })
-                                .subscribe({
-                                  next: async photo => {
-                                    if (photo !== DATABASE_WAITING_MESSAGE) {
-                                      count++;
-                                      if (count === this.ImageSrc.length) {
-                                        this.responseService.onSuccessAndRedirect(URI_HELMET_COUNT_FORM(this.auditoryId), 'Levantmiento guardado');
+
+                              setTimeout(async () => {
+                                this.helmetAuditoryEvidenceService
+                                  .localSave({ auditoryId: this.auditoryId, dir: photoId })
+                                  .subscribe({
+                                    next: async photo => {
+                                      console.log(photo)
+
+                                      if (photo !== DATABASE_WAITING_MESSAGE) {
+                                        count++;
+                                        if (count === this.ImageSrc.length) {
+                                          this.responseService.onSuccessAndRedirect(URI_HELMET_COUNT_FORM(this.auditoryId), 'Levantmiento guardado');
+                                        }
                                       }
-                                    }
-                                  },
-                                  error: err => {
-                                    this.responseService.onError(err, 'No se pudo guardar una imagen')
-                                  },
-                                })
+                                    },
+                                    error: err => {
+                                      this.responseService.onError(err, 'No se pudo guardar una imagen')
+                                    },
+                                  })
+                              }, 100 * index);
                             })
-                            .catch();
-                        }, 100 * index);
-                      });
-                    } else {
-                      this.responseService.onSuccessAndRedirect(URI_HELMET_COUNT_FORM(this.auditoryId), 'Levantmiento guardado');
-                    }
+                            .catch(err => this.responseService.onError(err, 'No se pudo guardar la imagen'));
+                        });
+                      } else {
+                        this.responseService.onSuccessAndRedirect(URI_HELMET_COUNT_FORM(this.auditoryId), 'Levantmiento guardado');
+                      }
+                    }, 20)
                   }
 
                 }
               });
+            }, 20);
           }
         },
         error: err => {
@@ -168,7 +177,7 @@ export class HelmetInitialFormPage implements OnInit {
           if (res !== DATABASE_WAITING_MESSAGE) {
             if (isPlatform('hybrid')) {
               res.values.forEach(async (row: any) => {
-                this.photoService.getLocalAuditoryEvidenceUri(row.dir).then(photo => {
+                this.photoService.getLocalEvidenceUri(row.dir).then(photo => {
                   this.ImageSrc.push({
                     id: row.dir,
                     url: Capacitor.convertFileSrc(photo.uri),
@@ -181,7 +190,7 @@ export class HelmetInitialFormPage implements OnInit {
               });
             } else {
               res.values.forEach(async (row: any) => {
-                this.photoService.getLocalAuditoryEvidence(row.dir).then(photo => {
+                this.photoService.getLocalEvidence(row.dir).then(photo => {
                   const file = 'data:image/png;base64,' + photo.data;
                   this.ImageSrc.push({
                     id: row.dir,
@@ -332,15 +341,16 @@ export class HelmetInitialFormPage implements OnInit {
             expand: {
               width: '25%'
             },
+            result: res.photos[index],
           });
         }
       } else {
         for (let index = 0; index < res.photos.length; index++) {
           const img = res.photos[index].webPath;
-          const blob = await fetch(img).then(r => r.blob());
+          // const blob = await fetch(img).then(r => r.blob());
 
           this.photoService
-            .saveLocalHelmetAuditoryEvidence(blob, this.auditoryId)
+            .saveLocalHelmetAuditoryEvidence(res.photos[index], this.auditoryId)
             .then(photoId => {
               if (photoId !== DATABASE_WAITING_MESSAGE) {
                 this.helmetAuditoryEvidenceService
@@ -360,6 +370,7 @@ export class HelmetInitialFormPage implements OnInit {
                                   expand: {
                                     width: '25%'
                                   },
+                                  result: res.photos[index],
                                 });
                               }
                             }
@@ -387,13 +398,14 @@ export class HelmetInitialFormPage implements OnInit {
           expand: {
             width: '25%'
           },
+          result: res,
         });
       } else {
         const img = res.webPath || '';
-        const blob = await fetch(img).then(r => r.blob());
+        // const blob = await fetch(img).then(r => r.blob());
 
         this.photoService
-          .saveLocalHelmetAuditoryEvidence(blob, this.auditoryId)
+          .saveLocalHelmetAuditoryEvidence(res, this.auditoryId)
           .then(photoId => {
             if (photoId !== DATABASE_WAITING_MESSAGE) {
               this.helmetAuditoryEvidenceService
@@ -413,6 +425,7 @@ export class HelmetInitialFormPage implements OnInit {
                                 expand: {
                                   width: '25%'
                                 },
+                                result: res,
                               });
                             }
                           }
@@ -474,7 +487,7 @@ export class HelmetInitialFormPage implements OnInit {
           .subscribe({
             next: () => {
               this.photoService
-                .removeLocalAuditoryEvidence(dir)
+                .removeLocalEvidence(dir)
                 .then(() => this.ImageSrc.splice(index, 1));
             }
           })

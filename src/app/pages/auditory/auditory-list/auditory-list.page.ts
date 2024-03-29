@@ -177,15 +177,15 @@ export class AuditoryListPage {
         return res(true);
       }
 
-      const ImageSrc = await this.photoService.getLocalAuditoryEvidenceUri(arr[index].dir).then(photo => photo.uri);
-      const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => r.blob());
+      const ImageSrc = await this.photoService.getLocalEvidence(arr[index].dir).then(photo => photo);
+      // const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => r.blob());
 
       this.auditoryEvidenceService
-        .uploadImage(blob, externalId, arr[index].creation_date, arr[index].dir)
+        .uploadImage((ImageSrc.data as string), externalId, arr[index].creation_date, arr[index].dir)
         .subscribe({
           next: () => {
             this.photoService
-              .removeLocalAuditoryEvidence(arr[index].dir)
+              .removeLocalEvidence(arr[index].dir)
               .then(() => {
                 this.auditoryEvidenceService
                   .localRemove(arr[index].dir)
@@ -212,7 +212,6 @@ export class AuditoryListPage {
         next: async evidences => {
           if (evidences !== DATABASE_WAITING_MESSAGE) {
 
-            setTimeout(() => {
               this.uploadAnswersEvidence(evidences.values, 0, extenalId)
                 .then(result => {
 
@@ -239,8 +238,7 @@ export class AuditoryListPage {
                         }
                       }
                     });
-                })
-            }, 20);
+                });
           }
         }
       });
@@ -252,16 +250,16 @@ export class AuditoryListPage {
         return res(true);
       }
 
-      const ImageSrc = await this.photoService.getLocalAnswerEvidenceUri(arr[index].dir).then(photo => photo.uri);
-      const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => r.blob());
+      const ImageSrc = await this.photoService.getLocalEvidence(arr[index].dir).then(photo => photo);
+      // const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => r.blob());
 
       this.answerEvidenceService
-        .uploadImage(blob, extenalId, arr[index].question_id, arr[index].creation_date, arr[index].dir)
+        .uploadImage((ImageSrc.data as string), extenalId, arr[index].question_id, arr[index].creation_date, arr[index].dir)
         .subscribe({
           next: () => {
 
             this.photoService
-              .removeLocalAnswerEvidence(arr[index].dir)
+              .removeLocalEvidence(arr[index].dir)
               .then(() => {
                 this.answerEvidenceService
                   .localRemove(arr[index].dir)
@@ -269,9 +267,8 @@ export class AuditoryListPage {
                     next: dlt => {
                       if (dlt !== DATABASE_WAITING_MESSAGE) {
 
-                        setTimeout(() => {
                           this.uploadAnswersEvidence(arr, index + 1, extenalId).then(r => res(r));
-                        }, 20);
+
                       }
                     }
                   });

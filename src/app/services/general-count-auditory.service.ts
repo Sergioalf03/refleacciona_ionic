@@ -117,7 +117,7 @@ export class GeneralCountAuditoryService {
       .subscribe(directories => {
         if (directories !== DATABASE_WAITING_MESSAGE) {
           directories.values.forEach((dir: any) => {
-            this.photoService.removeLocalAuditoryEvidence(dir.dir)
+            this.photoService.removeLocalEvidence(dir.dir)
           });
           this.databaseService
             .executeQuery(`DELETE FROM general_count_auditory_evidences WHERE general_count_auditory_id = ${id}`)
