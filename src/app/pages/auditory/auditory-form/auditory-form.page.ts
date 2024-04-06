@@ -27,20 +27,95 @@ export class AuditoryFormPage implements OnInit {
   ngOnDestroy() {
   }
 
+
+  URI_AUDITORY_LIST = URI_AUDITORY_LIST;
+  URI_QUESTION_FORM = URI_QUESTION_FORM;
+
+  functions = {
+    createAuditory: async (auditory: any) => {
+      this.auditoryService
+        .localSave(auditory)
+        .subscribe({
+          next: (save) => {
+            if (save !== DATABASE_WAITING_MESSAGE) {
+
+              setTimeout(() => {
+                this.auditoryService
+                  .getLastSavedId()
+                  .subscribe({
+                    next: async res => {
+                      if (res !== DATABASE_WAITING_MESSAGE) {
+
+                        setTimeout(() => {
+                          this.hideMap = true;
+                          this.auditoryId = res.values[0].id;
+
+                          let count = 0;
+
+                          if (this.ImageSrc.length > 0) {
+                            this.ImageSrc.forEach(async (src: any, index: number) => {
+
+                              // const blob = await fetch(src.base64).then(r => r.blob());
+
+                              this.photoService
+                                .saveLocalAuditoryEvidence(src.result, this.auditoryId)
+                                .then(photoId => {
+
+                                  setTimeout(async () => {
+                                    this.auditoryEvidenceService
+                                      .localSave({ auditoryId: this.auditoryId, dir: photoId })
+                                      .subscribe({
+                                        next: async photo => {
+                                          if (photo !== DATABASE_WAITING_MESSAGE) {
+                                            count++;
+                                            if (count === this.ImageSrc.length) {
+                                              // this.responseService.onSuccessAndRedirect(URI_QUESTION_FORM('0', this.auditoryId, `1`), 'Auditoría guarda');
+                                            }
+                                          }
+                                        },
+                                        error: err => {
+                                          this.responseService.onError(err, 'No se pudo guardar una imagen')
+                                        },
+                                      })
+
+                                  }, 100 * index);
+                                })
+                                .catch(err => this.responseService.onError(err, 'No se pudo guardar la imagen'));
+
+                            });
+                          } else {
+                            // this.responseService.onSuccessAndRedirect(URI_QUESTION_FORM('0', this.auditoryId, `1`), 'Auditoría guarda');
+                          }
+                        }, 20)
+                      }
+
+                    }
+                  });
+              }, 20);
+            }
+          },
+          error: err => {
+            this.responseService.onError(err, 'No se pudo guardar')
+          },
+        })
+    }
+  }
+
   formActionText = 'Nueva';
   SubmitButtonText = 'Comenzar';
   auditoryId = '0';
   backUrl = URI_HOME();
   locationAdded = false;
   hideMap = true;
+  showForm = false;
 
   form!: FormGroup;
 
   ImageSrc: any[] = [];
 
   constructor(
-    private auditoryService: AuditoryService,
-    private auditoryEvidenceService: AuditoryEvidenceService,
+    public auditoryService: AuditoryService,
+    public auditoryEvidenceService: AuditoryEvidenceService,
     private router: Router,
     private route: ActivatedRoute,
     private validFormService: ValidFormService,
@@ -87,73 +162,7 @@ export class AuditoryFormPage implements OnInit {
     });
   }
 
-  private async createAuditory(auditory: any) {
-    this.auditoryService
-      .localSave(auditory)
-      .subscribe({
-        next: (save) => {
-          if (save !== DATABASE_WAITING_MESSAGE) {
 
-            setTimeout(() => {
-              this.auditoryService
-                .getLastSavedId()
-                .subscribe({
-                  next: async res => {
-                    if (res !== DATABASE_WAITING_MESSAGE) {
-
-                      setTimeout(() => {
-                        this.hideMap = true;
-                        this.auditoryId = res.values[0].id;
-
-                        let count = 0;
-
-                        if (this.ImageSrc.length > 0) {
-                          this.ImageSrc.forEach(async (src: any, index: number) => {
-
-                              // const blob = await fetch(src.base64).then(r => r.blob());
-
-                              this.photoService
-                                .saveLocalAuditoryEvidence(src.result, this.auditoryId)
-                                .then(photoId => {
-
-                                  setTimeout(async () => {
-                                    this.auditoryEvidenceService
-                                      .localSave({ auditoryId: this.auditoryId, dir: photoId })
-                                      .subscribe({
-                                        next: async photo => {
-                                          if (photo !== DATABASE_WAITING_MESSAGE) {
-                                            count++;
-                                            if (count === this.ImageSrc.length) {
-                                              this.responseService.onSuccessAndRedirect(URI_QUESTION_FORM('0', this.auditoryId, `1`), 'Auditoría guarda');
-                                            }
-                                          }
-                                        },
-                                        error: err => {
-                                          this.responseService.onError(err, 'No se pudo guardar una imagen')
-                                        },
-                                      })
-
-                                    }, 100 * index);
-                                  })
-                                  .catch(err => this.responseService.onError(err, 'No se pudo guardar la imagen'));
-
-                            });
-                        } else {
-                          this.responseService.onSuccessAndRedirect(URI_QUESTION_FORM('0', this.auditoryId, `1`), 'Auditoría guarda');
-                        }
-                      }, 20)
-                    }
-
-                  }
-                });
-            }, 20);
-          }
-        },
-        error: err => {
-          this.responseService.onError(err, 'No se pudo guardar')
-        },
-      })
-  }
 
   private updateAuditory(auditory: any) {
     this.auditoryService
@@ -230,40 +239,39 @@ export class AuditoryFormPage implements OnInit {
   }
 
   ionViewWillEnter() {
-    // this.mapService.removeMap();
-    this.initForm();
-    this.route
-      .paramMap
-      .subscribe({
-        next: paramMap => {
-          // this.hideMap = false;
-          let id = paramMap.get('id') || '0';
-          if (id === '00') {
-            this.backUrl = URI_AUDITORY_LIST('local');
-            id = '0';
-          }
-          if (id !== '0') {
-            this.loadingService.showLoading();
-            this.auditoryId = id;
-            this.formActionText = 'Actualizando';
-            this.SubmitButtonText = 'Guardar';
-            this.auditoryService
-              .getLocalForm(this.auditoryId)
-              .subscribe({
-                next: res => {
-                  if (res !== DATABASE_WAITING_MESSAGE) {
-                    setTimeout(() => {
-                      this.setAuditory(res.values[0]);
-                    }, 20);
-                  }
-                },
-                error: err => {
-                  this.responseService.onError(err, 'No se pudieron recuperar los datos');
-                },
-              })
-          }
-        }
-      }).unsubscribe();
+    this.showForm = true;
+    // this.route
+    //   .paramMap
+    //   .subscribe({
+    //     next: paramMap => {
+    //       // this.hideMap = false;
+    //       let id = paramMap.get('id') || '0';
+    //       if (id === '00') {
+    //         this.backUrl = URI_AUDITORY_LIST('local');
+    //         id = '0';
+    //       }
+    //       if (id !== '0') {
+    //         this.loadingService.showLoading();
+    //         this.auditoryId = id;
+    //         this.formActionText = 'Actualizando';
+    //         this.SubmitButtonText = 'Guardar';
+    //         this.auditoryService
+    //           .getLocalForm(this.auditoryId)
+    //           .subscribe({
+    //             next: res => {
+    //               if (res !== DATABASE_WAITING_MESSAGE) {
+    //                 setTimeout(() => {
+    //                   this.setAuditory(res.values[0]);
+    //                 }, 20);
+    //               }
+    //             },
+    //             error: err => {
+    //               this.responseService.onError(err, 'No se pudieron recuperar los datos');
+    //             },
+    //           })
+    //       }
+    //     }
+    //   }).unsubscribe();
   }
 
   ionViewWillLeave() {
@@ -298,7 +306,7 @@ export class AuditoryFormPage implements OnInit {
           };
 
           if (this.auditoryId === '0') {
-            this.createAuditory(auditory);
+            this.functions.createAuditory(auditory);
           } else {
             this.updateAuditory(auditory);
           }

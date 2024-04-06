@@ -9,7 +9,7 @@ export const URI_PROFILE = () => 'profile';
 
 export const URI_AUDITORY_FORM = (id: string) => `auditory/form/${id}`;
 export const URI_AUDITORY_LIST = (origin: string) => `auditory/list/${origin}`;
-export const URI_QUESTION_FORM = (from: string, auditoryId: string, sectionId: string) => `question-form/${from}/${auditoryId}/${sectionId}`;
+export const URI_QUESTION_FORM = (auditoryId: string) => `question-form/${auditoryId}`;
 export const URI_AUDITORY_FINISH_FORM = (from: string, auditoryId: string) => `auditory/finish-form/${from}/${auditoryId}`;
 export const URI_AUDITORY_DETAIL = (id: string) => `auditory/detail/${id}`;
 

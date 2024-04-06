@@ -73,7 +73,7 @@ export class AuditoryListPage {
   }
 
   onEditAnswers = (id: string) => {
-    this.router.navigateByUrl(URI_QUESTION_FORM('1', id, `0`));
+    this.router.navigateByUrl(URI_QUESTION_FORM(id));
   }
 
   onNewAuditory = () => {

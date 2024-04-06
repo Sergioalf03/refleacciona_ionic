@@ -74,9 +74,8 @@ export class QuestionFormPage implements OnInit {
           }
 
           this.auditoryId = `${paramMap.get('auditoryId')}`;
-          this.sectionId = `${paramMap.get('sectionId')}`;
 
-          this.backUri = (paramMap.get('from') === '0') ? URI_AUDITORY_FORM(this.auditoryId) : URI_AUDITORY_LIST('local');
+          this.backUri =  URI_AUDITORY_LIST('local');
 
           this.questionService
             .getSectionIds()

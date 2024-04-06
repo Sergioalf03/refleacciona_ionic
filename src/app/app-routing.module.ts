@@ -53,13 +53,10 @@ const routes: Routes = [
     loadChildren: () => import('./pages/user/profile/profile.module').then( m => m.ProfilePageModule)
   },
   {
-    path: URI_QUESTION_FORM(':from', ':auditoryId', ':sectionId'),
+    path: URI_QUESTION_FORM(':auditoryId',),
     loadChildren: () => import('./pages/auditory/question-form/question-form.module').then( m => m.QuestionFormPageModule)
   },
-  {
-    path: URI_AUDITORY_FINISH_FORM(':from', ':auditoryId'),
-    loadChildren: () => import('./pages/auditory/auditory-finish-form/auditory-finish-form.module').then( m => m.AuditoryFinishFormPageModule)
-  },
+
   {
     path: URI_AUDITORY_DETAIL(':id'),
     loadChildren: () => import('./pages/auditory/auditory-detail/auditory-detail.module').then( m => m.AuditoryDetailPageModule)
@@ -139,7 +136,8 @@ const routes: Routes = [
   {
     path: URI_GENERAL_COUNT_COUNT_FORM(':id'),
     loadChildren: () => import('./pages/general/swipe-form/swipe-form.module').then( m => m.SwipeFormPageModule)
-  },  {
+  },
+  {
     path: 'generic-initial-form',
     loadChildren: () => import('./components/generic-initial-form/generic-initial-form.module').then( m => m.GenericInitialFormPageModule)
   },

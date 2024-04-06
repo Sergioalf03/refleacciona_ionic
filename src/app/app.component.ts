@@ -16,7 +16,7 @@ export class AppComponent implements OnInit {
 
   public isWeb: boolean = false;
   logged = false;
-
+  showProfileHeader= true;
   constructor(
     private sessionService: SessionService,
     private responseService: HttpResponseService,

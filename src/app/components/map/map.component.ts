@@ -18,7 +18,6 @@ export class MapComponent implements OnInit, AfterViewInit {
 
   private map!: L.Map;
 
-
   private async initMap(): Promise<any> {
     const coordinates = await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
 

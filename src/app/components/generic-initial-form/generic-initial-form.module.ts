@@ -6,6 +6,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { GenericInitialFormPage } from './generic-initial-form.page';
 import { RouterModule, Routes } from '@angular/router';
+import { MapModule } from '../map/map.module';
 
 const routes: Routes = [
   {
@@ -17,9 +18,10 @@ const routes: Routes = [
 @NgModule({
   imports: [
     CommonModule,
-    ReactiveFormsModule,
     IonicModule,
+    ReactiveFormsModule,
     RouterModule.forChild(routes),
+    MapModule,
   ],
   declarations: [GenericInitialFormPage],
   exports: [GenericInitialFormPage],
