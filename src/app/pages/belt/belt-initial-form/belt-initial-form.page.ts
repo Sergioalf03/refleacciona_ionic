@@ -32,6 +32,7 @@ export class BeltInitialFormPage {
                       if (res !== DATABASE_WAITING_MESSAGE) {
 
                         setTimeout(() => {
+                          this.auditoryId = res.values[0].id;
                           this.responseService.onSuccessAndRedirect(URI_BELT_COUNT_FORM(this.auditoryId), 'Registro guardado');
                         }, 20)
                       }
