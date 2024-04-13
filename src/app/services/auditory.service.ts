@@ -59,7 +59,7 @@ export class AuditoryService {
     const result = new BehaviorSubject<any>(DATABASE_WAITING_MESSAGE);
 
     this.databaseService
-      .executeQuery(`SELECT id, title, date, status FROM auditories WHERE (status = 1 OR status = 2) AND user_id = ${userId};`)
+      .executeQuery(`SELECT id, title, date, status FROM auditories WHERE (status = 1 OR status = 2) AND user_id = ${userId} ORDER BY auditories.id DESC;`)
       .subscribe({
         next: res => {
           if (res !== DATABASE_WAITING_MESSAGE) {

@@ -1,11 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { GeneralCountAuditoryFormPage } from './general-count-auditory-form.page';
 import { RouterModule, Routes } from '@angular/router';
-import { MapModule } from 'src/app/components/map/map.module';
-import { HeaderButtonsModule } from 'src/app/components/header-buttons/header-buttons.module';
+import { GenericInitialFormPageModule } from 'src/app/components/generic-initial-form/generic-initial-form.module';
 
 const routes: Routes = [
   {
@@ -17,11 +15,9 @@ const routes: Routes = [
 @NgModule({
   imports: [
     CommonModule,
-    ReactiveFormsModule,
     IonicModule,
     RouterModule.forChild(routes),
-    MapModule,
-    HeaderButtonsModule,
+    GenericInitialFormPageModule,
   ],
   declarations: [GeneralCountAuditoryFormPage]
 })

@@ -1,11 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
 import { AuditoryFormPage } from './auditory-form.page';
-import { MapModule } from 'src/app/components/map/map.module';
 import { RouterModule, Routes } from '@angular/router';
 import { GenericInitialFormPageModule } from 'src/app/components/generic-initial-form/generic-initial-form.module';
 
@@ -19,11 +17,8 @@ const routes: Routes = [
 @NgModule({
   imports: [
     CommonModule,
-    ReactiveFormsModule,
-    FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
-    MapModule,
     GenericInitialFormPageModule,
   ],
   declarations: [AuditoryFormPage]

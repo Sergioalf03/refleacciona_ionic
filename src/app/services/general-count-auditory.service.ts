@@ -48,7 +48,8 @@ export class GeneralCountAuditoryService {
           general_count_auditory_count.id AS countId
         FROM general_count_auditory
         LEFT JOIN general_count_auditory_count ON general_count_auditory.id = general_count_auditory_count.general_count_auditory_id
-        WHERE general_count_auditory.user_id = ${userId};`)
+        WHERE general_count_auditory.user_id = ${userId}
+        ORDER BY general_count_auditory.id DESC;`)
       .subscribe({
         next: res => {
           if (res !== DATABASE_WAITING_MESSAGE) {

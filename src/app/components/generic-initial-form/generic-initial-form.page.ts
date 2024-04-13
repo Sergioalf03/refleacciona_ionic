@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Geolocation } from '@capacitor/geolocation';
+import { Observable, Subscription, SubscriptionLike } from 'rxjs';
 import { URI_HOME } from 'src/app/core/constants/uris';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
@@ -15,12 +16,10 @@ import { ValidFormService } from 'src/app/core/controllers/valid-form.service';
 })
 export class GenericInitialFormPage implements OnInit {
 
-  @Input() toFormUrl!: any;
-  @Input() toListUrl!: any;
+  @Input() fromType!: string;
   @Input() functions!: any;
+  @Input() setValueObservable!: Observable<any>;
 
-  formActionText = 'Nuevo';
-  SubmitButtonText = 'Comenzar';
   auditoryId = '0';
   backUrl = URI_HOME();
   locationAdded = false;
@@ -34,6 +33,7 @@ export class GenericInitialFormPage implements OnInit {
 
   ImageSrc: any[] = [];
 
+  setValueSubscription!: Subscription;
 
   constructor(
     private mapService: MapService,
@@ -77,20 +77,7 @@ export class GenericInitialFormPage implements OnInit {
   }
 
   private updateAuditory(auditory: any) {
-    // this.service
-    //   .updateLocal(this.auditoryId, auditory)
-    //   .subscribe({
-    //     next: (updateRes: any) => {
-    //       if (updateRes !== DATABASE_WAITING_MESSAGE) {
-    //         this.hideMap = true;
-    //         this.responseService.onSuccessAndRedirect(this.toListUrl('local'), 'Registro actualizado');
-    //       }
-    //     },
-    //     error: (err: any) => {
-    //       this.responseService.onError(err, 'No se pudo actualizar')
-    //     },
-    //   })
-
+    this.functions.update(auditory);
   }
 
   // private setAuditory(auditory: any) {
@@ -149,50 +136,29 @@ export class GenericInitialFormPage implements OnInit {
 
   ngOnInit(): void {
     this.hideMap = true;
-    this.initForm()
+    this.initForm();
+    this.setValueSubscription = this.setValueObservable
+      .subscribe({
+        next: data => {
+          console.log(data)
+          if (data) {
+            this.auditoryId = data.id;
+            this.form.setValue(data);
+            this.coordsAccepted = true;
+
+            setTimeout(() => {
+              this.mapService.setCenter(data.lat, data.lng);
+              this.loadingService.dismissLoading();
+            }, 1000)
+          }
+        }
+      });
   }
 
   ionViewWillEnter() {
-    // this.mapService.removeMap();
-    this.initForm();
-    console.log(this.functions)
-    console.log(this.toListUrl)
-    console.log(this.toFormUrl)
-    // this.route
-    //   .paramMap
-    //   .subscribe({
-    //     next: paramMap => {
-    //       // this.hideMap = false;
-    //       let id = paramMap.get('id') || '0';
-    //       if (id === '00') {
-    //         this.backUrl = this.toListUrl('local');
-    //         id = '0';
-    //       }
-    //       if (id !== '0') {
-    //         this.loadingService.showLoading();
-    //         this.auditoryId = id;
-    //         this.formActionText = 'Actualizando';
-    //         this.SubmitButtonText = 'Guardar';
-    //         this.service
-    //           .getLocalForm(this.auditoryId)
-    //           .subscribe({
-    //             next: (res: any) => {
-    //               if (res !== DATABASE_WAITING_MESSAGE) {
-    //                 this.setAuditory(res.values[0]);
-    //               }
-    //             },
-    //             error: (err: any) => {
-    //               this.responseService.onError(err, 'No se pudieron recuperar los datos');
-    //             },
-    //           })
-    //       }
-    //     }
-    //   }).unsubscribe();
   }
 
   ionViewWillLeave() {
-    this.formActionText = 'Nueva';
-    this.SubmitButtonText = 'Comenzar';
     this.auditoryId = '0';
 
     this.locationAdded = false;
@@ -207,7 +173,7 @@ export class GenericInitialFormPage implements OnInit {
 
   onSubmit() {
     this.formSubmited = true;
-    if (this.validFormService.isValid(this.form, [])) {
+    if (this.validFormService.isValid(this.form, []) && this.coordsAccepted) {
       this.confirmDialogService
         .presentAlert('¿Desea guardar los cambios?', () => {
           this.loadingService.showLoading();
