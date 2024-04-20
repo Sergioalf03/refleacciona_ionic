@@ -7,6 +7,7 @@ import { Platform } from '@ionic/angular';
 import { SQLiteService } from './core/controllers/sqlite.service';
 import { URI_AUDITORY_LIST, URI_BELT_LIST, URI_GENERAL_COUNT_LIST, URI_HELMET_LIST, URI_HOME } from './core/constants/uris';
 import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-root',
@@ -25,6 +26,7 @@ export class AppComponent implements OnInit {
     private storage: Storage,
     private platform: Platform,
     private router: Router,
+    private location: Location,
   ) {}
 
   async ngOnInit() {
@@ -32,10 +34,13 @@ export class AppComponent implements OnInit {
       .then(async storage => {
       await this.storageService.init(storage);
 
+
       this.logged = await this.sessionService.isLoggedIn();
       if (this.logged) {
         await this.sessionService.setValuesFromStorage();
-        this.responseService.onSuccessAndRedirect(URI_HOME(), '/NA');
+        if (this.location.path() !== URI_HOME()) {
+          this.responseService.onSuccessAndRedirect(URI_HOME(), '/NA');
+        }
       }
     });
 
@@ -44,11 +49,9 @@ export class AppComponent implements OnInit {
         .then(async (ret) => {
           if (this.sqlite.platform === "web") {
             this.isWeb = true;
-            await customElements.whenDefined('jeep-sqlite');
-            const jeepSqliteEl = document.querySelector('jeep-sqlite');
-            if (jeepSqliteEl != null) {
+
               await this.sqlite.initWebStore();
-            }
+
           }
         })
         .catch(error => {

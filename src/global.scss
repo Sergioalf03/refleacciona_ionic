@@ -56,6 +56,7 @@ ion-card {
 }
 
 ion-content {
+  --ion-background-color: white;
   background-color: white;
 }
 
@@ -140,7 +141,7 @@ ion-input.custom-input {
 }
 
 .custom-background {
-  background: url('../../../../assets/background/partial.png') center center fixed;
+  // background: url('../../../../assets/background/partial.png') center center fixed;
   background-size: cover;
   width: 100%;
   /* Set the width of the div */

@@ -23,7 +23,6 @@ export class GenericInitialFormPage implements OnInit {
   auditoryId = '0';
   backUrl = URI_HOME();
   locationAdded = false;
-  hideMap = true;
   type = 0;
 
   formSubmited = false;
@@ -72,7 +71,6 @@ export class GenericInitialFormPage implements OnInit {
   }
 
   private createAuditory(data: any) {
-    console.log(this.functions.create);
     this.functions.create(data);
   }
 
@@ -135,12 +133,10 @@ export class GenericInitialFormPage implements OnInit {
   // }
 
   ngOnInit(): void {
-    this.hideMap = true;
     this.initForm();
     this.setValueSubscription = this.setValueObservable
       .subscribe({
         next: data => {
-          console.log(data)
           if (data) {
             this.auditoryId = data.id;
             this.form.setValue(data);
@@ -166,8 +162,6 @@ export class GenericInitialFormPage implements OnInit {
     this.form = new FormGroup({});
 
     this.ImageSrc = [];
-    this.hideMap = true;
-
 
   }
 
@@ -199,7 +193,6 @@ export class GenericInitialFormPage implements OnInit {
 
 
   async onAddLocation() {
-    this.hideMap = false;
     const coordinates = await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
     this.mapService.setCenter(coordinates.coords.latitude, coordinates.coords.longitude);
   }

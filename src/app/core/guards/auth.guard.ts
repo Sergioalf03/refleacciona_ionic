@@ -13,14 +13,18 @@ export class AuthGuard implements CanLoad  {
     private router: Router
   ){}
 
+  addition = 0;
 
    async canLoad(): Promise<any> {
+    this.addition++;
     const isAuthenticated = await this.sessionService.isLoggedIn();
-    if( isAuthenticated){
-      return true;
-    } else {
-      this.router.navigateByUrl(URI_LOGIN());
-      return false;
+    if (this.addition > 1) {
+      if( isAuthenticated){
+        return true;
+      } else {
+        this.router.navigateByUrl(URI_LOGIN());
+        return false;
+      }
     }
   }
 }

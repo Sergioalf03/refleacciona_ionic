@@ -224,13 +224,13 @@ CREATE TABLE IF NOT EXISTS general_count_auditory_count (
 `;
 
 const SECTION_ROWS: Array<Array<any>> = [
-  ['S1', 'CARACTERÍSTICAS DE LA CALLE', '',               1, 1, 1],
-  ['S2', 'SEGURIDAD',                   'Tramo de calle', 2, 2, 1],
-  ['S3', 'SEGURIDAD',                   'Intersección',   3, 3, 1],
-  ['S4', 'ACCESIBILIDAD',               'Tramo de calle', 4, 4, 1],
-  ['S5', 'ACCESIBILIDAD',               'Intersección',   5, 5, 1],
-  ['S6', 'CONFORT',                     'Tramo de calle', 6, 6, 1],
-  ['S7', 'CONFORT',                     'Intersección',   7, 7, 1],
+  ['S1', 'Características de la calle', '',               1, 1, 1],
+  ['S2', 'Seguridad',                   'Tramo de calle', 2, 2, 1],
+  ['S3', 'Seguridad',                   'Intersección',   3, 3, 1],
+  ['S4', 'Accesibilidad',               'Tramo de calle', 4, 4, 1],
+  ['S5', 'Accesibilidad',               'Intersección',   5, 5, 1],
+  ['S6', 'Confort',                     'Tramo de calle', 6, 6, 1],
+  ['S7', 'Confort',                     'Intersección',   7, 7, 1],
 ];
 
 const QUESTION_ROWS: Array<Array<any>> = [

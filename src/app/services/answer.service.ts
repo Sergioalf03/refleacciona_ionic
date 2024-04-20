@@ -66,7 +66,7 @@ export class AnswerService {
 
   answerExists(questionId: string, auditoryId: string) {
     return this.databaseService
-      .executeQuery(`SELECT answers.value FROM answers JOIN questions on questions.id = answers.question_id WHERE answers.auditory_id = ${auditoryId} AND questions.uid = ${questionId};`)
+      .executeQuery(`SELECT answers.value FROM answers JOIN questions on questions.id = answers.question_id WHERE answers.auditory_id = ${auditoryId} AND questions.uid = "${questionId}";`)
   }
 
 }

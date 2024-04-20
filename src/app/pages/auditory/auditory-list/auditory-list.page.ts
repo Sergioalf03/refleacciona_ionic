@@ -21,6 +21,8 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class AuditoryListPage {
 
+  onScreen = false;
+
   listObservable = new BehaviorSubject<{ list: any[], type: number }>({ list: [], type: 0 });
   sendedList = false;
 
@@ -49,6 +51,7 @@ export class AuditoryListPage {
   }
 
   async ionViewWillEnter() {
+    this.onScreen = true;
     this.route
       .paramMap
       .subscribe({
@@ -65,6 +68,10 @@ export class AuditoryListPage {
           }
         }
       }).unsubscribe();
+  }
+
+  ionViewWillLeave() {
+    this.onScreen = false;
   }
 
 

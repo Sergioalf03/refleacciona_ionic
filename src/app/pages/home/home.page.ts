@@ -7,15 +7,8 @@ import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.se
 import { VersionService } from 'src/app/services/version.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { URI_AUDITORY_FORM, URI_AUDITORY_LIST, URI_BELT_FORM, URI_BELT_LIST, URI_GENERAL_COUNT_FORM, URI_GENERAL_COUNT_LIST, URI_HELMET_FORM, URI_HELMET_LIST, URI_LOGIN, URI_PROFILE } from 'src/app/core/constants/uris';
-import { Platform, isPlatform } from '@ionic/angular';
+import { Platform } from '@ionic/angular';
 import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
-import { createSchema } from 'src/app/utils/database.util';
-import { PhotoService } from 'src/app/core/controllers/photo.service';
-import { Capacitor } from '@capacitor/core';
-// import { Camera } from '@capacitor/camera';
-// import { Filesystem } from '@capacitor/filesystem';
-// import { Geolocation } from '@capacitor/geolocation';
-// import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 
 @Component({
   selector: 'app-home',
@@ -32,6 +25,9 @@ export class HomePage {
   initPlugin: boolean = false;
 
   showProfileHeader = false;
+
+  userName = 'Sara J.';
+  ImageSafeSrc = '';
 
   constructor(
     private sessionService: SessionService,
@@ -70,7 +66,12 @@ export class HomePage {
   }
 
   ionViewWillEnter() {
-    this.showProfileHeader = true;
+    setTimeout(()=> {
+      this.showProfileHeader = true;
+    }, 200)
+    if (!this.versionService.checked) {
+      this.onFetchUpdate(false);
+    }
   }
 
   ionViewWillLeave() {

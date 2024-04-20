@@ -17,6 +17,7 @@ export class LoginPage {
 
   user: any = {};
   txtButtonEnter = 'Log In';
+  onScreen = false;
 
   constructor(
     private router:Router,
@@ -32,6 +33,14 @@ export class LoginPage {
         return;
         // processNextHandler();
       });
+  }
+
+  ionViewWillEnter() {
+    this.onScreen = true;
+  }
+
+  ionViewWillLeave() {
+    this.onScreen = false;
   }
 
   onRecuperar() {

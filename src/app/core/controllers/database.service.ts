@@ -68,7 +68,6 @@ export class DatabaseService {
       .then(async (result) => {
         await connection.isDBOpen()
           .then(c => {
-            console.log(c)
             connection
               .close()
               .then(async () => {
@@ -76,15 +75,12 @@ export class DatabaseService {
               })
               .catch(e => {
                 data.next('unclosed');
-                console.log(query);
-                console.log('1 No se cerró la conexión');
               })
           });
       })
       .catch(async (e) => {
         await connection.isDBOpen()
           .then(c => {
-            console.log(c)
             connection
               .close()
               .then(async () => {
@@ -92,8 +88,6 @@ export class DatabaseService {
               })
               .catch(e => {
                 data.next('unclosed');
-                console.log(query);
-                console.log('2 No se cerró la conexión');
               });
           });
       });

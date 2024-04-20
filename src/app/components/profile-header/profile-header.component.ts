@@ -43,11 +43,11 @@ export class ProfileHeaderComponent implements OnInit {
     if (isPlatform('hybrid')) {
       this.photoService.getLocalLogoUri().then(photo => {
         this.ImageSafeSrc = Capacitor.convertFileSrc(photo.uri)
-      })
+      }).catch(e => true)
     } else {
       this.photoService.getLocalLogo().then(photo => {
         this.ImageSafeSrc = 'data:image/png;base64,' + photo.data;
-      });
+      }).catch(e => true);
     }
   }
 

@@ -109,7 +109,6 @@ export class ProfilePage {
                 this.photoService
                   .saveLocalLogo(blob)
                   .then(file => {
-                    console.log(file);
                     this.sessionService
                       .uploadLogo(blob)
                       .subscribe({

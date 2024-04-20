@@ -43,7 +43,6 @@ export class GenericListComponent implements OnInit {
     this.listSubscription = this.listObservable
       .subscribe({
         next: data => {
-          console.log(data);
           this.list = data.list;
           this.sendedList = data.type === 2;
         },
@@ -65,6 +64,7 @@ export class GenericListComponent implements OnInit {
   }
 
   async presentActionSheetOptions(element: any) {
+    console.log(element)
     const buttons = [
       {
         text: 'Actualizar contenido',
@@ -88,7 +88,7 @@ export class GenericListComponent implements OnInit {
       },
     ];
 
-    if (!!element.countId) {
+    if (element.statusWord === "Terminada") {
       buttons.unshift({
         text: 'Subir',
         handler: () => this.upload(element.id),

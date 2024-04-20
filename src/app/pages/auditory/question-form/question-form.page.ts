@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
@@ -16,18 +17,18 @@ import { QuestionService } from 'src/app/services/question.service';
 @Component({
   selector: 'app-question-form',
   templateUrl: './question-form.page.html',
+  styleUrls: ['./question-form.page.scss'],
 })
 export class QuestionFormPage implements OnInit {
 
   auditoryId = '0';
-  sectionId = '0';
+  sectionId = '1';
   sectionName = '';
   subsectionName  = '';
   openedPopover = 0;
   questions: any[] = [];
   ImageSrc: any[] = [];
   answerCount = 0;
-  hideForm = true;
   sectionIds: number[] = [];
   sectionIndex = 0;
   backUri = URI_HOME();
@@ -40,6 +41,10 @@ export class QuestionFormPage implements OnInit {
 
   sameAnswer: any[] = [];
   canNext = false;
+
+  actionSheetButtons: any[] = [];
+
+  @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
 
   constructor(
     private questionService: QuestionService,
@@ -69,8 +74,9 @@ export class QuestionFormPage implements OnInit {
       .paramMap
       .subscribe({
         next: paramMap => {
-          if (!paramMap.has('sectionId') || !paramMap.has('auditoryId')) {
+          if (!paramMap.has('auditoryId')) {
             this.router.navigateByUrl(this.backUri);
+            return;
           }
 
           this.auditoryId = `${paramMap.get('auditoryId')}`;
@@ -97,10 +103,11 @@ export class QuestionFormPage implements OnInit {
   }
 
   ionViewWillEnter() {
-
+    this.viewport.scrollToIndex(0);
   }
 
   onNext() {
+    this.viewport.scrollToIndex(0);
     if (this.sectionIndex < this.sectionIds.length) {
       this.sectionIndex++;
       this.sectionId = `${+this.sectionIds[this.sectionIndex]}`;
@@ -109,6 +116,7 @@ export class QuestionFormPage implements OnInit {
   }
 
   onPrevious() {
+    this.viewport.scrollToIndex(0);
     if (this.sectionIndex !== 0) {
       this.sectionIndex--;
       this.sectionId = `${+this.sectionIds[this.sectionIndex]}`;
@@ -117,92 +125,165 @@ export class QuestionFormPage implements OnInit {
   }
 
   private fetchSection() {
-    this.hideForm = true;
-    this.questionService
-      .getSection(this.sectionId)
-      .subscribe({
-        next: res1 => {
-          if (res1 !== DATABASE_WAITING_MESSAGE) {
-            setTimeout(() => {
+    this.questions = [];
 
-              this.loadingService.showLoading();
-              const section = res1.values[0];
-              this.sectionName = section.name;
-              this.subsectionName = section.subname;
-              this.questionService
+    setTimeout(() => {
+      this.questionService
+        .getSection(this.sectionId)
+        .subscribe({
+          next: res1 => {
+            if (res1 !== DATABASE_WAITING_MESSAGE) {
+              setTimeout(() => {
+                const section = res1.values[0];
+                this.sectionName = section.name;
+                this.subsectionName = section.subname;
+                this.questionService
                 .getLocalQuestionsBySection(this.sectionId, this.auditoryId)
                 .subscribe({
                   next: res => {
                     if (res !== DATABASE_WAITING_MESSAGE) {
                       setTimeout(() => {
 
-                        this.questions = res.values;
+                          this.questions = res.values.map((q: any) => {
+                            try {
+                              const answersJson = JSON.parse(q.answers)
+                              const selectedAnswer = answersJson.find((a: any) => +a.v === +q.answer);
+
+                              return {
+                                ...q,
+                                answerText: selectedAnswer ? selectedAnswer.t : 'Seleccione una opción',
+                              };
+                            } catch(e: any) {
+                              return {
+                                ...q,
+                              };
+                            }
+                            // .find((a: any) => +a.v === +q.answer).t;
+
+                          });
 
 
-                        // To hide answers
-                        this.hideQuestion = this.questions.map(q => {
-                          return q.cond && q.cond !== '' && q.cond.startsWith('S')
-                        });
+                          // To hide answers
+                          this.hideQuestion = this.questions.map(q => {
+                            return q.cond && q.cond !== '' && q.cond.startsWith('S')
+                          });
 
-                        this.showedQuestions = this.hideQuestion.filter(q => q !== true).length;
-                        this.hasConditionQuestions = !!this.questions.find(q => q.cond && q.cond !== '');
+                          this.showedQuestions = this.hideQuestion.filter(q => q !== true).length;
+                          this.hasConditionQuestions = !!this.questions.find(q => q.cond && q.cond !== '');
 
-                        this.questionsWithCondition = this.questions.map((q, i)=> {
-                          if (q.cond) {
-                            const cond = q.cond.split('-');
-                            return { questionId: q.id, questionIndex: i, type: cond[0], section: cond[1], question: cond[2], answer: cond[3] }
-                          } else {
-                            return null;
-                          }
-                        }).filter(q => q !== null);
+                          this.questionsWithCondition = this.questions.map((q, i)=> {
+                            if (q.cond) {
+                              const cond = q.cond.split('-');
+                              return { questionId: q.id, questionIndex: i, type: cond[0], section: cond[1], question: cond[2], answer: cond[3] }
+                            } else {
+                              return null;
+                            }
+                          }).filter(q => q !== null);
 
-                        this.questionChangeEvent = this.questionsWithCondition
-                          .map(q => ({
-                            uid: q.question,
-                            affectedIndexes: this.questionsWithCondition.filter(qwc => qwc.question === q.question).map(qwc => qwc.questionIndex),
-                          }))
-                          .filter((q, i, arr) => arr.findIndex(qaux => qaux.uid === q.uid) === i)
-
-                        this.questionChangeEvent.forEach((q, i) => {
-                          setTimeout(() => {
-                            this.answerService
-                              .answerExists(q.uid, this.auditoryId)
-                              .subscribe({
-                                next: result => {
-                                  if (result !== DATABASE_WAITING_MESSAGE) {
-                                    if (result.values.length > 0) {
-                                      const answer = result.values[0].value
-                                      this.verifyCondition(q.uid, answer)
-                                    }
-                                  }
-                                }
-                              })
-                          }, 20 * i)
-                        });
-                        // End to hide answers
-
-                        // To answer the same like another answer
-                        const baseTime = this.questionChangeEvent.length * 20;
-
-                        const filteredQuestions = this.questions.filter(q => {
-                          return q.cond && q.cond !== '' && q.cond.startsWith('E')
-                        });
-
-                        filteredQuestions
-                          .forEach((q, i) => {
+                          this.questionChangeEvent = this.questionsWithCondition
+                            .map(q => ({
+                              uid: q.question,
+                              affectedIndexes: this.questionsWithCondition.filter(qwc => qwc.question === q.question).map(qwc => qwc.questionIndex),
+                            }))
+                            .filter((q, i, arr) => arr.findIndex(qaux => qaux.uid === q.uid) === i)
+                          this.questionChangeEvent.forEach((q, i) => {
                             setTimeout(() => {
-
                               this.answerService
-                                .answerExists(q.cond.split('-')[2], this.auditoryId)
+                                .answerExists(q.uid, this.auditoryId)
                                 .subscribe({
                                   next: result => {
                                     if (result !== DATABASE_WAITING_MESSAGE) {
-                                      q.answer = result.values[0].value;
-                                      // Insertar a base de datos
+                                      if (result.values.length > 0) {
+                                        const answer = result.values[0].value
+                                        this.verifyCondition(q.uid, answer)
+                                      }
+                                    }
+                                  }
+                                })
+                            }, 20 * i)
+                          });
+                        const baseTime = this.questionChangeEvent.length * 20;
 
-                                      setTimeout(() =>  {
+                          const filteredQuestions = this.questions.filter(q => {
+                            return q.cond && q.cond !== '' && q.cond.startsWith('E')
+                          });
+
+                          filteredQuestions
+                            .forEach((q, i) => {
+                              setTimeout(() => {
+
+                                this.answerService
+                                  .answerExists(q.cond.split('-')[2], this.auditoryId)
+                                  .subscribe({
+                                    next: result => {
+                                      if (result !== DATABASE_WAITING_MESSAGE) {
+                                        q.answer = result.values[0].value;
+                                        // Insertar a base de datos
+
+                                        setTimeout(() =>  {
+                                          this.answerService
+                                            .saveAnswer(q.id, this.auditoryId, q.answer)
+                                            .subscribe({
+                                              next: save => {
+                                                if (save !== DATABASE_WAITING_MESSAGE) {
+                                                  const originalIndex = this.questions.findIndex(question => question.id === q.id);
+                                                  this.ImageSrc[originalIndex].canTakePickture = true;
+                                                  this.alreadyAnsweredAll();
+                                                }
+                                              }
+                                            })
+                                        }, baseTime + (i * 40) -20);
+                                      }
+                                    }
+                                  })
+                              }, baseTime + (i * 40))
+                            });
+                          // End to answer the same like another answer
+
+                          // To answer by some answer
+                          const baseTime2 = baseTime + (filteredQuestions.length * 40);
+                          this.questions.filter(q => {
+                            return q.cond && q.cond !== '' && q.cond.startsWith('D')
+                          })
+                          .forEach((q, i) => {
+                            setTimeout(() => {
+
+                              const conditionArr = q.cond.split('-');
+                              this.answerService
+                                .answerExists(conditionArr[2], this.auditoryId)
+                                .subscribe({
+                                  next: result => {
+                                    if (result !== DATABASE_WAITING_MESSAGE) {
+
+                                      const valueArr = conditionArr[3].split(':');
+                                      let answer = '';
+
+                                      switch (valueArr[0]) {
+                                        case '<':
+                                          answer = +result.values[0].value < +valueArr[1] ? valueArr[2] : valueArr[3];
+                                          break;
+                                        case '<=':
+                                          answer = +result.values[0].value <= +valueArr[1] ? valueArr[2] : valueArr[3];
+                                          break;
+                                        case '>':
+                                          answer = +result.values[0].value > +valueArr[1] ? valueArr[2] : valueArr[3];
+                                          break;
+                                        case '>=':
+                                          answer = +result.values[0].value >= +valueArr[1] ? valueArr[2] : valueArr[3];
+                                          break;
+                                        case '=':
+                                          answer = +result.values[0].value === +valueArr[1] ? valueArr[2] : valueArr[3];
+                                          break;
+                                        case '!=':
+                                          answer = +result.values[0].value !== +valueArr[1] ? valueArr[2] : valueArr[3];
+                                          break;
+                                      }
+
+                                      q.answer = answer;
+
+                                      setTimeout(() => {
                                         this.answerService
-                                          .saveAnswer(q.id, this.auditoryId, q.answer)
+                                          .saveAnswer(q.id, this.auditoryId, answer)
                                           .subscribe({
                                             next: save => {
                                               if (save !== DATABASE_WAITING_MESSAGE) {
@@ -212,117 +293,55 @@ export class QuestionFormPage implements OnInit {
                                               }
                                             }
                                           })
-                                      }, baseTime + (i * 40) -20);
+                                      }, baseTime2 + (40 * i) - 20)
                                     }
                                   }
                                 })
-                            }, baseTime + (i * 40))
+                            }, baseTime2 + (40 * i))
+
                           });
-                        // End to answer the same like another answer
+                          // End to answer by some answer
 
+                          this.ImageSrc = this.questions.map(q => {
+                            return {
+                              canTakePickture: !!q.answer,
+                              url: '',
+                              id: q.dir ? q.dir : '',
+                            }
+                          });
 
-                        // To answer by some answer
-                        const baseTime2 = baseTime + (filteredQuestions.length * 40);
-                        this.questions.filter(q => {
-                          return q.cond && q.cond !== '' && q.cond.startsWith('D')
-                        })
-                        .forEach((q, i) => {
-                          setTimeout(() => {
-
-                            const conditionArr = q.cond.split('-');
-                            this.answerService
-                              .answerExists(conditionArr[2], this.auditoryId)
-                              .subscribe({
-                                next: result => {
-                                  if (result !== DATABASE_WAITING_MESSAGE) {
-
-                                    const valueArr = conditionArr[3].split(':');
-                                    let answer = '';
-
-                                    switch (valueArr[0]) {
-                                      case '<':
-                                        answer = +result.values[0].value < +valueArr[1] ? valueArr[2] : valueArr[3];
-                                        break;
-                                      case '<=':
-                                        answer = +result.values[0].value <= +valueArr[1] ? valueArr[2] : valueArr[3];
-                                        break;
-                                      case '>':
-                                        answer = +result.values[0].value > +valueArr[1] ? valueArr[2] : valueArr[3];
-                                        break;
-                                      case '>=':
-                                        answer = +result.values[0].value >= +valueArr[1] ? valueArr[2] : valueArr[3];
-                                        break;
-                                      case '=':
-                                        answer = +result.values[0].value === +valueArr[1] ? valueArr[2] : valueArr[3];
-                                        break;
-                                      case '!=':
-                                        answer = +result.values[0].value !== +valueArr[1] ? valueArr[2] : valueArr[3];
-                                        break;
-                                    }
-
-                                    q.answer = answer;
-
-                                    setTimeout(() => {
-                                      this.answerService
-                                        .saveAnswer(q.id, this.auditoryId, answer)
-                                        .subscribe({
-                                          next: save => {
-                                            if (save !== DATABASE_WAITING_MESSAGE) {
-                                              const originalIndex = this.questions.findIndex(question => question.id === q.id);
-                                              this.ImageSrc[originalIndex].canTakePickture = true;
-                                              this.alreadyAnsweredAll();
-                                            }
-                                          }
-                                        })
-                                    }, baseTime2 + (40 * i) - 20)
-                                  }
-                                }
-                              })
-                          }, baseTime2 + (40 * i))
-
-                        });
-                        // End to answer by some answer
-
-                        this.ImageSrc = this.questions.map(q => {
-                          return {
-                            canTakePickture: !!q.answer,
-                            url: '',
-                            id: q.dir ? q.dir : '',
+                          if (isPlatform('hybrid')) {
+                            this.ImageSrc.forEach((img, i) => {
+                              if (!!img.id) {
+                                this.photoService
+                                  .getLocalEvidenceUri(img.id)
+                                  .then((photo: any) => {
+                                    this.ImageSrc[i].url = Capacitor.convertFileSrc(photo.uri)
+                                  });
+                              }
+                            })
+                          } else {
+                            this.ImageSrc.forEach((img, i) => {
+                              if (!!img.id) {
+                                this.photoService
+                                  .getLocalEvidence(img.id)
+                                  .then((photo: any) => {
+                                    this.ImageSrc[i].url = this.sanitization.bypassSecurityTrustUrl('data:image/jpeg;base64,' + photo.data);
+                                  });
+                              }
+                            })
                           }
-                        });
 
-                        if (isPlatform('hybrid')) {
-                          this.ImageSrc.forEach((img, i) => {
-                            if (!!img.id) {
-                              this.photoService
-                                .getLocalEvidenceUri(img.id)
-                                .then((photo: any) => {
-                                  this.ImageSrc[i].url = Capacitor.convertFileSrc(photo.uri)
-                                });
-                            }
-                          })
-                        } else {
-                          this.ImageSrc.forEach((img, i) => {
-                            if (!!img.id) {
-                              this.photoService
-                                .getLocalEvidence(img.id)
-                                .then((photo: any) => {
-                                  this.ImageSrc[i].url = this.sanitization.bypassSecurityTrustUrl('data:image/jpeg;base64,' + photo.data);
-                                });
-                            }
-                          })
-                        }
-
-                        this.alreadyAnsweredAll()
-                        this.hideForm = false;
-                      }, 20);
-                    }
-                  },
-                });
-            }, 20);
+                          this.alreadyAnsweredAll()
+                        }, 20);
+                      }
+                    },
+                  });
+              }, 20);
+            }
           }
-        }
-      })
+        })
+    }, 10);
   }
 
   jsonCast(jsonString: string) {
@@ -455,10 +474,10 @@ export class QuestionFormPage implements OnInit {
     });
   }
 
-  onAnswerChange(event: any, question: any, index: number) {
-    if (!!event.detail.value) {
+  onAnswerChange(question: any, index: number) {
+    if (!!question.answer) {
       this.answerService
-        .saveAnswer(question.id, this.auditoryId, event.detail.value)
+        .saveAnswer(question.id, this.auditoryId, question.answer)
         .subscribe({
           next: (save) => {
             if (save !== DATABASE_WAITING_MESSAGE) {
@@ -472,22 +491,26 @@ export class QuestionFormPage implements OnInit {
       this.alreadyAnsweredAll();
     }
 
-    this.verifyCondition(question.uid, `${event.detail.value}`);
+    this.verifyCondition(question.uid, `${question.answer}`);
+
+  }
+
+  setValue(question: any, event: any) {
+    question.answer = event.target.value;
   }
 
   private verifyCondition(questionUid: string, answerValue: string) {
     const needsChange = this.questionChangeEvent.find(q => `${questionUid}` === q.uid);
-
     if (needsChange) {
       // this.loadingService.showLoading();
-      this.hideForm = true;
       let count = 0;
       let hiddenCount = 0;
 
       needsChange.affectedIndexes.forEach((i: number, index: number) => {
         const questionConst = this.questionsWithCondition.find(qwc => qwc.type === 'S' && qwc.questionIndex === i);
 
-        this.hideQuestion[i] = questionConst && (questionConst.answer !== answerValue);
+        this.hideQuestion[i] = questionConst && (+questionConst.answer !== +answerValue);
+
 
         if (this.hideQuestion[i] === true) {
           hiddenCount++;
@@ -504,11 +527,9 @@ export class QuestionFormPage implements OnInit {
                         if(dlt !== DATABASE_WAITING_MESSAGE) {
                           this.ImageSrc[i].canTakePickture = false;
                           this.questions[i].answer = undefined;
-                          this.hideForm = true;
                           this.showedQuestions = this.hideQuestion.filter(q => q !== true).length;
                           count++;
                           if (count === needsChange.affectedIndexes.length) {
-                            this.hideForm = false;
                             this.loadingService.dismissLoading();
                           }
                         }
@@ -526,7 +547,6 @@ export class QuestionFormPage implements OnInit {
                       this.showedQuestions = this.hideQuestion.filter(q => q !== true).length;
                       count++;
                       if (count === needsChange.affectedIndexes.length) {
-                        this.hideForm = false;
                         this.loadingService.dismissLoading();
                       }
                     }
@@ -538,7 +558,6 @@ export class QuestionFormPage implements OnInit {
           this.showedQuestions = this.hideQuestion.filter(q => q !== true).length;
           count++;
           if (count === needsChange.affectedIndexes.length) {
-            this.hideForm = false;
             this.loadingService.dismissLoading();
           }
         }
@@ -546,6 +565,9 @@ export class QuestionFormPage implements OnInit {
         this.alreadyAnsweredAll();
       })
     }
+
+    this.selectedQuestion = undefined;
+    this.selectedIndex = -1;
   }
 
   alreadyAnsweredAll() {
@@ -560,11 +582,48 @@ export class QuestionFormPage implements OnInit {
     this.loadingService.dismissLoading();
     this.loadingService.dismissLoading();
     this.loadingService.dismissLoading();
-    this.hideForm = false;
   }
 
   onFinish() {
     this.router.navigateByUrl(URI_AUDITORY_LIST('local'));
   }
+
+  onCancel() {
+    this.router.navigateByUrl(this.backUri);
+  }
+
+  selectedQuestion!: any;
+  selectedIndex = -1;
+
+  setActionSheetButtons(index: any) {
+    this.selectedIndex = index;
+    this.selectedQuestion = this.questions[index];
+    const answers = JSON.parse(this.selectedQuestion.answers);
+    this.actionSheetButtons = answers.map((a: any) => ({
+      text: a.t,
+      data: {
+        answer: a.t,
+        action: a.v,
+      },
+    }));
+
+    this.actionSheetButtons.push({
+      text: 'Cancelar',
+      role: 'cancel',
+    },)
+  }
+
+  logResult(data: any) {
+    if (data) {
+      this.selectedQuestion.answer = data.detail.data.action;
+      this.selectedQuestion.answerText = data.detail.data.answer;
+
+      this.onAnswerChange(this.selectedQuestion, this.selectedIndex)
+    } else {
+      this.selectedQuestion = undefined;
+      this.selectedIndex = -1;
+    }
+  }
+
 
 }

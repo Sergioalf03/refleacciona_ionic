@@ -191,7 +191,7 @@ export class HelmetAuditoryListPage {
       // const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => r.blob());
 
       // this.blobUrl = URL.createObjectURL(blob) // blob is the Blob object
-      // console.log(blob);
+
 
       this.auditoryEvidenceService
         .uploadImage((ImageSrc.data as string), externalId, arr[index].creation_date, arr[index].dir)
@@ -219,7 +219,6 @@ export class HelmetAuditoryListPage {
   }
 
   onDelete = (id: string) => {
-    console.log('delete')
     this.confirmDialogService
       .presentAlert('¿Desea eliminar el registro?', () => {
         this.loadingService.showLoading();
