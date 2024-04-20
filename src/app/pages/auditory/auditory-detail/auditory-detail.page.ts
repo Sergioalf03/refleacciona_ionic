@@ -8,14 +8,13 @@ import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { MapService } from 'src/app/core/controllers/map.service';
 import { AuditoryService } from 'src/app/services/auditory.service';
 import { STORAGE_URL } from 'src/environments/environment';
-import { Filesystem, Directory } from '@capacitor/filesystem';
-import { Share } from '@capacitor/share';
 import { DownloadPlatformService } from 'src/app/core/controllers/download-platform.service';
 
 
 @Component({
   selector: 'app-auditory-detail',
   templateUrl: './auditory-detail.page.html',
+  styleUrls: ['./auditory-detail.page.scss'],
 })
 export class AuditoryDetailPage {
 
@@ -157,5 +156,6 @@ export class AuditoryDetailPage {
   onGoingBack() {
     this.router.navigateByUrl(this.backUrl);
   }
+
 
 }

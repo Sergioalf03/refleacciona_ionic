@@ -64,7 +64,6 @@ export class GenericListComponent implements OnInit {
   }
 
   async presentActionSheetOptions(element: any) {
-    console.log(element)
     const buttons = [
       {
         text: 'Actualizar contenido',
