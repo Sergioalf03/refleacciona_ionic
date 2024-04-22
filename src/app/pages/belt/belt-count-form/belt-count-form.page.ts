@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ModalController } from '@ionic/angular';
 import { DIRECTIONS } from 'src/app/core/constants/directions';
 import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
 import { URI_BELT_LIST } from 'src/app/core/constants/uris';
@@ -8,12 +7,12 @@ import { VEHICLE_TYPES } from 'src/app/core/constants/vehicle-types';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
-import { ToastService } from 'src/app/core/controllers/toast.service';
 import { BeltCollectionService } from 'src/app/services/belt-collection.service';
 
 @Component({
   selector: 'app-belt-count-form',
   templateUrl: './belt-count-form.page.html',
+  styleUrls: ['./belt-count-form.page.scss']
 })
 export class BeltCountFormPage implements OnInit {
 
@@ -51,7 +50,6 @@ export class BeltCountFormPage implements OnInit {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private beltCollectionService: BeltCollectionService,
-    private toastService: ToastService,
     private confirmDialogService: ConfirmDialogService,
     private loadingService: LoadingService,
     private responseService: HttpResponseService,
@@ -71,9 +69,6 @@ export class BeltCountFormPage implements OnInit {
               next: result =>  {
                 if (result !== 'W' && result.values.length > 0) {
                   const count = result.values[0];
-
-                  // this.originId = count.origin;
-                  // this.destinationId = count.destination;
 
                   this.beltCount = count.belts_count;
                   this.beltlessCount = count.adults_count;

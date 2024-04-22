@@ -26,6 +26,7 @@ import { GeneralCountCollectionService } from 'src/app/services/general-count-co
 @Component({
   selector: 'app-swipe-form',
   templateUrl: './swipe-form.page.html',
+  styleUrls: ['./swipe-form.page.scss']
 })
 export class SwipeFormPage implements AfterViewInit {
 
@@ -60,8 +61,6 @@ export class SwipeFormPage implements AfterViewInit {
   auditoryId = '';
   backUrl = URI_GENERAL_COUNT_LIST('local');
 
-  @ViewChild('content', { read: ElementRef }) content!: ElementRef<HTMLParagraphElement>;
-  @ViewChild('footer', { read: ElementRef }) footer!: ElementRef<HTMLParagraphElement>;
 
   constructor(
     private confirmDialogService: ConfirmDialogService,
@@ -196,4 +195,8 @@ export class SwipeFormPage implements AfterViewInit {
     this.auditoryId = '0';
   }
 
+  onCancel() {
+    this.resetVariables();
+    this.router.navigateByUrl(this.backUrl);
+  }
 }

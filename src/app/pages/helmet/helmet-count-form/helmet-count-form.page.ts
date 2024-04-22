@@ -13,6 +13,7 @@ import { HttpResponseService } from 'src/app/core/controllers/http-response.serv
 @Component({
   selector: 'app-helmet-count-form',
   templateUrl: './helmet-count-form.page.html',
+  styleUrls: ['helmet-count-form.page.scss'],
 })
 export class HelmetCountFormPage implements OnInit {
 

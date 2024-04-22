@@ -112,6 +112,10 @@ ion-input.custom-input {
   color: #a1a1a1;
 }
 
+button:disabled {
+  border: none;
+}
+
 .custom-btn {
   display: block;
   width: 100%;

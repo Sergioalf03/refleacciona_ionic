@@ -11,7 +11,6 @@ import { MapService } from 'src/app/core/controllers/map.service';
 import { HelmetAuditoryService } from 'src/app/services/helmet-auditory.service';
 import { STORAGE_URL } from 'src/environments/environment';
 
-const directions = DIRECTIONS;
 
 @Component({
   selector: 'app-helmet-auditory-detail',
@@ -31,8 +30,10 @@ export class HelmetAuditoryDetailPage {
     auditoryLat = '';
     auditoryLng = '';
 
-    yesScore = 0;
-    notScore = 0;
+    total = 0;
+
+    yesScore = '0';
+    notScore = '0';
 
     auditoyrEvidences: any[] = [];
     auditorySections: any[] = [];
@@ -90,6 +91,17 @@ export class HelmetAuditoryDetailPage {
       this.auditoyrEvidences = data.evidences.map((e: any) => `${STORAGE_URL}/helmet/${e.dir}`)
 
       this.counts = data.counts;
+      this.total = this.counts[0].users_count + this.counts[0].helmets_count;
+
+      this.notScore = (this.counts[0].users_count * 100 / this.total).toFixed(2);
+      if (this.notScore.length < 5) {
+        this.notScore = `0${this.notScore}`;
+      }
+
+      this.yesScore = (this.counts[0].helmets_count * 100 / this.total).toFixed(2);
+      if (this.yesScore.length < 5) {
+        this.yesScore = `0${this.yesScore}`;
+      }
 
       this.mapService.setCenter(+this.auditoryLat, +this.auditoryLng, true);
       setTimeout(() => {

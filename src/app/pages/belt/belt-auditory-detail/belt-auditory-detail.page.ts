@@ -13,9 +13,6 @@ import { MapService } from 'src/app/core/controllers/map.service';
 import { BeltAuditoryService } from 'src/app/services/belt-auditory.service';
 import { STORAGE_URL } from 'src/environments/environment';
 
-const directions = DIRECTIONS;
-const vehicleTypes = VEHICLE_TYPES;
-
 @Component({
   selector: 'app-belt-auditory-detail',
   templateUrl: './belt-auditory-detail.page.html',
@@ -34,8 +31,10 @@ export class BeltAuditoryDetailPage {
   auditoryLat = '';
   auditoryLng = '';
 
-  yesScore = 0;
-  notScore = 0;
+  yesScore = '0';
+  notScore = '0';
+  chairScore = '0';
+  total = 0;
 
   auditoyrEvidences: any[] = [];
   auditorySections: any[] = [];
@@ -93,6 +92,24 @@ export class BeltAuditoryDetailPage {
     this.auditoyrEvidences = data.evidences.map((e: any) => `${STORAGE_URL}/belt/${e.dir}`);
 
     this.counts = data.counts;
+
+    this.total = this.counts[0].adults_count + this.counts[0].belts_count + this.counts[0].chairs_count;
+
+    this.notScore = (this.counts[0].adults_count * 100 / this.total).toFixed(2);
+    if (this.notScore.length < 5) {
+      this.notScore = `0${this.notScore}`;
+    }
+
+    this.yesScore = (this.counts[0].belts_count * 100 / this.total).toFixed(2);
+    if (this.yesScore.length < 5) {
+      this.yesScore = `0${this.yesScore}`;
+    }
+
+    this.chairScore = (this.counts[0].chairs_count * 100 / this.total).toFixed(2);
+    if (this.chairScore.length < 5) {
+      this.chairScore = `0${this.chairScore}`;
+    }
+
 
     this.mapService.setCenter(+this.auditoryLat, +this.auditoryLng, true);
     setTimeout(() => {

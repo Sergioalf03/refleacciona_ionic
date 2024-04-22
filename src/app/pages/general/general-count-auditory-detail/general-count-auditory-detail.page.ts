@@ -13,9 +13,6 @@ import { MapService } from 'src/app/core/controllers/map.service';
 import { GeneralCountAuditoryService } from 'src/app/services/general-count-auditory.service';
 import { STORAGE_URL } from 'src/environments/environment';
 
-const directions = DIRECTIONS;
-const vehicleTypes = VEHICLE_TYPES;
-
 @Component({
   selector: 'app-general-count-auditory-detail',
   templateUrl: './general-count-auditory-detail.page.html',
@@ -39,6 +36,8 @@ export class GeneralCountAuditoryDetailPage {
     'Pickup',
   ];
 
+  total = 0;
+
   auditoryId = '0';
 
   auditoryTitle = '';
@@ -56,6 +55,7 @@ export class GeneralCountAuditoryDetailPage {
   auditorySections: any[] = [];
 
   counts: any[] = [];
+  score: any[] = []
 
   constructor(
     private auditoryService: GeneralCountAuditoryService,
@@ -108,6 +108,68 @@ export class GeneralCountAuditoryDetailPage {
     this.auditoyrEvidences = data.evidences.map((e: any) => `${STORAGE_URL}/general/${e.dir}`);
 
     this.counts = data.counts;
+
+    this.total = +this.counts[0].count1 +
+      +this.counts[0].count2 +
+      +this.counts[0].count3 +
+      +this.counts[0].count4 +
+      +this.counts[0].count5 +
+      +this.counts[0].count6 +
+      +this.counts[0].count7 +
+      +this.counts[0].count8 +
+      +this.counts[0].count9 +
+      +this.counts[0].count10 +
+      +this.counts[0].count11 +
+      +this.counts[0].count12;
+
+    this.counts[0].score1 = (this.counts[0].count1 * 100 / this.total).toFixed(2);
+    if (this.counts[0].score1.length < 5) {
+      this.counts[0].score1 = `0${this.counts[0].score1}`;
+    }
+    this.counts[0].score2 = (this.counts[0].count2 * 100 / this.total).toFixed(2);
+    if (this.counts[0].score2.length < 5) {
+      this.counts[0].score2 = `0${this.counts[0].score2}`;
+    }
+    this.counts[0].score3 = (this.counts[0].count3 * 100 / this.total).toFixed(2);
+    if (this.counts[0].score3.length < 5) {
+      this.counts[0].score3 = `0${this.counts[0].score3}`;
+    }
+    this.counts[0].score4 = (this.counts[0].count4 * 100 / this.total).toFixed(2);
+    if (this.counts[0].score4.length < 5) {
+      this.counts[0].score4 = `0${this.counts[0].score4}`;
+    }
+    this.counts[0].score5 = (this.counts[0].count5 * 100 / this.total).toFixed(2);
+    if (this.counts[0].score5.length < 5) {
+      this.counts[0].score5 = `0${this.counts[0].score5}`;
+    }
+    this.counts[0].score6 = (this.counts[0].count6 * 100 / this.total).toFixed(2);
+    if (this.counts[0].score6.length < 5) {
+      this.counts[0].score6 = `0${this.counts[0].score6}`;
+    }
+    this.counts[0].score7 = (this.counts[0].count7 * 100 / this.total).toFixed(2);
+    if (this.counts[0].score7.length < 5) {
+      this.counts[0].score7 = `0${this.counts[0].score7}`;
+    }
+    this.counts[0].score8 = (this.counts[0].count8 * 100 / this.total).toFixed(2);
+    if (this.counts[0].score8.length < 5) {
+      this.counts[0].score8 = `0${this.counts[0].score8}`;
+    }
+    this.counts[0].score9 = (this.counts[0].count9 * 100 / this.total).toFixed(2);
+    if (this.counts[0].score9.length < 5) {
+      this.counts[0].score9 = `0${this.counts[0].score9}`;
+    }
+    this.counts[0].score10 = (this.counts[0].count10 * 100 / this.total).toFixed(2);
+    if (this.counts[0].score10.length < 5) {
+      this.counts[0].score10 = `0${this.counts[0].score10}`;
+    }
+    this.counts[0].score11 = (this.counts[0].count11 * 100 / this.total).toFixed(2);
+    if (this.counts[0].score11.length < 5) {
+      this.counts[0].score11 = `0${this.counts[0].score11}`;
+    }
+    this.counts[0].score12 = (this.counts[0].count12* 100 / this.total).toFixed(2);
+    if (this.counts[0].score12.length < 5) {
+      this.counts[0].score12 = `0${this.counts[0].score12}`;
+    }
 
     this.mapService.setCenter(+this.auditoryLat, +this.auditoryLng, true);
     setTimeout(() => {
