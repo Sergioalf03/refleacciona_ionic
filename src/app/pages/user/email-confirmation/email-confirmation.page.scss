@@ -1,0 +1,17 @@
+input {
+  border-radius: 5px;
+}
+
+.custom-btn {
+  display: block;
+  width: 100%;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #EC6A5C;
+  color: #000;
+  border: none;
+  border-radius: 15px;
+  /* Adjust the border-radius to control the roundness */
+  font-weight: bold;
+  cursor: pointer;
+}

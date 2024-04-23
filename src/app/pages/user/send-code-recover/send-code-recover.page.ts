@@ -11,6 +11,7 @@ import { AuthService } from 'src/app/services/auth.service';
 @Component({
   selector: 'app-send-code-recover',
   templateUrl: './send-code-recover.page.html',
+  styleUrls: ['./send-code-recover.page.scss']
 })
 export class SendCodeRecoverPage implements OnInit {
 
@@ -18,6 +19,8 @@ export class SendCodeRecoverPage implements OnInit {
   backUri = URI_LOGIN();
 
   showEmail = false;
+
+  formSubmited = false;
 
   constructor(
     private authService: AuthService,
@@ -109,6 +112,7 @@ export class SendCodeRecoverPage implements OnInit {
   }
 
   onSubmit() {
+    this.formSubmited = true;
     if (this.validFormService.isValid(this.form, [])) {
       this.loadingService.showLoading();
       const code = `${this.form.controls['code1'].value}${this.form.controls['code2'].value}${this.form.controls['code3'].value}${this.form.controls['code4'].value}${this.form.controls['code5'].value}${this.form.controls['code6'].value}`;
@@ -147,6 +151,10 @@ export class SendCodeRecoverPage implements OnInit {
     } else {
       input.setFocus();
     }
+  }
+
+  onLeave() {
+    this.router.navigateByUrl(this.backUri);
   }
 
 }

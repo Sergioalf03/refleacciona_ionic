@@ -1,4 +1,98 @@
-<ion-content class="center">
+<ion-content>
+  <div class="col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4 col-xxl-3 offset-xxl-auto mr-auto mb-4">
+
+    <div class="mx-5">
+
+      <button class="btn custom-white-btn mt-4" (click)="onLeave()">
+        <i class="fa-solid fa-arrow-left" style="font-size: 15spx;"></i>
+      </button>
+
+      <div class="row mt-4">
+        <div class="col">
+          <div class=" mb-0 title-text-size">Nueva contraseña</div>
+
+          <p class="text text-mini coolor mt-0">Introduce tu código de confirmación y la nueva contraseña</p>
+
+        </div>
+      </div>
+
+      <form *ngIf="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+       <div class="row px-5 mt-4">
+          <div class="col px-0">
+            <input type="tel" maxlength="1" formControlName="code1" #i1 (click)="setInputFocus(i1)" (keyup)="$event.key === 'Backspace' ? true : setInputFocus(i2)" class="form-control text-center">
+          </div>
+          <div class="col px-0">
+            <input type="tel" maxlength="1" formControlName="code2" #i2 (click)="setInputFocus(i2)" (keyup)="$event.key === 'Backspace' ? setInputFocus(i1) : setInputFocus(i3)" class="form-control text-center">
+          </div>
+          <div class="col px-0">
+            <input type="tel" maxlength="1" formControlName="code3" #i3 (click)="setInputFocus(i3)" (keyup)="$event.key === 'Backspace' ? setInputFocus(i2) : setInputFocus(i4)" class="form-control text-center">
+          </div>
+          <div class="col px-0">
+            <input type="tel" maxlength="1" formControlName="code4" #i4 (click)="setInputFocus(i4)" (keyup)="$event.key === 'Backspace' ? setInputFocus(i3) : setInputFocus(i5)" class="form-control text-center">
+          </div>
+          <div class="col px-0">
+            <input type="tel" maxlength="1" formControlName="code5" #i5 (click)="setInputFocus(i5)" (keyup)="$event.key === 'Backspace' ? setInputFocus(i4) : setInputFocus(i6)" class="form-control text-center">
+          </div>
+          <div class="col px-0">
+            <input type="tel" maxlength="1" formControlName="code6" #i6 (click)="setInputFocus(i6)" (keyup)="$event.key === 'Backspace' ? setInputFocus(i5) : true" class="form-control text-center">
+          </div>
+        </div>
+
+        <div class="input-with-icon mt-3">
+
+          <input
+            type="password"
+            name="password"
+            formControlName="password"
+            required
+            placeholder="*Nueva contraseña"
+            class="form-control py-3 px-4 full-input"
+            [ngClass]="{ 'border-danger': formSubmited && form.controls['password'].invalid }"
+          >
+
+          <i class="fa-solid fa-lock"></i>
+
+        </div>
+
+        <span
+          *ngIf="formSubmited && form.controls['password'].invalid"
+          class="text-danger text-mini"
+        >Contraseña requerido</span>
+
+        <div [hidden]="!showEmail" class="input-with-icon mt-4">
+
+          <input
+            name="email"
+            formControlName="email"
+            type="email"
+            placeholder="*Correo electrónico"
+            class="form-control py-3 px-4 full-input"
+            [ngClass]="{ 'border-danger': formSubmited && form.controls['email'].invalid }"
+          >
+            <i class="fa-regular fa-envelope"></i>
+        </div>
+
+        <span
+          [hidden]="!showEmail"
+          *ngIf="formSubmited && form.controls['email'].invalid"
+          class="text-danger text-mini"
+        >Correo requerido</span>
+
+
+        <ion-row class="mt-4">
+          <ion-col>
+            <button class="btn custom-btn text-white" type="submit">
+              Enviar
+            </button>
+          </ion-col>
+        </ion-row>
+      </form>
+
+    </div>
+  </div>
+</ion-content>
+
+<!-- <ion-content class="center">
 
   <app-header-buttons
     [backUrl]="backUri"
@@ -76,4 +170,4 @@
       </div>
     </form>
   </div>
-</ion-content>
+</ion-content> -->

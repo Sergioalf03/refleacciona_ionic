@@ -101,6 +101,7 @@ export class ProfilePage {
   }
 
   onSubmit() {
+    this.formSubmited = true;
     if (this.validFormService.isValid(this.form, [])) {
       this.confirmDialogService.presentAlert('¿Desea guardar los cambios?', () => {
         this.loadingService.showLoading();
@@ -122,16 +123,16 @@ export class ProfilePage {
                 this.photoService
                   .saveLocalLogo(this.imageData)
                   .then(file => {
-                //     this.sessionService
-                //       .uploadLogo(blob)
-                //       .subscribe({
-                //         next: async (res: any) => {
+                    this.sessionService
+                      .uploadLogo(blob)
+                      .subscribe({
+                        next: async (res: any) => {
                           this.httpResponseService.onSuccess('Actualización exitosa')
-                //         },
-                //         error: err => {
-                //           this.httpResponseService.onError(err, 'No se pudo guardar la imagen');
-                //         },
-                //       });
+                        },
+                        error: err => {
+                          this.httpResponseService.onError(err, 'No se pudo guardar la imagen');
+                        },
+                      });
                   })
                   .catch(e => this.httpResponseService.onError(e, 'No se pudieron actualizar los datos'));
               } else {
