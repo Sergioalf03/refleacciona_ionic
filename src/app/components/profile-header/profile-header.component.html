@@ -21,28 +21,12 @@
           </div>
 
           <div class="col-3 text-end">
-            <button id="click-trigger" class="btn custom-white-btn p-0 m-0 px-2  mt-2">
+
+
+            <button (click)="onOpenUser()"  class="btn custom-white-btn p-0 m-0 px-2  mt-2">
               <i class="fa-solid fa-gear p-0 m-0 mt-2"></i>
             </button>
 
-            <!-- <ion-button id="click-trigger" size="small">
-          <ion-icon slot="icon-only" name="person"></ion-icon>
-        </ion-button>
-         -->
-        <ion-popover trigger="click-trigger" [dismissOnSelect]="true" triggerAction="click">
-          <ng-template>
-            <ion-content>
-              <ion-list lines="none">
-                <ion-item class="p-0 m-0" button (click)="onOpenUser()">
-                  <p class="text">Datos de Usuario</p>
-                </ion-item>
 
-                <ion-item class="p-0 m-0" button (click)="onLogout()">
-                  <p class="text">Salir</p>
-                </ion-item>
-              </ion-list>
-            </ion-content>
-          </ng-template>
-        </ion-popover>
           </div>
         </div>

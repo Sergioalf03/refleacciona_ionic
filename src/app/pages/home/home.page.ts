@@ -7,8 +7,10 @@ import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.se
 import { VersionService } from 'src/app/services/version.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { URI_AUDITORY_FORM, URI_AUDITORY_LIST, URI_BELT_FORM, URI_BELT_LIST, URI_GENERAL_COUNT_FORM, URI_GENERAL_COUNT_LIST, URI_HELMET_FORM, URI_HELMET_LIST, URI_LOGIN, URI_PROFILE } from 'src/app/core/constants/uris';
-import { Platform } from '@ionic/angular';
+import { Platform, isPlatform } from '@ionic/angular';
 import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
+import { PhotoService } from 'src/app/core/controllers/photo.service';
+import { Capacitor } from '@capacitor/core';
 
 @Component({
   selector: 'app-home',
@@ -38,6 +40,7 @@ export class HomePage {
     private confirmDialogService: ConfirmDialogService,
     private loadingService: LoadingService,
     private platform: Platform,
+    private photoService: PhotoService,
 
     // private androidPermissions: AndroidPermissions,
   ) {
@@ -124,22 +127,7 @@ export class HomePage {
       });
   }
 
-  onLogout() {
-    this.confirmDialogService
-      .presentAlert('¿Desea cerrar sesión?', async () => {
-        this.loadingService.showLoading();
-        return await this.sessionService.logout()
-        .subscribe({
-          next: () => {
-            this.router.navigateByUrl(URI_LOGIN())
-            this.loadingService.dismissLoading();
-          },
-          error: err => {
-            this.httpResponseService.onError(err, 'Error al cerrar sesión');
-          },
-        })
-      })
-  }
+
 
   onNewAuditory() {
     this.router.navigateByUrl(URI_AUDITORY_FORM('0'));
@@ -165,9 +153,6 @@ export class HomePage {
     this.router.navigateByUrl(URI_BELT_LIST('local'));
   }
 
-  onOpenUser() {
-    this.router.navigateByUrl(URI_PROFILE());
-  }
 
   onGeneralCountList() {
     this.router.navigateByUrl(URI_GENERAL_COUNT_LIST('local'));
@@ -179,7 +164,6 @@ export class HomePage {
 
   onFetchUpdate(showToast: boolean) {
     this.versionService.checked = true;
-    this.loadingService.showLoading();
     this.databaseService
       .checkDatabaseVersion()
       .then((localVersion: any) => {
@@ -231,7 +215,6 @@ export class HomePage {
                 if (showToast) {
                   this.httpResponseService.onSuccess('La versión más reciente ya está instalada')
                 } else {
-                  this.loadingService.dismissLoading();
                 }
               }
             },
@@ -239,6 +222,58 @@ export class HomePage {
           });
       })
       .catch(err => this.httpResponseService.onError(err, 'Error al verificar versión local'));
+  }
+
+  ngOnInit() {
+    const homeUserData = this.sessionService.getUserHomeData();
+
+    const whereToSlice = homeUserData.userName.indexOf(' ');
+    let replacedName = homeUserData.userName.substring(0, whereToSlice + 2) + '.';
+
+    if (replacedName.length > 15) {
+      replacedName = replacedName.substring(0, 15) + '...';
+    }
+
+    this.userName = replacedName;
+
+    if (isPlatform('hybrid')) {
+      this.photoService.getLocalLogoUri()
+        .then(photo => {
+          this.ImageSafeSrc = Capacitor.convertFileSrc(photo.uri)
+        })
+        .catch(e => console.log(e));
+    } else {
+      this.photoService
+        .getLocalLogo()
+        .then(photo => {
+          if (!!photo) {
+            this.ImageSafeSrc = 'data:image/png;base64,' + photo.data;
+          }
+        })
+        .catch(e => console.log(e));
+    }
+  }
+
+
+  onLogout() {
+    this.confirmDialogService
+      .presentAlert('¿Desea cerrar sesión?', async () => {
+        this.loadingService.showLoading();
+        return await this.sessionService.logout()
+          .subscribe({
+            next: () => {
+              this.router.navigateByUrl(URI_LOGIN())
+              this.loadingService.dismissLoading();
+            },
+            error: err => {
+              this.httpResponseService.onError(err, 'Error al cerrar sesión');
+            },
+          })
+      })
+  }
+
+  onOpenUser() {
+    this.router.navigateByUrl(URI_PROFILE());
   }
 
 }

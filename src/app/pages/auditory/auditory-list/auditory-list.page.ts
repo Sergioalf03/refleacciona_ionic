@@ -173,6 +173,7 @@ export class AuditoryListPage {
               .then(result => {
                 this.uploadAnswerPhotos(localId, extenalId);
               })
+              .catch(e => console.log(e));
           }
         }
       });
@@ -184,7 +185,13 @@ export class AuditoryListPage {
         return res(true);
       }
 
-      const ImageSrc = await this.photoService.getLocalEvidence(arr[index].dir).then(photo => photo);
+      const ImageSrc = await this.photoService
+        .getLocalEvidence(arr[index].dir)!
+        .then(photo => photo)
+        .catch(e => {
+          console.log(e);
+          return e;
+        });
       // const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => r.blob());
 
       this.auditoryEvidenceService
@@ -203,7 +210,8 @@ export class AuditoryListPage {
                       }
                     }
                   });
-              });
+              })
+              .catch(e => console.log(e));
           },
           error: err => this.responseService.onError(err, 'No se pudo subir la imagen'),
         });
@@ -245,7 +253,8 @@ export class AuditoryListPage {
                         }
                       }
                     });
-                });
+                })
+                .catch(e => console.log(e));
           }
         }
       });
@@ -257,7 +266,13 @@ export class AuditoryListPage {
         return res(true);
       }
 
-      const ImageSrc = await this.photoService.getLocalEvidence(arr[index].dir).then(photo => photo);
+      const ImageSrc = await this.photoService
+        .getLocalEvidence(arr[index].dir)!
+        .then(photo => photo)
+        .catch(e => {
+          console.log(e)
+          return e;
+        });
       // const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => r.blob());
 
       this.answerEvidenceService
@@ -274,12 +289,15 @@ export class AuditoryListPage {
                     next: dlt => {
                       if (dlt !== DATABASE_WAITING_MESSAGE) {
 
-                          this.uploadAnswersEvidence(arr, index + 1, extenalId).then(r => res(r));
+                          this.uploadAnswersEvidence(arr, index + 1, extenalId)
+                            .then(r => res(r))
+                            .catch(e => console.log(e));;
 
                       }
                     }
                   });
-              });
+              })
+              .catch(e => console.log(e));
           },
           error: err => this.responseService.onError(err, 'No se pudo subir la imagen'),
         });

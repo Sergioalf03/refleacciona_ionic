@@ -32,32 +32,35 @@ export class AppComponent implements OnInit {
   async ngOnInit() {
     this.storage.create()
       .then(async storage => {
-      await this.storageService.init(storage);
+        await this.storageService.init(storage);
 
-
-      this.logged = await this.sessionService.isLoggedIn();
-      if (this.logged) {
-        await this.sessionService.setValuesFromStorage();
-        if (this.location.path() !== URI_HOME()) {
-          this.responseService.onSuccessAndRedirect(URI_HOME(), '/NA');
+        this.logged = await this.sessionService.isLoggedIn();
+        if (this.logged) {
+          await this.sessionService.setValuesFromStorage();
+          if (this.location.path() !== URI_HOME()) {
+            this.responseService.onSuccessAndRedirect(URI_HOME(), '/NA');
+          }
         }
-      }
-    });
+      })
+      .catch(e => console.log(e));
 
-    this.platform.ready().then(async () => {
-      this.sqlite.initializePlugin()
-        .then(async (ret) => {
-          if (this.sqlite.platform === "web") {
-            this.isWeb = true;
+    this.platform
+      .ready()
+      .then(async () => {
+        this.sqlite.initializePlugin()
+          .then(async (ret) => {
+            if (this.sqlite.platform === "web") {
+              this.isWeb = true;
 
               await this.sqlite.initWebStore();
 
-          }
-        })
-        .catch(error => {
-          console.log('No se pudo inicializar sqlite')
-        });
-    });
+            }
+          })
+          .catch(error => {
+            console.log('No se pudo inicializar sqlite')
+          });
+      })
+      .catch(e => console.log(e));
   }
 
   onAuditoryList() {

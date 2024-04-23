@@ -64,10 +64,15 @@ export class PhotoService {
   }
 
   getLocalEvidence(id: string) {
-    return Filesystem.readFile({
-      path: id,
-      directory: Directory.Data
-    })
+    try {
+      const f = Filesystem.readFile({
+        path: id,
+        directory: Directory.Data
+      });
+      return f;
+    } catch (e) {
+      return null;
+    }
   }
 
   getLocalEvidenceUri(id: string) {
