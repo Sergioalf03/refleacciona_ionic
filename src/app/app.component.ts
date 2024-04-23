@@ -5,7 +5,7 @@ import { StorageService } from './core/controllers/storage.service';
 import { Storage } from '@ionic/storage-angular';
 import { Platform } from '@ionic/angular';
 import { SQLiteService } from './core/controllers/sqlite.service';
-import { URI_AUDITORY_LIST, URI_BELT_LIST, URI_GENERAL_COUNT_LIST, URI_HELMET_LIST, URI_HOME } from './core/constants/uris';
+import { URI_AUDITORY_LIST, URI_BELT_LIST, URI_GENERAL_COUNT_LIST, URI_HELMET_LIST, URI_HOME, URI_LOGIN } from './core/constants/uris';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 
@@ -41,6 +41,8 @@ export class AppComponent implements OnInit {
         if (this.location.path() !== URI_HOME()) {
           this.responseService.onSuccessAndRedirect(URI_HOME(), '/NA');
         }
+      } else {
+        this.router.navigateByUrl(URI_LOGIN());
       }
     });
 

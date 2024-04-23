@@ -5,10 +5,10 @@ import { SessionService } from 'src/app/core/controllers/session.service';
 import { DatabaseService } from 'src/app/core/controllers/database.service';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { VersionService } from 'src/app/services/version.service';
-import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { URI_AUDITORY_FORM, URI_AUDITORY_LIST, URI_BELT_FORM, URI_BELT_LIST, URI_GENERAL_COUNT_FORM, URI_GENERAL_COUNT_LIST, URI_HELMET_FORM, URI_HELMET_LIST, URI_LOGIN, URI_PROFILE } from 'src/app/core/constants/uris';
 import { Platform } from '@ionic/angular';
 import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
+import { LoadingService } from 'src/app/core/controllers/loading.service';
 
 @Component({
   selector: 'app-home',
@@ -179,7 +179,6 @@ export class HomePage {
 
   onFetchUpdate(showToast: boolean) {
     this.versionService.checked = true;
-    this.loadingService.showLoading();
     this.databaseService
       .checkDatabaseVersion()
       .then((localVersion: any) => {
@@ -231,7 +230,6 @@ export class HomePage {
                 if (showToast) {
                   this.httpResponseService.onSuccess('La versión más reciente ya está instalada')
                 } else {
-                  this.loadingService.dismissLoading();
                 }
               }
             },
