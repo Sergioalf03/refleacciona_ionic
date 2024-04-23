@@ -317,17 +317,19 @@ export class QuestionFormPage implements OnInit {
                                   .getLocalEvidenceUri(img.id)
                                   .then((photo: any) => {
                                     this.ImageSrc[i].url = Capacitor.convertFileSrc(photo.uri)
-                                  });
+                                  })
+                                  .catch(e => console.log(e));
                               }
                             })
                           } else {
                             this.ImageSrc.forEach((img, i) => {
                               if (!!img.id) {
                                 this.photoService
-                                  .getLocalEvidence(img.id)
+                                  .getLocalEvidence(img.id)!
                                   .then((photo: any) => {
                                     this.ImageSrc[i].url = this.sanitization.bypassSecurityTrustUrl('data:image/jpeg;base64,' + photo.data);
-                                  });
+                                  })
+                                  .catch(e => console.log(e));
                               }
                             })
                           }
@@ -376,14 +378,62 @@ export class QuestionFormPage implements OnInit {
   }
 
   fromGallery(index: number, questionId: string) {
-    this.photoService.openGallery().then(async res => {
-      for (let forIndex = 0; forIndex < res.photos.length; forIndex++) {
-        const img = res.photos[forIndex].webPath;
+    this.photoService
+      .openGallery()
+      .then(async res => {
+        for (let forIndex = 0; forIndex < res.photos.length; forIndex++) {
+          const img = res.photos[forIndex].webPath;
+          // const blob = await fetch(img).then(r => r.blob());
+
+          this.photoService
+            .saveLocalAnswerEvidence(res.photos[forIndex], this.auditoryId, this.sectionId)
+            .then(photoId => {
+              this.answerEvidenceService
+                .localSave({
+                  auditoryId: this.auditoryId,
+                  questionId: questionId,
+                  dir: photoId
+                })
+                .subscribe({
+                  next: async save => {
+                    if (save !== DATABASE_WAITING_MESSAGE) {
+
+                      setTimeout(() => {
+                        this.answerEvidenceService
+                          .getLastInsertedDir()
+                          .subscribe({
+                            next: async (res1: any) => {
+                              if (res1 !== DATABASE_WAITING_MESSAGE) {
+                                this.ImageSrc[index].url = this.sanitization.bypassSecurityTrustUrl(img);
+                                this.ImageSrc[index].id = res1.values[0].dir;
+                              }
+                            }
+                          });
+                      }, 20)
+                    }
+                  },
+                  error: err => {
+                    this.responseService.onError(err, 'No se pudo guardar una imagen')
+                  },
+                })
+            })
+            .catch(e => console.log(e));
+        }
+      })
+      .catch(e => console.log(e));
+  }
+
+  fromCamera(index: number, questionId: string) {
+    this.photoService
+      .takePicture()
+      .then(async res => {
+        const img = res.webPath || '';
         // const blob = await fetch(img).then(r => r.blob());
 
         this.photoService
-          .saveLocalAnswerEvidence(res.photos[forIndex], this.auditoryId, this.sectionId)
+          .saveLocalAnswerEvidence(res, this.auditoryId, this.sectionId)
           .then(photoId => {
+            if (photoId !== DATABASE_WAITING_MESSAGE) {
             this.answerEvidenceService
               .localSave({
                 auditoryId: this.auditoryId,
@@ -398,65 +448,25 @@ export class QuestionFormPage implements OnInit {
                       this.answerEvidenceService
                         .getLastInsertedDir()
                         .subscribe({
-                          next: async (res1: any) => {
-                            if (res1 !== DATABASE_WAITING_MESSAGE) {
+                          next: async (res2: any) => {
+                            if (res2 !== DATABASE_WAITING_MESSAGE) {
                               this.ImageSrc[index].url = this.sanitization.bypassSecurityTrustUrl(img);
-                              this.ImageSrc[index].id = res1.values[0].dir;
+                              this.ImageSrc[index].id = res2.values[0].dir;
                             }
                           }
                         });
-                    }, 20)
+                    }, 20);
                   }
                 },
                 error: err => {
                   this.responseService.onError(err, 'No se pudo guardar una imagen')
                 },
-              })
-          });
-      }
-    });
-  }
-
-  fromCamera(index: number, questionId: string) {
-    this.photoService.takePicture().then(async res => {
-      const img = res.webPath || '';
-      // const blob = await fetch(img).then(r => r.blob());
-
-      this.photoService
-        .saveLocalAnswerEvidence(res, this.auditoryId, this.sectionId)
-        .then(photoId => {
-          if (photoId !== DATABASE_WAITING_MESSAGE) {
-          this.answerEvidenceService
-            .localSave({
-              auditoryId: this.auditoryId,
-              questionId: questionId,
-              dir: photoId
-            })
-            .subscribe({
-              next: async save => {
-                if (save !== DATABASE_WAITING_MESSAGE) {
-
-                  setTimeout(() => {
-                    this.answerEvidenceService
-                      .getLastInsertedDir()
-                      .subscribe({
-                        next: async (res2: any) => {
-                          if (res2 !== DATABASE_WAITING_MESSAGE) {
-                            this.ImageSrc[index].url = this.sanitization.bypassSecurityTrustUrl(img);
-                            this.ImageSrc[index].id = res2.values[0].dir;
-                          }
-                        }
-                      });
-                  }, 20);
-                }
-              },
-              error: err => {
-                this.responseService.onError(err, 'No se pudo guardar una imagen')
-              },
-            });
-          }
-        });
-    });
+              });
+            }
+          })
+          .catch(e => console.log(e));
+      })
+      .catch(e => console.log(e));
   }
 
   onImgClicked(index: number) {
@@ -470,7 +480,8 @@ export class QuestionFormPage implements OnInit {
             url: '',
             id: '',
           };
-        });
+        })
+        .catch(e => console.log(e));
     });
   }
 
@@ -536,6 +547,7 @@ export class QuestionFormPage implements OnInit {
                       }
                     });
                 })
+                .catch(e => console.log(e));
             } else {
               this.answerService
                 .deleteAnswer(this.questions[i].id, this.auditoryId)

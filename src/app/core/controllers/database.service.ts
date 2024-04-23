@@ -55,6 +55,7 @@ export class DatabaseService {
               .then(async connection => {
                 this.sendQuery(connection, query, data);
               })
+              .catch(e => console.log(e));
           });
       });
 
@@ -76,7 +77,8 @@ export class DatabaseService {
               .catch(e => {
                 data.next('unclosed');
               })
-          });
+          })
+          .catch(e => console.log(e));
       })
       .catch(async (e) => {
         await connection.isDBOpen()
@@ -89,7 +91,8 @@ export class DatabaseService {
               .catch(e => {
                 data.next('unclosed');
               });
-          });
+          })
+          .catch(e => console.log(e));
       });
   }
 
@@ -104,7 +107,8 @@ export class DatabaseService {
           .retrieveConnection(LOCAL_DATABASE.name)
           .then(async connection => {
             this.sendCreateDatabase(connection);
-          });
+          })
+          .catch(e => console.log(e));
       });
   }
 

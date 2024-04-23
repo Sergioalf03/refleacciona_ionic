@@ -11,6 +11,7 @@ import { AuthService } from 'src/app/services/auth.service';
 @Component({
   selector: 'app-email-confirmation',
   templateUrl: './email-confirmation.page.html',
+  styleUrls: ['./email-confirmation.page.scss'],
 })
 export class EmailConfirmationPage implements OnInit {
 
@@ -18,6 +19,8 @@ export class EmailConfirmationPage implements OnInit {
   backUri = URI_LOGIN();
 
   showEmail = false;
+
+  formSubmited = false;
 
   constructor(
     private authService: AuthService,
@@ -99,6 +102,7 @@ export class EmailConfirmationPage implements OnInit {
   }
 
   onSubmit() {
+    this.formSubmited = true;
     if (this.validFormService.isValid(this.form, [])) {
       this.loadingService.showLoading();
 
@@ -121,6 +125,10 @@ export class EmailConfirmationPage implements OnInit {
     } else {
       input.setFocus();
     }
+  }
+
+  onLeave() {
+    this.router.navigateByUrl(this.backUri);
   }
 
 }

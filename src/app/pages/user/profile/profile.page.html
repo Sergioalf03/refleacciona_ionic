@@ -1,69 +1,80 @@
-<ion-content >
-  <app-header-buttons
-    [backUrl]="backUri"
-    [homeUrl]="backUri"
-  ></app-header-buttons>
+<ion-content>
+  <div class="col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4 col-xxl-3 offset-xxl-auto mr-auto mb-4">
 
-  <div class=" principal col-md-6 col-xl-12 mr-auto mb-4">
+    <div class="mx-5">
 
-    <form *ngIf="form" [formGroup]="form" (ngSubmit)="onSubmit()">
-      <div class="card-body mx-2 mt-2">
-          <h1>Mis Datos</h1>
+      <button class="btn custom-white-btn mt-4" (click)="onGoingHome()">
+        <i class="fa-solid fa-arrow-left" style="font-size: 15spx;"></i>
+      </button>
 
-          <ion-item class="mt-4 txtInput">
-            <ion-label position="stacked">Nombre completo</ion-label>
+       <div class="row mt-4">
+          <div class="col">
+            <div class=" mb-0 title-text-size">Mis Datos</div>
 
-            <ion-input
-              [clearInput]="true"
-              formControlName="name"
-              type="text"
-              placeholder="Escriba su nombre"
-            ></ion-input>
+            <p class="text text-mini coolor mt-0">Actualiza tus datos</p>
+          </div>
+        </div>
 
-          </ion-item>
+      <form *ngIf="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="input-with-icon mt-4">
 
-          <ion-item class="mt-2 txtInput">
+          <input
+            name="name"
+            formControlName="name"
+            type="text"
+            placeholder="*Nombre Completo"
+            class="form-control py-3 px-4"
+            [ngClass]="{ 'border-danger': formSubmited && form.controls['name'].invalid }"
+          >
+            <i class="fa-regular fa-user"></i>
+        </div>
 
-            <ion-label position="stacked">Número de teléfono</ion-label>
+        <span
+          *ngIf="formSubmited && form.controls['name'].invalid"
+          class="text-danger text-mini"
+        >Nombre requerido</span>
 
-            <ion-input
-              [clearInput]="true"
-              formControlName="phoneNumber"
-              type="tel"
-              placeholder="8888888888"
-            ></ion-input>
+        <div class="input-with-icon mt-3">
 
-          </ion-item>
+          <input
+            name="phoneNumber"
+            formControlName="phoneNumber"
+            type="tel"
+            placeholder="*Teléfono"
+            class="form-control py-3 px-4"
+          >
+            <i class="fa-solid fa-phone"></i>
+        </div>
 
-      </div>
+        <span
+          *ngIf="formSubmited && form.controls['phoneNumber'].invalid"
+          class="text-danger text-mini"
+        >Teléfono requerido</span>
+
+        <ion-row *ngIf="ImageSafeSrc" class="mt-3">
+          <ion-col>
+            <img width="100%"  [src]="ImageSafeSrc">
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="mt-3">
+          <ion-col>
+            <button (click)="onSelectPhoto()" class="btn custom-btn text-white" type="button">
+              {{!ImageSafeSrc ? 'Seleccionar logo' : 'Cambiar logo'}}
+            </button>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="mt-3">
+          <ion-col>
+            <button class="btn custom-btn text-white" type="submit">
+              Guardar
+            </button>
+          </ion-col>
+        </ion-row>
+      </form>
 
 
-
-      <ion-row *ngIf="ImageSafeSrc" class="mt-3">
-        <ion-col>
-          <img width="100%"  [src]="ImageSafeSrc">
-        </ion-col>
-      </ion-row>
-      <ion-row class="mt-3">
-        <ion-col>
-          <ion-button (click)="onSelectPhoto()" expand="full" type="button">
-            {{!ImageSafeSrc ? 'SELECCIONAR LOGO' : 'CAMBIAR LOGO' }}
-          </ion-button>
-        </ion-col>
-      </ion-row>
-
-      <ion-row class="mt-3">
-        <ion-col>
-          <ion-button color="danger" expand="full" (click)="onGoingHome()">
-            CANCELAR
-          </ion-button>
-        </ion-col>
-        <ion-col>
-          <ion-button expand="full" type="submit">
-            ACTUALIZAR
-          </ion-button>
-        </ion-col>
-      </ion-row>
-    </form>
+    </div>
   </div>
 </ion-content>

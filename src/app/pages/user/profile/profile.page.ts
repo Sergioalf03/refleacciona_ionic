@@ -15,6 +15,7 @@ import { URI_HOME } from 'src/app/core/constants/uris';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
+  styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage {
 
@@ -26,6 +27,8 @@ export class ProfilePage {
   ImageSrc = '';
   ImageSafeSrc: SafeUrl = '';
   imageData!: any;
+
+  formSubmited = false;
 
   constructor(
     private sessionService: SessionService,
@@ -78,18 +81,27 @@ export class ProfilePage {
 
 
       if (isPlatform('hybrid')) {
-        this.photoService.getLocalLogoUri().then(photo => {
-          this.ImageSafeSrc = Capacitor.convertFileSrc(photo.uri)
-        })
+        this.photoService
+          .getLocalLogoUri()
+          .then(photo => {
+            this.ImageSafeSrc = Capacitor.convertFileSrc(photo.uri)
+          })
+          .catch(e => console.log(e));
       } else {
-        this.photoService.getLocalLogo().then(photo => {
-          this.ImageSafeSrc = 'data:image/png;base64,' + photo.data;
-        });
+        this.photoService
+          .getLocalLogo()
+          .then(photo => {
+            if (!!photo) {
+              this.ImageSafeSrc = 'data:image/png;base64,' + photo.data;
+            }
+          })
+          .catch(e => console.log(e));
       }
 
   }
 
   onSubmit() {
+    this.formSubmited = true;
     if (this.validFormService.isValid(this.form, [])) {
       this.confirmDialogService.presentAlert('¿Desea guardar los cambios?', () => {
         this.loadingService.showLoading();
@@ -104,10 +116,12 @@ export class ProfilePage {
           .subscribe({
             next: async (res: any) => {
               if (this.ImageSrc) {
-                const blob = await fetch(this.ImageSrc).then(r => r.blob());
+                const blob = await fetch(this.ImageSrc)
+                  .then(r => r.blob())
+                  .catch(e => console.log(e));
 
                 this.photoService
-                  .saveLocalLogo(blob)
+                  .saveLocalLogo(this.imageData)
                   .then(file => {
                     this.sessionService
                       .uploadLogo(blob)
@@ -118,10 +132,9 @@ export class ProfilePage {
                         error: err => {
                           this.httpResponseService.onError(err, 'No se pudo guardar la imagen');
                         },
-                      })
-
-
+                      });
                   })
+                  .catch(e => this.httpResponseService.onError(e, 'No se pudieron actualizar los datos'));
               } else {
                 this.httpResponseService.onSuccess('Actualización exitosa')
               }
@@ -140,11 +153,14 @@ export class ProfilePage {
   }
 
   onSelectPhoto() {
-    this.photoService.openGallery().then(async res => {
-      this.ImageSafeSrc = this.sanitization.bypassSecurityTrustUrl(res.photos[0].webPath);
-      this.ImageSrc = res.photos[0].webPath;
-      this.imageData = res.photos[0];
-    });
+    this.photoService
+      .openGallery()
+      .then(async res => {
+        this.ImageSafeSrc = this.sanitization.bypassSecurityTrustUrl(res.photos[0].webPath);
+        this.ImageSrc = res.photos[0].webPath;
+        this.imageData = res.photos[0];
+      })
+      .catch(e => console.log(e));
   }
 
 }

@@ -178,6 +178,7 @@ export class BeltAuditoryListPage {
                     },
                   });
               })
+              .catch(e => console.log(e));
           }
         }
       });
@@ -189,7 +190,13 @@ export class BeltAuditoryListPage {
         return res(true);
       }
 
-      const ImageSrc = await this.photoService.getLocalEvidence(arr[index].dir).then(photo => photo);
+      const ImageSrc = await this.photoService
+        .getLocalEvidence(arr[index].dir)!
+        .then(photo => photo)
+        .catch(e => {
+          console.log(e);
+          return e
+        });
 
       // const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => r.blob());
 
@@ -205,11 +212,14 @@ export class BeltAuditoryListPage {
                   .subscribe({
                     next: dlt => {
                       if (dlt !== DATABASE_WAITING_MESSAGE) {
-                        this.uploadAuditoryEvidence(arr, index + 1, externalId).then(r => res(r))
+                        this.uploadAuditoryEvidence(arr, index + 1, externalId)
+                          .then(r => res(r))
+                          .catch(e => console.log(e));
                       }
                     }
                   });
-              });
+              })
+              .catch(e => console.log(e));
           },
           error: err => this.responseService.onError(err, 'No se pudo subir la imagen'),
         });

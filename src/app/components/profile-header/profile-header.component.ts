@@ -41,32 +41,40 @@ export class ProfileHeaderComponent implements OnInit {
     this.userName = replacedName;
 
     if (isPlatform('hybrid')) {
-      this.photoService.getLocalLogoUri().then(photo => {
-        this.ImageSafeSrc = Capacitor.convertFileSrc(photo.uri)
-      }).catch(e => true)
+      this.photoService
+        .getLocalLogoUri()
+        .then(photo => {
+          this.ImageSafeSrc = Capacitor.convertFileSrc(photo.uri)
+        })
+        .catch(e => console.log(e));
     } else {
-      this.photoService.getLocalLogo().then(photo => {
-        this.ImageSafeSrc = 'data:image/png;base64,' + photo.data;
-      }).catch(e => true);
+      this.photoService
+        .getLocalLogo()
+        .then(photo => {
+          if (!!photo) {
+            this.ImageSafeSrc = 'data:image/png;base64,' + photo.data;
+          }
+        })
+        .catch(e => console.log(e));
     }
   }
-
 
   onLogout() {
     this.confirmDialogService
       .presentAlert('¿Desea cerrar sesión?', async () => {
         this.loadingService.showLoading();
-        return await this.sessionService.logout()
+        return await this.sessionService
+          .logout()
           .subscribe({
             next: () => {
-              this.router.navigateByUrl(URI_LOGIN())
+              this.router.navigateByUrl(URI_LOGIN());
               this.loadingService.dismissLoading();
             },
             error: err => {
               this.httpResponseService.onError(err, 'Error al cerrar sesión');
             },
-          })
-      })
+          });
+      });
   }
 
   onOpenUser() {

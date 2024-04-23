@@ -12,6 +12,7 @@ import { AuthService } from 'src/app/services/auth.service';
 @Component({
   selector: 'app-recover-account',
   templateUrl: './recover-account.page.html',
+  styleUrls: ['./recover-account.page.scss'],
 })
 export class RecoverAccountPage implements OnInit {
 
@@ -19,8 +20,9 @@ export class RecoverAccountPage implements OnInit {
   backUri = URI_LOGIN();
 
   form!: FormGroup;
+ formSubmited = false;
 
-  constructor(
+constructor(
     private authService: AuthService,
     private validFormService: ValidFormService,
     private responseService: HttpResponseService,
@@ -57,26 +59,27 @@ export class RecoverAccountPage implements OnInit {
   }
 
   onSubmit() {
-    if (this.validFormService.isValid(this.form, [])) {
-      this.confirmDialogService
-        .presentAlert('¿Desea continuar?', () => {
-          this.loadingService.showLoading();
+    // this.formSubmited = true;
+    // if (this.validFormService.isValid(this.form, [])) {
+    //   this.confirmDialogService
+    //     .presentAlert('¿Desea continuar?', () => {
+    //       this.loadingService.showLoading();
 
-          const email = this.form.controls['email'].value;
+    //       const email = this.form.controls['email'].value;
 
-          this.authService
-            .resetPassword(email)
-            .subscribe({
-              next: () => {
-                this.authService.email = email;
+    //       this.authService
+    //         .resetPassword(email)
+    //         .subscribe({
+    //           next: () => {
+    //             this.authService.email = email;
                 this.responseService.onSuccessAndRedirect(URI_SEND_RECOVER_CODE('0'), 'Solicitud recibida');
-              },
-              error: err => {
-                this.responseService.onError(err, 'No se pudo procesar la solicitud');
-              }
-            });
-        });
-    }
+    //           },
+    //           error: err => {
+    //             this.responseService.onError(err, 'No se pudo procesar la solicitud');
+    //           }
+    //         });
+    //     });
+    // }
   }
 
   alreadyHadCode() {
