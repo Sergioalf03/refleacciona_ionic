@@ -8,6 +8,7 @@ import { SQLiteService } from './core/controllers/sqlite.service';
 import { URI_AUDITORY_LIST, URI_BELT_LIST, URI_GENERAL_COUNT_LIST, URI_HELMET_LIST, URI_HOME, URI_LOGIN } from './core/constants/uris';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -18,6 +19,9 @@ export class AppComponent implements OnInit {
   public isWeb: boolean = false;
   logged = false;
   showProfileHeader= true;
+
+  loggedObservable!: Subscription;
+
   constructor(
     private sessionService: SessionService,
     private responseService: HttpResponseService,
@@ -63,6 +67,16 @@ export class AppComponent implements OnInit {
           });
       })
       .catch(e => console.log(e));
+
+      this.loggedObservable = this.sessionService
+        .loggedObservable()
+        .subscribe({
+          next: res => this.logged = res,
+        })
+  }
+
+  ngOnDestroy() {
+    this.loggedObservable.unsubscribe();
   }
 
   onAuditoryList() {

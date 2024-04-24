@@ -6,7 +6,7 @@
                 <i *ngIf="!ImageSafeSrc" class="fa-solid fa-circle-user icon-shadow mx-0"></i>
 
                 <ion-avatar *ngIf="ImageSafeSrc">
-                  <img  width="100%"  [src]="ImageSafeSrc">
+                  <img  width="100%" (error)="this.ImageSafeSrc = ''" [src]="ImageSafeSrc">
                 </ion-avatar>
 
               </li>
