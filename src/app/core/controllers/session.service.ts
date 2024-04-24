@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { map, catchError, of } from 'rxjs';
+import { map, catchError, of, BehaviorSubject } from 'rxjs';
 import { STORAGE_KEY_TOKEN, STORAGE_KEY_UNIQUE_DEVICE_ID, STORAGE_KEY_USER_EMAIL, STORAGE_KEY_USER_ID, STORAGE_KEY_USER_NAME, STORAGE_KEY_USER_PHONE_NUMBER } from '../constants/strings';
 import { HttpRequestService } from './http-request.service';
 import { StorageService } from './storage.service';
@@ -16,6 +16,7 @@ export class SessionService {
   userName = '';
   userPhone = '';
   userId = '';
+  loggedObs = new BehaviorSubject<boolean>(false);
 
   constructor(
     private httpService: HttpRequestService,
@@ -26,6 +27,11 @@ export class SessionService {
    async isLoggedIn() {
     const token =  await this.storageService.get(STORAGE_KEY_TOKEN);
     return !!token;
+  }
+
+  loggedObservable() {
+    this.loggedObs.next(!!this.token);
+    return this.loggedObs.asObservable();
   }
 
   login(email: string, password: string, deviceId: string) {
@@ -47,6 +53,8 @@ export class SessionService {
           this.storageService.set(STORAGE_KEY_USER_NAME, data.userName);
           this.storageService.set(STORAGE_KEY_USER_PHONE_NUMBER, data.userPhone);
           this.storageService.set(STORAGE_KEY_USER_ID, data.userId);
+
+          this.loggedObs.next(true);
 
           return true;
         })
