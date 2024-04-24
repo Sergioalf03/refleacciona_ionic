@@ -68,13 +68,21 @@ export class HomePage {
 
   }
 
+  ionViewDidEnter() {
+
+  }
   ionViewWillEnter() {
     setTimeout(()=> {
       this.showProfileHeader = true;
     }, 200)
-    if (!this.versionService.checked) {
-      this.onFetchUpdate(false);
-    }
+    this.databaseService
+    .createConnection()
+    .then(() => {
+      if (!this.versionService.checked) {
+        this.onFetchUpdate(false);
+      }
+    })
+    .catch(() => true)
   }
 
   ionViewWillLeave() {

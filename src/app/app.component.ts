@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { DatabaseService } from './core/controllers/database.service';
 import { Subscription } from 'rxjs';
+import { LOCAL_DATABASE } from 'src/environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +21,8 @@ export class AppComponent implements OnInit {
   public isWeb: boolean = false;
   logged = false;
   showProfileHeader= true;
+  platform = '';
+  isAppInit = false;
 
   loggedObservable!: Subscription;
 
@@ -27,9 +30,8 @@ export class AppComponent implements OnInit {
     private sessionService: SessionService,
     private responseService: HttpResponseService,
     private storageService: StorageService,
-    private sqlite: SQLiteService,
+    private sqliteService: SQLiteService,
     private storage: Storage,
-    private platform: Platform,
     private router: Router,
     private location: Location,
     private databaseService: DatabaseService,
@@ -52,32 +54,29 @@ export class AppComponent implements OnInit {
       })
       .catch(e => console.log(e));
 
-    this.platform
-      .ready()
-      .then(async () => {
-        this.sqlite.initializePlugin()
-          .then(async (ret) => {
-            if (this.sqlite.platform === "web") {
-              this.isWeb = true;
-
-              await this.sqlite.initWebStore();
-
-              this.databaseService
-                .createConnection()
-                .then(() => true)
-                .catch(() => true)
-            } else {
-              this.databaseService
-                .createConnection()
-                .then(() => true)
-                .catch(() => true)
+      await this.sqliteService.initializePlugin().then(async (ret) => {
+        this.platform = this.sqliteService.platform;
+        try {
+            if( this.sqliteService.platform === 'web') {
+                await this.sqliteService.initWebStore();
             }
-          })
-          .catch(error => {
-            console.log('No se pudo inicializar sqlite')
-          });
-      })
-      .catch(e => console.log(e));
+            await this.databaseService.createConnection();
+            // Here Initialize MOCK_DATA if required
+
+            // Initialize whatever database and/or MOCK_DATA you like
+
+            if( this.sqliteService.platform === 'web') {
+                await this.sqliteService.saveToStore( LOCAL_DATABASE.name);
+            }
+
+            this.isAppInit = true;
+
+        } catch (error) {
+            console.log(`initializeAppError: ${error}`);
+            await this.responseService.onError(error, `initializeAppError: ${error}`);
+        }
+      });
+
 
       this.loggedObservable = this.sessionService
         .loggedObservable()
@@ -85,6 +84,7 @@ export class AppComponent implements OnInit {
           next: res => this.logged = res,
         })
   }
+
 
   ngOnDestroy() {
     this.loggedObservable.unsubscribe();
