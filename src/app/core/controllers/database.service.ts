@@ -13,10 +13,77 @@ import { HttpResponseService } from './http-response.service';
 })
 export class DatabaseService {
 
+  connection!: SQLiteDBConnection;
+
   constructor(
     private _sqlite: SQLiteService,
     private responseService: HttpResponseService,
   ) { }
+
+  createConnection() {
+    return new Promise((resolve, reject) => {
+      this._sqlite
+        .createConnection(LOCAL_DATABASE.name, LOCAL_DATABASE.encrypted, LOCAL_DATABASE.mode, LOCAL_DATABASE.version)
+        .then(newConnection => {
+          this.connection = newConnection;
+          console.log('Conexión creada');
+          resolve(true);
+        })
+        .catch(err => {
+          console.log('No se pudo crear la conexión: ' + err);
+          resolve(false);
+        });
+    });
+  }
+
+  openConnection() {
+    return new Promise((resolve, reject) =>  {
+      this.connection
+        .open()
+        .then(() => {
+          console.log('Conexión abierta');
+          resolve(true);
+        })
+        .catch(err => {
+          console.log('No se pudo abrir la conexión: ' + err);
+          resolve(false);
+        });
+    });
+  }
+
+  closeConnection() {
+    return new Promise((resolve, reject) => {
+      if (!!this.connection) {
+        this.connection
+          .close()
+          .then(() => {
+            console.log('Conexión cerrada');
+            resolve(true);
+          })
+          .catch(err => {
+            console.log('No se pudo cerrar la conexión: ' + err);
+            resolve(false);
+          });
+      }
+    });
+  }
+
+  deleteConnection() {
+    return new Promise((resolve, reject) => {
+      if (!!this.connection) {
+        this.connection
+          .delete()
+          .then(() => {
+            console.log('Conexión eliminada');
+            resolve(true);
+          })
+          .catch(err => {
+            console.log('No se pudo eliminar la conexión: ' + err);
+            resolve(false);
+          });
+      }
+    });
+  }
 
   async checkDatabaseVersion() {
     const result = new Promise((res, rej) => {
@@ -38,38 +105,20 @@ export class DatabaseService {
 
   executeQuery(query: string): Observable<any> {
     const data = new BehaviorSubject<any>(DATABASE_WAITING_MESSAGE);
-    this._sqlite
-      .createConnection(LOCAL_DATABASE.name, LOCAL_DATABASE.encrypted, LOCAL_DATABASE.mode, LOCAL_DATABASE.version)
-      .then(async connection => {
-        this.sendQuery(connection, query, data);
-      })
-      .catch(async err => {
-        this._sqlite
-          .retrieveConnection(LOCAL_DATABASE.name)
-          .then(async connection => {
-            this.sendQuery(connection, query, data);
-          })
-          .catch(() => {
-            this._sqlite
-              .createConnection(LOCAL_DATABASE.name, LOCAL_DATABASE.encrypted, LOCAL_DATABASE.mode, LOCAL_DATABASE.version)
-              .then(async connection => {
-                this.sendQuery(connection, query, data);
-              })
-              .catch(e => console.log(e));
-          });
-      });
+
+    this.sendQuery(query, data);
 
     return data.asObservable().pipe(take(2));
   }
 
-  private async sendQuery(connection: SQLiteDBConnection, query: string, data: BehaviorSubject<any>) {
-    await connection.open();
+  private async sendQuery(query: string, data: BehaviorSubject<any>) {
+    await this.connection.open();
 
-    connection?.query(query)
+    this.connection?.query(query)
       .then(async (result) => {
-        await connection.isDBOpen()
+        await this.connection.isDBOpen()
           .then(c => {
-            connection
+            this.connection
               .close()
               .then(async () => {
                 data.next(result);
@@ -81,9 +130,9 @@ export class DatabaseService {
           .catch(e => console.log(e));
       })
       .catch(async (e) => {
-        await connection.isDBOpen()
+        await this.connection.isDBOpen()
           .then(c => {
-            connection
+            this.connection
               .close()
               .then(async () => {
                 data.next(`error: ${e.message}`);
@@ -97,35 +146,31 @@ export class DatabaseService {
   }
 
   public async createDatabase() {
-    this._sqlite
-      .createConnection(LOCAL_DATABASE.name, LOCAL_DATABASE.encrypted, LOCAL_DATABASE.mode, LOCAL_DATABASE.version)
-      .then(async connection => {
-        this.sendCreateDatabase(connection);
-      })
-      .catch(async err => {
-        this._sqlite
-          .retrieveConnection(LOCAL_DATABASE.name)
-          .then(async connection => {
-            this.sendCreateDatabase(connection);
-          })
-          .catch(e => console.log(e));
-      });
-  }
-
-  private async sendCreateDatabase(connection: SQLiteDBConnection,) {
-    await connection.open();
-    connection.execute(createSchema)
+    await this.connection.open();
+    this.connection
+      .execute(createSchema)
       .then(result => {
-        connection.execute(loadData)
+        this.connection
+          .execute(loadData)
           .then(async (result1) => {
-            await connection.close().catch(e => this.responseService.onError(e, 'No se pudo crear la base de datos'));
+            await this.connection
+              .close()
+              .then(() => true)
+              .catch(e => this.responseService.onError(e, 'No se pudo crear la base de datos'));
           })
           .catch(async (e) => {
-            await connection.close().catch(e => this.responseService.onError(e, 'No se pudo crear la base de datos'));
+            await this.connection
+              .close()
+              .then(() => true)
+              .catch(e => this.responseService.onError(e, 'No se pudo crear la base de datos'));
           });
       })
       .catch(async (e) => {
-        await connection.close().catch(e => this.responseService.onError(e, 'No se pudo crear la base de datos'));
+        await this.connection
+          .close()
+          .then(() => true)
+          .catch(e => this.responseService.onError(e, 'No se pudo crear la base de datos'));
       });
   }
+
 }

@@ -8,6 +8,7 @@ import { SQLiteService } from './core/controllers/sqlite.service';
 import { URI_AUDITORY_LIST, URI_BELT_LIST, URI_GENERAL_COUNT_LIST, URI_HELMET_LIST, URI_HOME, URI_LOGIN } from './core/constants/uris';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
+import { DatabaseService } from './core/controllers/database.service';
 
 @Component({
   selector: 'app-root',
@@ -27,6 +28,7 @@ export class AppComponent implements OnInit {
     private platform: Platform,
     private router: Router,
     private location: Location,
+    private databaseService: DatabaseService,
   ) {}
 
   async ngOnInit() {
@@ -56,6 +58,15 @@ export class AppComponent implements OnInit {
 
               await this.sqlite.initWebStore();
 
+              this.databaseService
+                .createConnection()
+                .then(() => true)
+                .catch(() => true)
+            } else {
+              this.databaseService
+                .createConnection()
+                .then(() => true)
+                .catch(() => true)
             }
           })
           .catch(error => {
@@ -63,6 +74,13 @@ export class AppComponent implements OnInit {
           });
       })
       .catch(e => console.log(e));
+  }
+
+  ngOnDestroy() {
+    this.databaseService
+      .closeConnection()
+      .then(() => true)
+      .catch(() => true);
   }
 
   onAuditoryList() {
