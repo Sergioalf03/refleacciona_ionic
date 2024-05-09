@@ -16,7 +16,7 @@ import { SessionService } from 'src/app/core/controllers/session.service';
 export class LoginPage {
 
   user: any = {};
-  txtButtonEnter = 'Log In';
+  txtButtonEnter = 'Entrar';
   onScreen = false;
 
   constructor(
