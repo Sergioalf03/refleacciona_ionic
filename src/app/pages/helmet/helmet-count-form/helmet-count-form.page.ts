@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ModalController } from '@ionic/angular';
-import { DIRECTIONS } from 'src/app/core/constants/directions';
 import { URI_HELMET_LIST } from 'src/app/core/constants/uris';
 import { HelmetCollectionService } from 'src/app/services/helmet-collection.service';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
@@ -24,8 +23,6 @@ export class HelmetCountFormPage implements OnInit {
 
   helmetlessCount = 0;
   helmetCount = 0;
-
-  directions = DIRECTIONS;
 
   disableUserDecrease = true;
   disableHelmetDecrease = true;

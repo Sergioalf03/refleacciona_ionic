@@ -54,6 +54,15 @@ export class AppComponent implements OnInit {
       })
       .catch(e => console.log(e));
 
+      this.loggedObservable = this.sessionService
+      .loggedObservable()
+      .subscribe({
+        next: res => {
+          console.log(res);
+          this.logged = res
+        },
+      })
+
       await this.sqliteService.initializePlugin().then(async (ret) => {
         this.platform = this.sqliteService.platform;
         try {
@@ -78,11 +87,7 @@ export class AppComponent implements OnInit {
       });
 
 
-      this.loggedObservable = this.sessionService
-        .loggedObservable()
-        .subscribe({
-          next: res => this.logged = res,
-        })
+
   }
 
 

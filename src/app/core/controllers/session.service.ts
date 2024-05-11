@@ -144,6 +144,7 @@ export class SessionService {
           this.clearStorage();
           this.clearVariables();
           this.router.navigateByUrl(URI_LOGIN());
+          this.loggedObs.next(false);
           return true;
         }),
         catchError(error => {

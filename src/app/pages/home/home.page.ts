@@ -262,24 +262,6 @@ export class HomePage {
     }
   }
 
-
-  onLogout() {
-    this.confirmDialogService
-      .presentAlert('¿Desea cerrar sesión?', async () => {
-        this.loadingService.showLoading();
-        return await this.sessionService.logout()
-          .subscribe({
-            next: () => {
-              this.router.navigateByUrl(URI_LOGIN())
-              this.loadingService.dismissLoading();
-            },
-            error: err => {
-              this.httpResponseService.onError(err, 'Error al cerrar sesión');
-            },
-          })
-      })
-  }
-
   onOpenUser() {
     this.router.navigateByUrl(URI_PROFILE());
   }

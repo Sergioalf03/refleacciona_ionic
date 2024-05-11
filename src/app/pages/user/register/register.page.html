@@ -14,7 +14,7 @@
         <div class="col">
           <h3 class="text text-white">Registro</h3>
 
-          <p class="text text-mini coolor">Lorem ipsum dolor sit amet consectetur adipisicing elit. Non molestias.</p>
+          <p class="text text-mini coolor">Escriba sus datos</p>
         </div>
       </div>
     </div>
@@ -35,7 +35,7 @@
                     name="name"
                     type="text"
                     formControlName="name"
-                    placeholder="User name"
+                    placeholder="Nombre Completo"
                     class="form-control py-3 px-4"
                     required
                    >
@@ -51,7 +51,23 @@
                     name="email"
                     type="text"
                     formControlName="email"
-                    placeholder="Email"
+                    placeholder="Correo electrónico"
+                    class="form-control py-3 px-4"
+                    required
+                    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+
+                    <i class="fa-regular fa-envelope"></i>
+
+
+                </div>
+
+                <div class="input-with-icon  mt-3">
+
+                  <input
+                    name="email"
+                    type="text"
+                    formControlName="confirmEmail"
+                    placeholder="confirmar correo"
                     class="form-control py-3 px-4"
                     required
                     pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
@@ -68,7 +84,7 @@
                     name="password"
                     type="password"
                     formControlName="password"
-                    placeholder="Password"
+                    placeholder="Contraseña"
                     class="form-control py-3 px-4"
                     required>
 
@@ -82,7 +98,7 @@
                     name="confirmPassword"
                     type="password"
                     formControlName="confirmPassword"
-                    placeholder="Confirm password"
+                    placeholder="Confirarm contraseña"
                     class="form-control py-3 px-4"
                     required>
 
@@ -101,7 +117,7 @@
                 </ion-col> -->
 
                 <ion-col>
-                  <button class="btn btn-primary custom-btn" type="submit">
+                  <button [disabled]="disableSubmitButton" class="btn btn-primary custom-btn" type="submit">
                     {{txtButtonEnter}}
                   </button>
                 </ion-col>
@@ -109,7 +125,7 @@
 
               <ion-row class="mt-2">
                 <ion-col class="text-center">
-                  <label (click)="onGoingHome()" class="forgot-password-color text text-mini">I have an account already. <strong><u class="mt-3">LOG IN</u></strong></label>
+                  <label (click)="onGoingHome()" class="forgot-password-color text text-mini">Ya tengo una cuenta <strong><u class="mt-3">ENTRAR</u></strong></label>
                 </ion-col>
               </ion-row>
 

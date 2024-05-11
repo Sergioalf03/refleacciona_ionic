@@ -6,7 +6,6 @@ import { IonicModule } from '@ionic/angular';
 
 import { HelmetCountFormPage } from './helmet-count-form.page';
 import { RouterModule, Routes } from '@angular/router';
-import { HeaderButtonsModule } from 'src/app/components/header-buttons/header-buttons.module';
 
 const routes: Routes = [
   {
@@ -21,7 +20,6 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
-    HeaderButtonsModule,
   ],
   declarations: [HelmetCountFormPage]
 })

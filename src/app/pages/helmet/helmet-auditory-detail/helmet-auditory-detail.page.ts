@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { DIRECTIONS } from 'src/app/core/constants/directions';
 import { URI_HELMET_LIST } from 'src/app/core/constants/uris';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { DownloadPlatformService } from 'src/app/core/controllers/download-platform.service';

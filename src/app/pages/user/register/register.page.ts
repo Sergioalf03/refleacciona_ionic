@@ -8,6 +8,7 @@ import { HttpResponseService } from 'src/app/core/controllers/http-response.serv
 import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { RandomStringService } from 'src/app/core/controllers/random-string.service';
 import { SessionService } from 'src/app/core/controllers/session.service';
+import { ToastService } from 'src/app/core/controllers/toast.service';
 import { ValidFormService } from 'src/app/core/controllers/valid-form.service';
 import { AuthService } from 'src/app/services/auth.service';
 
@@ -22,7 +23,8 @@ export class RegisterPage {
   backUri = URI_LOGIN();
 
   user: any = {};
-  txtButtonEnter = 'Sign Up';
+  txtButtonEnter = 'Restrarse';
+  disableSubmitButton = false;
 
   constructor(
     private randomService: RandomStringService,
@@ -34,6 +36,7 @@ export class RegisterPage {
     private loadingService: LoadingService,
     private confirmDialogService: ConfirmDialogService,
     private platform: Platform,
+    private toastSerivce: ToastService,
   ) {
     this.platform
       .backButton
@@ -49,13 +52,16 @@ export class RegisterPage {
       name: new FormControl('', {
         validators: [ Validators.required ],
       }),
-      phoneNumber: new FormControl('', {
+      confirmEmail: new FormControl('', {
         validators: [ Validators.required ],
       }),
       email: new FormControl('', {
         validators: [ Validators.required ],
       }),
       password: new FormControl('', {
+        validators: [ Validators.required ],
+      }),
+      confirmPassword: new FormControl('', {
         validators: [ Validators.required ],
       }),
     })
@@ -73,15 +79,27 @@ export class RegisterPage {
 
   onSubmit() {
     if (this.validFormService.isValid(this.form, [])) {
+
+      if (this.form.controls['email'].value !== this.form.controls['confirmEmail'].value) {
+        this.toastSerivce.showErrorToast('El correo no coincide con la confirmación de correo');
+        return;
+      }
+
+      if (this.form.controls['password'].value !== this.form.controls['confirmPassword'].value) {
+        this.toastSerivce.showErrorToast('La contraseña no coincide con la confirmación de contraseña');
+        return;
+      }
+
       this.confirmDialogService
         .presentAlert('¿Desea envíar el registro?', () => {
           this.loadingService.showLoading();
+          this.disableSubmitButton = true;
+          this.txtButtonEnter = 'Cargando...'
 
           const user = {
             name: this.form.controls['name'].value,
             email: this.form.controls['email'].value,
             password: this.form.controls['password'].value,
-            phone_number: this.form.controls['phoneNumber'].value,
             key: this.randomService.generate(128),
           };
 
@@ -92,9 +110,13 @@ export class RegisterPage {
                 this.authService.email = user.email;
                 this.httpResponseService.onSuccessAndRedirect(URI_EMAIL_CONFIRMATION('0'), 'Usuario registrado correctamente.');
                 this.form.reset();
+                this.disableSubmitButton = false;
+                this.txtButtonEnter = 'Restrarse';
               },
               error: err => {
                 this.httpResponseService.onError(err, 'No se pudo registrar el usuario');
+                this.disableSubmitButton = false;
+                this.txtButtonEnter = 'Restrarse';
               },
             });
         });

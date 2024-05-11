@@ -37,10 +37,14 @@ input {
     padding: 10px 20px;
     font-size: 16px;
     background-color: #EC6A5C;
-    color: #000;
+    color: #FFF;
     border: none;
     border-radius: 15px;
     /* Adjust the border-radius to control the roundness */
     font-weight: bold;
     cursor: pointer;
+}
+
+.white-bg {
+  background-color: #FFF !important;
 }

@@ -44,7 +44,11 @@ export class SQLiteService {
             db = await this.sqliteConnection
                     .createConnection(dbName, encrypted, mode, version, readonly);
         }
-        await db.open();
+        try {
+          const open = await db.open().catch(e => console.log(e));
+        } catch(e) {
+          console.log(e)
+        }
         return db;
     }
     async retrieveConnection(dbName:string, readonly: boolean): Promise<SQLiteDBConnection> {
