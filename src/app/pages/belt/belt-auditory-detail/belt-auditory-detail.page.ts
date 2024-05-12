@@ -12,6 +12,7 @@ import { STORAGE_URL } from 'src/environments/environment';
 @Component({
   selector: 'app-belt-auditory-detail',
   templateUrl: './belt-auditory-detail.page.html',
+  styleUrls: ['./belt-auditory-detail.page.scss']
 })
 export class BeltAuditoryDetailPage {
 

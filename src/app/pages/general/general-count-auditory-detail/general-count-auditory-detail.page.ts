@@ -12,6 +12,7 @@ import { STORAGE_URL } from 'src/environments/environment';
 @Component({
   selector: 'app-general-count-auditory-detail',
   templateUrl: './general-count-auditory-detail.page.html',
+  styleUrls: ['./general-count-auditory-detail.page.scss'],
 })
 export class GeneralCountAuditoryDetailPage {
 

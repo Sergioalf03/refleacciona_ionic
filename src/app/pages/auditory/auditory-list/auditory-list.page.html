@@ -1,5 +1,6 @@
-<ion-content class="m-0 p-0" *ngIf="onScreen">
+<ion-content [fullscreen]="true" class="m-0 p-0" *ngIf="onScreen">
   <app-generic-list
+  class="m-0 p-0"
     [title]="'Auditoría'"
     [descrciption]="'Cuestionario para evaluar los parámetros de calidad, seguridad y comodidad de una calle.'"
     [type]="0"

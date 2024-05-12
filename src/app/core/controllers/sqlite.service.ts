@@ -45,7 +45,9 @@ export class SQLiteService {
                     .createConnection(dbName, encrypted, mode, version, readonly);
         }
         try {
-          const open = await db.open().catch(e => console.log(e));
+          const open = await db.open()
+            .then(a => a)
+            .catch(e => console.log(e));
         } catch(e) {
           console.log(e)
         }

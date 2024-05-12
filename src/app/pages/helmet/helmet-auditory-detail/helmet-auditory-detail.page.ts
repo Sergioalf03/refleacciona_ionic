@@ -14,6 +14,7 @@ import { STORAGE_URL } from 'src/environments/environment';
 @Component({
   selector: 'app-helmet-auditory-detail',
   templateUrl: './helmet-auditory-detail.page.html',
+  styleUrls: ['./helmet-auditory-detail.page.scss'],
 })
 export class HelmetAuditoryDetailPage {
 
