@@ -28,6 +28,8 @@ export class ProfilePage {
   ImageSafeSrc: SafeUrl = '';
   imageData!: any;
 
+  showSaveButton = false;
+
   formSubmited = false;
 
   constructor(
@@ -159,6 +161,7 @@ export class ProfilePage {
         this.ImageSafeSrc = this.sanitization.bypassSecurityTrustUrl(res.photos[0].webPath);
         this.ImageSrc = res.photos[0].webPath;
         this.imageData = res.photos[0];
+        this.showSaveButton = true;
       })
       .catch(e => console.log(e));
   }

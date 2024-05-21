@@ -48,6 +48,7 @@
               placeholder="*Nombre Completo"
               class="form-control py-3 px-4"
               [ngClass]="{ 'border-danger': formSubmited && form.controls['name'].invalid }"
+              (keyup)="showSaveButton = true"
             >
               <i class="fa-regular fa-user"></i>
           </div>
@@ -65,6 +66,7 @@
               type="tel"
               placeholder="*Teléfono"
               class="form-control py-3 px-4"
+              (keyup)="showSaveButton = true"
             >
               <i class="fa-solid fa-phone"></i>
           </div>
@@ -88,7 +90,7 @@
             </ion-col>
           </ion-row>
 
-          <ion-row class="mt-3">
+          <ion-row *ngIf="showSaveButton" class="mt-3">
             <ion-col>
               <button class="btn custom-btn text-white" type="submit">
                 Guardar
@@ -98,7 +100,60 @@
         </form>
 
 
+        <ion-row class="mt-3">
+          <ion-col class="px-3">
+            <p class="forgot-password-color text text-mini ion-text-justify">Esta es una aplicación gratuita desarrollada por Refleacciona en conjunto con el Global Road Safety Partnership (GRSP).</p>
+            <p class="forgot-password-color text text-mini ion-text-justify">Consulta nuestro Aviso de Privacidad <a href="https://www.refleacciona.org/mx/privacidad/">Aquí</a></p>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="mt-0">
+          <!-- <ion-col>
+            <button class="btn btn-primary custom-btn" (click)="onRegistrar()">REGISTRARME</button>
+          </ion-col> -->
+
+          <ion-col class="white-bg">
+            <button (click)="modal.present()" class="btn custom-btn text-white" type="button">
+              Instrucciones
+            </button>
+
+
+          </ion-col>
+        </ion-row>
       </div>
     </ion-card>
   </div>
 </ion-content>
+
+
+
+
+<ion-modal
+#modal
+[initialBreakpoint]="0.5"
+[mode]="'ios'"
+>
+<ng-template>
+<div class="p-3">
+<!-- <div class="pt-5"> -->
+  <div class="text-center h5">
+    Instrucciones de uso:
+  </div>
+
+  <p class="white-bg text ion-text-justify">1. Escoger el módulo a llenar, completar con la ubicación deseada, fotografía para documentar el estado de las calles cuando aplique.</p>
+  <p class="text ion-text-justify">2. Una vez llenado podrás descargar tu reporte.</p>
+  <p class="text ion-text-justify">3. Si no tienes datos, podrás descargar los reportes cuando te conectes por WiFi.</p>
+
+  <p class="text ion-text-justify">¡Gracias por contribuir a tener calles más seguras!</p>
+
+
+  <div class="text-center mt-2 d-grid gap-2">
+    <button
+      class="btn custom-btn"
+      (click)="modal.dismiss()"
+    >Cerrar</button>
+  </div>
+<!-- </div> -->
+</div>
+</ng-template>
+</ion-modal>
