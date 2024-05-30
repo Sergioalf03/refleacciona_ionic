@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-import { IonModal, Platform } from '@ionic/angular';
+import { IonContent, IonModal, Platform } from '@ionic/angular';
 import { URI_HOME, URI_RECOVER_ACCOUNT, URI_REGISTER } from 'src/app/core/constants/uris';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
@@ -22,6 +22,8 @@ export class LoginPage {
 
   disableLoginButton = false;
 
+  @ViewChild(IonContent) content!: IonContent;
+
   constructor(
     private router:Router,
     private sessionService: SessionService,
@@ -40,6 +42,15 @@ export class LoginPage {
 
   ionViewWillEnter() {
     this.onScreen = true;
+  }
+
+  ionViewDidEnter() {
+    setTimeout(()=> {
+      this.content.scrollToBottom(1)
+        .then(() => {
+          this.content.scrollToTop(1);
+        });
+    }, 200);
   }
 
   ionViewWillLeave() {

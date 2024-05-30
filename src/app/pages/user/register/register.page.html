@@ -1,199 +1,201 @@
-<div class="custom-background">
+<ion-content class="scroll-content">
+  <div class="custom-background">
 
-  <div class="col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4 col-xxl-3 offset-xxl-auto mr-auto mb-4">
+    <div class="col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4 col-xxl-3 offset-xxl-auto mr-auto mb-4">
 
-    <div class="mx-5">
+      <div class="mx-5">
 
-      <div class="row mt-5 mb-0">
-        <div class="col text-end">
-          <i class="fa-solid fa-circle-user circular-shadow-blue"></i>
+        <div class="row mt-5 mb-0">
+          <div class="col text-end">
+            <i class="fa-solid fa-circle-user circular-shadow-blue"></i>
+          </div>
         </div>
-      </div>
 
-      <div class="row mt-0">
-        <div class="col">
-          <h3 class="text text-white">Registro</h3>
+        <div class="row mt-0">
+          <div class="col">
+            <h3 class="text text-white">Registro</h3>
 
-          <p class="text text-mini coolor">Escriba sus datos</p>
-        </div>
-      </div>
-    </div>
-
-    <form *ngIf="form" [formGroup]="form" (ngSubmit)="onSubmit()">
-
-      <div class="container-fluid d-flex flex-column vh-100 m-0 p-0">
-        <div class="row m-0 p-0 flex-grow-1">
-          <div class="col m-0 p-0">
-
-            <div class="card border-0 rounded-5 p-4">
-
-              <div class=" mx-2 mt-2">
-
-                <div class="input-with-icon">
-
-                  <input
-                    name="name"
-                    type="text"
-                    formControlName="name"
-                    placeholder="Nombre Completo"
-                    class="form-control py-3 px-4"
-                    required
-                   >
-
-                   <i class="fa-regular fa-user"></i>
-
-                </div>
-
-
-                <div class="input-with-icon  mt-3">
-
-                  <input
-                    name="email"
-                    type="text"
-                    formControlName="email"
-                    placeholder="Correo electrónico"
-                    class="form-control py-3 px-4"
-                    required
-                    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
-
-                    <i class="fa-regular fa-envelope"></i>
-
-
-                </div>
-
-                <div class="input-with-icon  mt-3">
-
-                  <input
-                    name="email"
-                    type="text"
-                    formControlName="confirmEmail"
-                    placeholder="confirmar correo"
-                    class="form-control py-3 px-4"
-                    required
-                    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
-
-                    <i class="fa-regular fa-envelope"></i>
-
-
-                </div>
-
-
-                <div class="input-with-icon  mt-3">
-
-                  <input
-                    name="password"
-                    type="password"
-                    formControlName="password"
-                    placeholder="Contraseña"
-                    class="form-control py-3 px-4"
-                    required>
-
-                    <i class="fa-solid fa-lock"></i>
-
-                </div>
-
-                <div class="input-with-icon  mt-3">
-
-                  <input
-                    name="confirmPassword"
-                    type="password"
-                    formControlName="confirmPassword"
-                    placeholder="Confirarm contraseña"
-                    class="form-control py-3 px-4"
-                    required>
-
-                    <i class="fa-regular fa-square-check"></i>
-
-                </div>
-
-              </div>
-
-                 <div class="row mt-4 mb-5"></div>
-              <!-- <div class="row my-5"></div> -->
-
-              <ion-row class="mt-3">
-                <!-- <ion-col>
-                  <button class="btn btn-primary custom-btn" (click)="onRegistrar()">REGISTRARME</button>
-                </ion-col> -->
-
-                <ion-col>
-                  <button [disabled]="disableSubmitButton" class="btn btn-primary custom-btn" type="submit">
-                    {{txtButtonEnter}}
-                  </button>
-                </ion-col>
-              </ion-row>
-
-              <ion-row class="mt-2">
-                <ion-col class="text-center">
-                  <label (click)="onGoingHome()" class="forgot-password-color text text-mini">Ya tengo una cuenta <strong><u class="mt-3">ENTRAR</u></strong></label>
-                </ion-col>
-              </ion-row>
-
-              <div class="row my-5"></div>
-              <div class="row my-5"></div>
-              <div class="row my-5"></div>
-            </div>
+            <p class="text text-mini coolor">Escriba sus datos</p>
           </div>
         </div>
       </div>
 
+      <form *ngIf="form" [formGroup]="form" (ngSubmit)="onSubmit()">
 
-<!--
-          <ion-item class="mt-2 txtInput">
+        <div class="container-fluid d-flex flex-column vh-100 m-0 p-0">
+          <div class="row m-0 p-0 flex-grow-1">
+            <div class="col m-0 p-0">
 
-            <ion-label position="stacked">Número de teléfono</ion-label>
+              <div class="card border-0 rounded-5 p-4">
 
-            <ion-input
-              formControlName="phoneNumber"
-              [clearInput]="true"
-              type="tel"
-              placeholder="8888888888"
-            ></ion-input>
+                <div class=" mx-2 mt-2">
 
-          </ion-item>
+                  <div class="input-with-icon">
 
-          <ion-item class="mt-2 txtInput">
+                    <input
+                      name="name"
+                      type="text"
+                      formControlName="name"
+                      placeholder="Nombre Completo"
+                      class="form-control py-3 px-4"
+                      required
+                     >
 
-            <ion-label position="stacked">Correo Electrónico</ion-label>
+                     <i class="fa-regular fa-user"></i>
 
-            <ion-input
-              [clearInput]="true"
-              formControlName="email"
-              type="email"
-              placeholder="correo@dominio.com"
-            ></ion-input>
+                  </div>
 
-          </ion-item>
 
-          <ion-item  class="mt-2 txtInput">
+                  <div class="input-with-icon  mt-3">
 
-            <ion-label position="stacked">Contraseña</ion-label>
+                    <input
+                      name="email"
+                      type="text"
+                      formControlName="email"
+                      placeholder="Correo electrónico"
+                      class="form-control py-3 px-4"
+                      required
+                      pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
 
-            <ion-input
-              [clearInput]="true"
-              type="password"
-              formControlName="password"
-              placeholder="********"
-            ></ion-input>
+                      <i class="fa-regular fa-envelope"></i>
 
-          </ion-item>
-      </div>
-      <div class="d-flex flex-row-reverse mt-3 me-3">
-        <ion-label color="tertiary txt-pwd" (click)="alreadyHasCode()">Ya tengo un código</ion-label>
-      </div>
-      <ion-row class="mt-3">
-        <ion-col>
-          <ion-button color="danger" expand="full" (click)="onGoingHome()">
-            CANCELAR
-          </ion-button>
-        </ion-col>
-        <ion-col>
-          <ion-button expand="full"type="submit">
-            {{txtButtonEnter}}
-          </ion-button>
-        </ion-col>
-      </ion-row> -->
-    </form>
 
+                  </div>
+
+                  <div class="input-with-icon  mt-3">
+
+                    <input
+                      name="email"
+                      type="text"
+                      formControlName="confirmEmail"
+                      placeholder="confirmar correo"
+                      class="form-control py-3 px-4"
+                      required
+                      pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+
+                      <i class="fa-regular fa-envelope"></i>
+
+
+                  </div>
+
+
+                  <div class="input-with-icon  mt-3">
+
+                    <input
+                      name="password"
+                      type="password"
+                      formControlName="password"
+                      placeholder="Contraseña"
+                      class="form-control py-3 px-4"
+                      required>
+
+                      <i class="fa-solid fa-lock"></i>
+
+                  </div>
+
+                  <div class="input-with-icon  mt-3">
+
+                    <input
+                      name="confirmPassword"
+                      type="password"
+                      formControlName="confirmPassword"
+                      placeholder="Confirarm contraseña"
+                      class="form-control py-3 px-4"
+                      required>
+
+                      <i class="fa-regular fa-square-check"></i>
+
+                  </div>
+
+                </div>
+
+                   <div class="row mt-4 mb-5"></div>
+                <!-- <div class="row my-5"></div> -->
+
+                <ion-row class="mt-3">
+                  <!-- <ion-col>
+                    <button class="btn btn-primary custom-btn" (click)="onRegistrar()">REGISTRARME</button>
+                  </ion-col> -->
+
+                  <ion-col>
+                    <button [disabled]="disableSubmitButton" class="btn btn-primary custom-btn" type="submit">
+                      {{txtButtonEnter}}
+                    </button>
+                  </ion-col>
+                </ion-row>
+
+                <ion-row class="mt-2">
+                  <ion-col class="text-center">
+                    <label (click)="onGoingHome()" class="forgot-password-color text text-mini">Ya tengo una cuenta <strong><u class="mt-3">ENTRAR</u></strong></label>
+                  </ion-col>
+                </ion-row>
+
+                <div class="row my-5"></div>
+                <div class="row my-5"></div>
+                <div class="row my-5"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+  <!--
+            <ion-item class="mt-2 txtInput">
+
+              <ion-label position="stacked">Número de teléfono</ion-label>
+
+              <ion-input
+                formControlName="phoneNumber"
+                [clearInput]="true"
+                type="tel"
+                placeholder="8888888888"
+              ></ion-input>
+
+            </ion-item>
+
+            <ion-item class="mt-2 txtInput">
+
+              <ion-label position="stacked">Correo Electrónico</ion-label>
+
+              <ion-input
+                [clearInput]="true"
+                formControlName="email"
+                type="email"
+                placeholder="correo@dominio.com"
+              ></ion-input>
+
+            </ion-item>
+
+            <ion-item  class="mt-2 txtInput">
+
+              <ion-label position="stacked">Contraseña</ion-label>
+
+              <ion-input
+                [clearInput]="true"
+                type="password"
+                formControlName="password"
+                placeholder="********"
+              ></ion-input>
+
+            </ion-item>
+        </div>
+        <div class="d-flex flex-row-reverse mt-3 me-3">
+          <ion-label color="tertiary txt-pwd" (click)="alreadyHasCode()">Ya tengo un código</ion-label>
+        </div>
+        <ion-row class="mt-3">
+          <ion-col>
+            <ion-button color="danger" expand="full" (click)="onGoingHome()">
+              CANCELAR
+            </ion-button>
+          </ion-col>
+          <ion-col>
+            <ion-button expand="full"type="submit">
+              {{txtButtonEnter}}
+            </ion-button>
+          </ion-col>
+        </ion-row> -->
+      </form>
+
+    </div>
   </div>
-</div>
+</ion-content>

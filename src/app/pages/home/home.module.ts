@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { HomePage } from './home.page';
 import { RouterModule, Routes } from '@angular/router';
 import { ProfileHeaderModule } from 'src/app/components/profile-header/profile-header.module';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 const routes: Routes = [
   {
@@ -22,6 +23,7 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes),
     ProfileHeaderModule,
+    ScrollingModule,
   ],
   declarations: [HomePage]
 })
