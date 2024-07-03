@@ -1,13 +1,22 @@
+.background {
+  background: url('../../../assets/background/background3.PNG') center center fixed;
+  background-size: cover;
+  width: 100%;
+  /* Set the width of the div */
+  height: 100vh;
+
+}
+
 .card-red {
   background-color: #EC6A5C;
 }
 
 .card-yellow {
-  background-color: #FDC616;
+  background-color: #2CAFC0;
 }
 
 .card-blue {
-  background-color: #2CAFC0;
+  background-color: #FDC616;
 }
 
 .card-gray {
@@ -31,7 +40,7 @@
   width: auto;
   padding: 10px 20px;
   font-size: 12px;
-  background-color: #FDC616;
+  background-color: #2CAFC0;
   color: #FFF;
   border: 1px solid white;
   border-radius: 20px;
@@ -44,7 +53,7 @@
   width: auto;
   padding: 10px 20px;
   font-size: 12px;
-  background-color: #2CAFC0;
+  background-color: #FDC616;
   color: #FFF;
   border: 1px solid white;
   border-radius: 20px;

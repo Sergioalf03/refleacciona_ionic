@@ -2,11 +2,18 @@
   width: auto;
   padding: 10px 20px;
   font-size: 16px;
-  background-color: #FDC616;
+  background-color: #2CAFC0;
   color: #FFF;
   border: 1px solid white;
   border-radius: 20px;
   /* Adjust the border-radius to control the roundness */
   font-weight: normal;
   cursor: pointer;
+}
+
+.background {
+  background: url('../../../../assets/background/background2.PNG') center center fixed;
+  background-size: cover;
+  width: 100%;
+  height: 100vh;
 }

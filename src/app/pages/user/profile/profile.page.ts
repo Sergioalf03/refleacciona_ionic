@@ -10,7 +10,7 @@ import { PhotoService } from 'src/app/core/controllers/photo.service';
 import { SessionService } from 'src/app/core/controllers/session.service';
 import { ValidFormService } from 'src/app/core/controllers/valid-form.service';
 import { Capacitor } from '@capacitor/core';
-import { URI_HOME } from 'src/app/core/constants/uris';
+import { URI_HOME, URI_LOGIN } from 'src/app/core/constants/uris';
 
 @Component({
   selector: 'app-profile',
@@ -27,6 +27,8 @@ export class ProfilePage {
   ImageSrc = '';
   ImageSafeSrc: SafeUrl = '';
   imageData!: any;
+
+  showSaveButton = false;
 
   formSubmited = false;
 
@@ -159,8 +161,26 @@ export class ProfilePage {
         this.ImageSafeSrc = this.sanitization.bypassSecurityTrustUrl(res.photos[0].webPath);
         this.ImageSrc = res.photos[0].webPath;
         this.imageData = res.photos[0];
+        this.showSaveButton = true;
       })
       .catch(e => console.log(e));
+  }
+
+  onLogout() {
+    this.confirmDialogService
+      .presentAlert('¿Desea cerrar sesión?', async () => {
+        this.loadingService.showLoading();
+        return await this.sessionService.logout()
+          .subscribe({
+            next: () => {
+              this.router.navigateByUrl(URI_LOGIN())
+              this.loadingService.dismissLoading();
+            },
+            error: err => {
+              this.httpResponseService.onError(err, 'Error al cerrar sesión');
+            },
+          })
+      })
   }
 
 }

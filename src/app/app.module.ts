@@ -13,9 +13,6 @@ import { ErrorInterceptorService } from './core/controllers/error-interceptor.se
 
 import { SQLiteService } from './core/controllers/sqlite.service';
 
-import { HammerGestureConfig, HAMMER_GESTURE_CONFIG,  } from '@angular/platform-browser';
-import { DOCUMENT } from '@angular/common';
-import { Console } from 'console';
 import { ProfileHeaderModule } from './components/profile-header/profile-header.module';
 
 
@@ -31,6 +28,7 @@ import { ProfileHeaderModule } from './components/profile-header/profile-header.
     ProfileHeaderModule,
   ],
   providers: [
+    SQLiteService,
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptorService, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptorService, multi: true },
     SQLiteService,

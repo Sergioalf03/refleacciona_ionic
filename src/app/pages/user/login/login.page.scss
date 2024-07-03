@@ -1,3 +1,11 @@
+.custom-background {
+  background: url('../../../../assets/background/partial.png') center center fixed;
+  background-size: cover;
+  width: 100%;
+  /* Set the width of the div */
+  height: 100vh;
+
+}
 
 img {
     align-items: center;
@@ -29,10 +37,20 @@ input {
     padding: 10px 20px;
     font-size: 16px;
     background-color: #EC6A5C;
-    color: #000;
+    color: #FFF;
     border: none;
     border-radius: 15px;
     /* Adjust the border-radius to control the roundness */
     font-weight: bold;
     cursor: pointer;
+}
+
+.white-bg {
+  background-color: #FFF !important;
+}
+
+.scroll-content {
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }

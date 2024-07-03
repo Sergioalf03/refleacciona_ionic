@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DIRECTIONS } from 'src/app/core/constants/directions';
 import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
 import { URI_BELT_LIST } from 'src/app/core/constants/uris';
-import { VEHICLE_TYPES } from 'src/app/core/constants/vehicle-types';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
@@ -27,9 +25,6 @@ export class BeltCountFormPage implements OnInit {
 
   chairChairlessCount = 0;
   chairCount = 0;
-
-  directions = DIRECTIONS;
-  vehicleTypes = VEHICLE_TYPES;
 
   disableBeltUserDecrease = true;
   disableBeltDecrease = true;

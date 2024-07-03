@@ -1,12 +1,17 @@
-<ion-content [color]="'white'" class="bg-white ">
-  <div class="bg-white m-0 p-0 h-100">
+<ion-content>
+  <div class="background m-0 p-0 h-100">
 
-    <div class="bg-white  col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4 col-xxl-3 offset-xxl-auto mr-auto mb-4">
+    <div class="col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4 col-xxl-3 offset-xxl-auto mr-auto mb-4">
 
-      <div class="mx-5 bg-white ">
+      <div class="mx-5 ">
         <button class="btn custom-white-btn mt-4" (click)="onCancel()">
           <i class="fa-solid fa-circle-arrow-left" style="font-size: 35px;"></i>
         </button>
+
+      </div>
+
+      <ion-card>
+        <div class="mx-4 mb-3">
 
         <div class="row mt-3 bg-white ">
           <div class="col">
@@ -71,90 +76,9 @@
         </ion-row>
 
       </div>
-
+      </ion-card>
     </div>
   </div>
 
 
 </ion-content>
-
-<!-- <ion-content >
-  <app-header-buttons
-    [backUrl]="backUrl"
-    homeUrl="/home"
-  ></app-header-buttons>
-
-  <div class="mx-2 mt-4 mb-2">
-    <h1>Registro de uso de casco</h1>
-  </div>
-
-  <div class="my-3 mx-2 text-justify">
-    <p>
-      Ubicado en un cruce específico, indique la cantidad de personas con y sin casco.
-    </p>
-  </div>
-
-  <div class="mx-2 mt-1 ion-text-center">
-    <h3>Con Casco: {{ helmetCount }} </h3>
-  </div>
-
-  <div class="row">
-    <div class="col-6 p-4 pt-0 pe-2">
-      <div [ngClass]="{ 'bg-secondary': disableHelmetDecrease, 'bg-primary': !disableHelmetDecrease }" class="card ion-button">
-        <div (click)="decreaseHelmets()" class="ion-text-center mt-4 mb-2">
-          <ion-icon color="light" size="large" name="remove"></ion-icon>
-          <p class="text-light">Decrementar</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-6 p-4 pt-0 ps-2">
-      <div class="card button bg-primary">
-        <div (click)="increaseHelmets()" class="ion-text-center mt-4 mb-2">
-          <ion-icon color="light" size="large" name="add"></ion-icon>
-          <p class="text-light">Incrementar</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="mx-2 mt-1 ion-text-center">
-    <h3>Sin casco: {{ helmetlessCount }}</h3>
-  </div>
-
-  <div class="row">
-    <div class="col-6 p-4 pt-0 pe-2">
-      <div [ngClass]="{ 'bg-secondary': disableUserDecrease, 'bg-primary': !disableUserDecrease }" class="card ion-button">
-        <div (click)="decreaseUsers()" class="ion-text-center mt-4 mb-2">
-          <ion-icon color="light" size="large" name="remove"></ion-icon>
-          <p class="text-light">Decrementar</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-6 p-4 pt-0 ps-2">
-      <div class="card button bg-primary">
-        <div (click)="increaseUsers()" class="ion-text-center mt-4 mb-2">
-          <ion-icon color="light" size="large" name="add"></ion-icon>
-          <p class="text-light">Incrementar</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-
-</ion-content>
-
-<ion-footer class="bg-white">
-  <div class="row p-2">
-    <div class="col">
-      <ion-button color="danger" expand="block" (click)="onCancel()">
-        CANCELAR
-      </ion-button>
-    </div>
-    <div class="col">
-      <ion-button [disabled]="!canSubmit" expand="block" (click)="onSubmit()">
-        {{submitButtonText}}
-      </ion-button>
-    </div>
-  </div>
-</ion-footer> -->

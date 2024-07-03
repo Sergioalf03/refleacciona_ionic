@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
 import { SessionService } from 'src/app/core/controllers/session.service';
@@ -6,7 +6,7 @@ import { DatabaseService } from 'src/app/core/controllers/database.service';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { VersionService } from 'src/app/services/version.service';
 import { URI_AUDITORY_FORM, URI_AUDITORY_LIST, URI_BELT_FORM, URI_BELT_LIST, URI_GENERAL_COUNT_FORM, URI_GENERAL_COUNT_LIST, URI_HELMET_FORM, URI_HELMET_LIST, URI_LOGIN, URI_PROFILE } from 'src/app/core/constants/uris';
-import { Platform, isPlatform } from '@ionic/angular';
+import { IonContent, Platform, isPlatform } from '@ionic/angular';
 import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
 import { LoadingService } from 'src/app/core/controllers/loading.service';
 import { PhotoService } from 'src/app/core/controllers/photo.service';
@@ -20,6 +20,8 @@ import { Capacitor } from '@capacitor/core';
 export class HomePage {
 
   auditoriesCount = 0;
+
+  @ViewChild(IonContent) content!: IonContent;
 
   sqlite: any;
   // platform?: string;
@@ -68,13 +70,25 @@ export class HomePage {
 
   }
 
+  ionViewDidEnter() {
+
+  }
   ionViewWillEnter() {
     setTimeout(()=> {
       this.showProfileHeader = true;
+      this.content.scrollToBottom(1)
+      .then(() => {
+        this.content.scrollToTop(1);
+      });
     }, 200)
-    if (!this.versionService.checked) {
-      this.onFetchUpdate(false);
-    }
+    this.databaseService
+    .createConnection()
+    .then(() => {
+      if (!this.versionService.checked) {
+        this.onFetchUpdate(false);
+      }
+    })
+    .catch(() => true)
   }
 
   ionViewWillLeave() {
@@ -252,24 +266,6 @@ export class HomePage {
         })
         .catch(e => console.log(e));
     }
-  }
-
-
-  onLogout() {
-    this.confirmDialogService
-      .presentAlert('¿Desea cerrar sesión?', async () => {
-        this.loadingService.showLoading();
-        return await this.sessionService.logout()
-          .subscribe({
-            next: () => {
-              this.router.navigateByUrl(URI_LOGIN())
-              this.loadingService.dismissLoading();
-            },
-            error: err => {
-              this.httpResponseService.onError(err, 'Error al cerrar sesión');
-            },
-          })
-      })
   }
 
   onOpenUser() {

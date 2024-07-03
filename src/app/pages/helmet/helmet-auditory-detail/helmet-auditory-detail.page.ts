@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { DIRECTIONS } from 'src/app/core/constants/directions';
 import { URI_HELMET_LIST } from 'src/app/core/constants/uris';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { DownloadPlatformService } from 'src/app/core/controllers/download-platform.service';
@@ -15,6 +14,7 @@ import { STORAGE_URL } from 'src/environments/environment';
 @Component({
   selector: 'app-helmet-auditory-detail',
   templateUrl: './helmet-auditory-detail.page.html',
+  styleUrls: ['./helmet-auditory-detail.page.scss'],
 })
 export class HelmetAuditoryDetailPage {
 

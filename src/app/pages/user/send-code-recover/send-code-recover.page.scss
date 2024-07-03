@@ -19,3 +19,22 @@ input {
   font-weight: bold;
   cursor: pointer;
 }
+
+
+.custom-white-btn {
+  width: auto;
+  background-color: #636363;
+  color: white;
+  border: 1px solid #636363;
+  border-radius: 30px;
+  cursor: pointer;
+}
+
+.background {
+  background: url('../../../../assets/background/background2.PNG') center center fixed;
+  background-size: cover;
+  width: 100%;
+  /* Set the width of the div */
+  height: 100vh;
+
+}

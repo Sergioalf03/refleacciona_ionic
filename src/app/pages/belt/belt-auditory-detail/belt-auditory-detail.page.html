@@ -1,9 +1,10 @@
-<ion-content [color]="'white'" class="bg-white ">
-  <div class="bg-white m-0 p-0 h-100">
+<ion-content>
+  <div class="background m-0 p-0 h-100">
 
-    <div class="bg-white  col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4 col-xxl-3 offset-xxl-auto mr-auto mb-4">
+    <div class=" col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4 col-xxl-3 offset-xxl-auto mr-auto mb-4">
 
-      <div class="mx-4 bg-white ">
+      <ion-card>
+      <div class="mx-4  ">
 
         <div class="row">
           <div class="col">
@@ -12,11 +13,11 @@
             </button>
           </div>
           <div class="col text-end">
-            <button id="c1" class="btn custom-white-btn mt-4">
+            <button id="bc1" class="btn custom-white-btn mt-4">
               <i class="fa-solid fa-ellipsis-vertical" style="font-size: 24px;"></i>
             </button>
 
-            <ion-popover trigger="c1" [dismissOnSelect]="true" triggerAction="click">
+            <ion-popover trigger="bc1" [dismissOnSelect]="true" triggerAction="click">
               <ng-template>
                 <ion-content>
                   <ion-list lines="none">
@@ -33,7 +34,12 @@
           </div>
         </div>
 
-        <div class="row mt-3 bg-white ">
+      </div>
+
+
+        <div class="mx-4 mb-3">
+
+        <div class="row mt-3  ">
           <div class="col">
             <!-- <div class=" mb-0 title-text-size">{{ title }}</div> -->
             <div class=" mb-0 title-text-size">{{ auditoryTitle }}</div>
@@ -74,82 +80,8 @@
 
 
       </div>
+      </ion-card>
     </div>
 
   </div>
 </ion-content>
-
-<!-- <ion-content>
-
-  <div class="row mt-2 mx-0">
-    <div class="col">
-      <ion-button size="small" (click)="onGoingBack()">
-        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
-      </ion-button>
-    </div>
-    <div class="col text-end">
-      <ion-button id="c1" size="small">
-        <ion-icon slot="icon-only" name="cloud-download"></ion-icon>
-      </ion-button>
-      <ion-popover trigger="c1" [dismissOnSelect]="true" triggerAction="click">
-        <ng-template>
-          <ion-content>
-            <ion-list lines="none">
-              <ion-item button (click)="downloadPdf()">
-                <ion-label>Descargar PDF</ion-label>
-              </ion-item>
-              <ion-item button (click)="downloadCsv()">
-                <ion-label>Descargar CSV</ion-label>
-              </ion-item>
-            </ion-list>
-          </ion-content>
-        </ng-template>
-      </ion-popover>
-    </div>
-  </div>
-
-  <div class="mx-2 mt-4">
-    <h1>{{ auditoryTitle }}</h1>
-
-    <p class="mt-4" *ngIf="auditoryDate"><strong>Fecha:</strong> {{ auditoryDate }} {{ auditoryTime }}</p>
-    <p *ngIf="auditoryDescription"><strong>Descripción:</strong> {{ auditoryDescription }}</p>
-
-    <p>
-      <strong>Ubicación:</strong>
-      <app-map></app-map>
-    </p>
-
-    <p *ngIf="auditoyrEvidences.length > 0">
-      <strong class="mt-2">Fotografías del entorno:</strong>
-      <img width="100%" *ngFor="let url of auditoyrEvidences" class="mb-2" [src]="url">
-    </p>
-
-
-
-      <div class="row" *ngIf="counts[0]">
-        <div class="col-12 p-4">
-
-        <ion-item class="mt-2 txtInput ion-no-padding ion-no-margin">
-          <ion-label>
-            <h2 class="text-start ps-2">Sin Cinturón: {{ counts[0].adults_count }} </h2>
-          </ion-label>
-        </ion-item>
-
-        <ion-item class="mt-2 txtInput ion-no-padding ion-no-margin">
-          <ion-label>
-            <h2 class="text-start ps-2">Con Cinturón: {{ counts[0].belts_count }} </h2>
-          </ion-label>
-        </ion-item>
-
-        <ion-item class="mt-2 txtInput ion-no-padding ion-no-margin">
-          <ion-label>
-            <h2 class="text-start ps-2">Con Silla de Retención: {{ counts[0].chairs_count }} </h2>
-          </ion-label>
-        </ion-item>
-
-      </div>
-    </div>
-
-  </div>
-
-</ion-content> -->

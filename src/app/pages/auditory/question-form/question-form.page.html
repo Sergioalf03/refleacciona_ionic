@@ -1,23 +1,28 @@
-<ion-content [color]="'white'" class="bg-white ">
-  <div class="bg-white m-0 p-0 h-100">
+<ion-content>
+  <div class="background m-0 p-0 h-100">
 
-    <div class="bg-white  col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4 col-xxl-3 offset-xxl-auto mr-auto mb-4">
+    <div class="col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4 col-xxl-3 offset-xxl-auto mr-auto mb-4">
 
-      <div class="mx-5 bg-white ">
+      <div class="mx-5">
         <button class="btn custom-white-btn mt-4" (click)="onCancel()">
           <i class="fa-solid fa-circle-arrow-left" style="font-size: 35px;"></i>
         </button>
 
-        <div class="row mt-3 bg-white ">
-          <div class="col">
-            <!-- <div class=" mb-0 title-text-size">{{ title }}</div> -->
-            <div class=" mb-0 title-text-size">{{ sectionName }}</div>
+      </div>
 
-            <p class="text text-mini coolor mt-0">{{ subsectionName }}</p>
+      <ion-card>
+        <div class="mx-4 mb-3">
+
+          <div class="row mt-3 ">
+            <div class="col">
+              <!-- <div class=" mb-0 title-text-size">{{ title }}</div> -->
+              <div class=" mb-0 title-text-size">{{ sectionName }}</div>
+
+              <p class="text text-mini coolor mt-0">{{ subsectionName }}</p>
+            </div>
           </div>
-        </div>
 
-        <cdk-virtual-scroll-viewport #viewport itemSize="300" class="bg-white ">      </cdk-virtual-scroll-viewport>
+          <cdk-virtual-scroll-viewport #viewport itemSize="300" class="bg-white ">      </cdk-virtual-scroll-viewport>
 
           <div *ngFor="let question of questions; let questionIndex = index">
             <div *ngIf="!hideQuestion[questionIndex]" class="mt-3 mb-3">
@@ -49,7 +54,7 @@
                     pattern="[0-9]$"
                     [(value)]="question.answer"
                     maxlength="1"
-                     (change)="setValue(question, $event); onAnswerChange(question, questionIndex)"
+                      (change)="setValue(question, $event); onAnswerChange(question, questionIndex)"
                   >
 
                 </div>
@@ -70,11 +75,8 @@
 
           </div>
 
-
-
-
-      </div>
-
+        </div>
+      </ion-card>
     </div>
   </div>
 
@@ -129,121 +131,3 @@
 
         </ion-row>
 </ion-footer>
-
-<!-- <ion-header class="ion-no-border">
-  <app-header-buttons
-    [backUrl]="backUri"
-    homeUrl="/home"
-  ></app-header-buttons>
-
-  <div class="principal col-md-6 col-xl-12  mr-auto mb-4">
-    <div class=" mx-2 mt-2">
-      <h5 class="text-center">{{ sectionName }}</h5>
-      <h6 class="text-center">{{ subsectionName }}</h6>
-    </div>
-  </div>
-
-
-</ion-header>
-
-<ion-content  class="ion-padding-horizontal">
-  <div [hidden]="hideForm">
-    <div *ngFor="let question of questions; let questionIndex = index">
-      <div *ngIf="!hideQuestion[questionIndex]" class="mt-2 mb-2">
-        <div class="row">
-
-          <div [class]="question.popup || question.has_evidence ? 'col-10' : 'col' + ' ion-text-justify'">
-            {{ question.uid + '.- ' + question.sentence}}
-
-            <ion-item *ngIf="question.answers === 'FREETEXT'" class="txtInput">
-              <ion-input
-                [autofocus]="true"
-                [clearInput]="true"
-                [autocomplete]="true"
-                [value]="question.answer"
-                (ionChange)="onAnswerChange($event, question, questionIndex)"
-              ></ion-input>
-            </ion-item>
-
-
-            <ion-item *ngIf="question.answers === 'ONEDIGIT'" class="txtInput">
-              <ion-input
-                *ngIf="question.answers === 'ONEDIGIT'"
-                [autofocus]="true"
-                [clearInput]="true"
-                [autocomplete]="true"
-                [value]="question.answer"
-                maxlength="1"
-                type="number"
-                (ionChange)="onAnswerChange($event, question, questionIndex)"
-              ></ion-input>
-            </ion-item>
-
-            <ion-item *ngIf="question.answers !== 'FREETEXT' && question.answers !== 'ONEDIGIT'" lines="none">
-              <ion-radio-group
-                (ionChange)="onAnswerChange($event, question, questionIndex)"
-                class="ion-no-border"
-                [value]="+question.answer"
-              >
-                <ion-radio
-                  *ngFor="let option of jsonCast(question.answers)"
-                  justify="start"
-                  label-placement="end"
-                  mode="md"
-                  [value]="option.v"
-                >{{ option.t }}</ion-radio><br />
-              </ion-radio-group>
-            </ion-item>
-          </div>
-
-          <div class="col-2">
-            <ion-button *ngIf="question.has_evidence" [disabled]="!this.ImageSrc[questionIndex].canTakePickture || !!ImageSrc[questionIndex].url" size="small" (click)="onSelectPhoto(questionIndex, question.id)">
-              <ion-icon style="font-size: 15px;" slot="icon-only" name="camera">
-            </ion-icon></ion-button>
-
-            <ion-button *ngIf="question.popup" size="small" (click)="openedPopover = question.indx">
-              <ion-icon style="font-size: 15px;" slot="icon-only" name="help"></ion-icon>
-            </ion-button>
-
-            <ion-popover [isOpen]="openedPopover === question.indx" (didDismiss)="openedPopover = 0">
-              <ng-template>
-                <ion-content class="ion-padding ion-text-justify">{{ question.popup }}</ion-content>
-              </ng-template>
-            </ion-popover>
-          </div>
-        </div>
-
-
-        <ion-row *ngIf="ImageSrc[questionIndex].url" class="mt-3">
-          <ion-col>
-            <img width="100%"  (click)="onImgClicked(questionIndex)" [src]="ImageSrc[questionIndex].url">
-          </ion-col>
-        </ion-row>
-      </div>
-    </div>
-  </div>
-
-</ion-content>
-
-<ion-footer >
-
-  <ion-row *ngIf="questions" class="mt-2">
-    <ion-col>
-      <p class="text-center"><strong>Sección {{sectionIndex + 1}}/{{sectionIds.length}}</strong></p>
-    </ion-col>
-    <ion-col>
-      <p class="text-center"><strong>{{answerCount}}/{{showedQuestions}} Respuestas</strong></p>
-    </ion-col>
-  </ion-row>
-
-  <ion-row>
-    <ion-col >
-      <ion-button *ngIf="sectionIndex !== 0" expand="full" (click)="onPrevious()">ANTERIOR</ion-button>
-    </ion-col>
-
-    <ion-col>
-      <ion-button [disabled]="!canNext" *ngIf="sectionIndex !== sectionIds.length - 1" expand="full" (click)="onNext()">SIGUIENTE</ion-button>
-      <ion-button [disabled]="!canNext" *ngIf="sectionIndex === sectionIds.length - 1" expand="full" (click)="onFinish()">FINALIZAR</ion-button>
-    </ion-col>
-  </ion-row>
-</ion-footer> -->

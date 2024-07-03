@@ -1,10 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Directory, Filesystem } from '@capacitor/filesystem';
-import { Share } from '@capacitor/share';
-import { DIRECTIONS } from 'src/app/core/constants/directions';
 import { URI_GENERAL_COUNT_LIST } from 'src/app/core/constants/uris';
-import { VEHICLE_TYPES } from 'src/app/core/constants/vehicle-types';
 import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
 import { DownloadPlatformService } from 'src/app/core/controllers/download-platform.service';
 import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
@@ -16,6 +12,7 @@ import { STORAGE_URL } from 'src/environments/environment';
 @Component({
   selector: 'app-general-count-auditory-detail',
   templateUrl: './general-count-auditory-detail.page.html',
+  styleUrls: ['./general-count-auditory-detail.page.scss'],
 })
 export class GeneralCountAuditoryDetailPage {
 

@@ -16,23 +16,22 @@ export class DatabaseService {
   connection!: SQLiteDBConnection;
 
   constructor(
-    private _sqlite: SQLiteService,
+    private sqliteService: SQLiteService,
     private responseService: HttpResponseService,
   ) { }
 
-  createConnection() {
-    return new Promise((resolve, reject) => {
-      this._sqlite
-        .createConnection(LOCAL_DATABASE.name, LOCAL_DATABASE.encrypted, LOCAL_DATABASE.mode, LOCAL_DATABASE.version)
-        .then(newConnection => {
-          this.connection = newConnection;
-          console.log('Conexión creada');
-          resolve(true);
-        })
-        .catch(err => {
-          console.log('No se pudo crear la conexión: ' + err);
-          resolve(false);
-        });
+ async createConnection() {
+
+   return new Promise(async (resolve, reject) => {
+      this.connection = await this.sqliteService.openDatabase(
+        LOCAL_DATABASE.name,
+        LOCAL_DATABASE.encrypted,
+        LOCAL_DATABASE.mode,
+        LOCAL_DATABASE.version,
+        false
+      );
+
+      resolve(true);
     });
   }
 
@@ -112,64 +111,92 @@ export class DatabaseService {
   }
 
   private async sendQuery(query: string, data: BehaviorSubject<any>) {
-    await this.connection.open();
+    console.log('Inicio de ejecución de query')
+    if (this.connection) {
+      console.log('conexión definida')
+      await this.connection
+        .open()
+        .then(() => {
+          console.log('conexión abierta');
 
-    this.connection?.query(query)
-      .then(async (result) => {
-        await this.connection.isDBOpen()
-          .then(c => {
-            this.connection
-              .close()
-              .then(async () => {
-                data.next(result);
-              })
-              .catch(e => {
-                data.next('unclosed');
-              })
-          })
-          .catch(e => console.log(e));
-      })
-      .catch(async (e) => {
-        await this.connection.isDBOpen()
-          .then(c => {
-            this.connection
-              .close()
-              .then(async () => {
-                data.next(`error: ${e.message}`);
-              })
-              .catch(e => {
-                data.next('unclosed');
-              });
-          })
-          .catch(e => console.log(e));
-      });
+          this.connection.query(query)
+            .then(async (result) => {
+              await this.connection
+                .isDBOpen()
+                .then(c => {
+                  console.log('conexión abierta? ', c)
+                  this.connection
+                    .close()
+                    .then(async () => {
+                      data.next(result);
+                    })
+                    .catch(e => {
+                      data.next('unclosed');
+                    })
+                })
+                .catch(e => console.log('Errro al verificar conexión abierta ', e));
+            })
+            .catch(async (e) => {
+              await this.connection.isDBOpen()
+                .then(c => {
+                  this.connection
+                    .close()
+                    .then(async () => {
+                      data.next(`error: ${e.message}`);
+                    })
+                    .catch(e => {
+                      data.next('unclosed');
+                    });
+                })
+                .catch(e => console.log(e));
+            });
+        })
+        .catch(e => {
+          console.log('Conexión no se pudo abrir 4', e);
+        });
+
+    } else {
+      console.log('conexión no definida');
+    }
   }
 
   public async createDatabase() {
-    await this.connection.open();
-    this.connection
-      .execute(createSchema)
-      .then(result => {
+    console.log('inicia creación de base de datos')
+    await this.connection
+      .open()
+      .then(() => {
+        console.log('Conexión abierta')
         this.connection
-          .execute(loadData)
-          .then(async (result1) => {
-            await this.connection
-              .close()
-              .then(() => true)
-              .catch(e => this.responseService.onError(e, 'No se pudo crear la base de datos'));
+          .execute(createSchema)
+          .then(result => {
+            console.log('Base de datos creada')
+            this.connection
+              .execute(loadData)
+              .then(async (result1) => {
+                console.log('Datos cargados')
+                await this.connection
+                  .close()
+                  .then(() => console.log('Base de datos cerrada 1'))
+                  .catch(e => this.responseService.onError(e, 'No se pudo cerrar la base de datos 1'));
+              })
+              .catch(async (e1) => {
+                console.log('error al cargar datos: ', e1)
+                await this.connection
+                  .close()
+                  .then(() => console.log('Base de datos cerrada 2'))
+                  .catch(e => this.responseService.onError(e, 'No se pudo cerrar la base de datos 2'));
+              });
           })
           .catch(async (e) => {
+            console.log('Error al crear base de datos: ', e)
             await this.connection
               .close()
-              .then(() => true)
-              .catch(e => this.responseService.onError(e, 'No se pudo crear la base de datos'));
+              .then(() => console.log('Base de datos cerrada 3'))
+              .catch(e => this.responseService.onError(e, 'No se pudo cerrar la base de datos 3'));
           });
       })
-      .catch(async (e) => {
-        await this.connection
-          .close()
-          .then(() => true)
-          .catch(e => this.responseService.onError(e, 'No se pudo crear la base de datos'));
+      .catch(e => {
+        console.log('Error Al abrir la conexión', e)
       });
   }
 
