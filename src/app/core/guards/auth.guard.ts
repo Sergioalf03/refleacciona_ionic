@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CanLoad, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { SessionService } from '../controllers/session.service';
 import { URI_LOGIN } from '../constants/uris';
 
@@ -7,7 +7,7 @@ import { URI_LOGIN } from '../constants/uris';
   providedIn: 'root'
 })
 
-export class AuthGuard implements CanLoad  {
+export class AuthGuard   {
   constructor(
     private sessionService: SessionService,
     private router: Router
