@@ -1,0 +1,88 @@
+.background {
+  background: url('../../../assets/background/background3.PNG') center center fixed;
+  background-size: cover;
+  width: 100%;
+  /* Set the width of the div */
+  height: 100vh;
+
+}
+
+.card-red {
+  background-color: #EC6A5C;
+}
+
+.card-yellow {
+  background-color: #2CAFC0;
+}
+
+.card-blue {
+  background-color: #FDC616;
+}
+
+.card-gray {
+  background-color: #636363;
+}
+
+.custom-red-btn {
+  width: auto;
+  padding: 10px 20px;
+  font-size: 12px;
+  background-color: #EC6A5C;
+  color: #FFF;
+  border: 1px solid white;
+  border-radius: 20px;
+  /* Adjust the border-radius to control the roundness */
+  font-weight: normal;
+  cursor: pointer;
+}
+
+.custom-yellow-btn {
+  width: auto;
+  padding: 10px 20px;
+  font-size: 12px;
+  background-color: #2CAFC0;
+  color: #FFF;
+  border: 1px solid white;
+  border-radius: 20px;
+  /* Adjust the border-radius to control the roundness */
+  font-weight: normal;
+  cursor: pointer;
+}
+
+.custom-blue-btn {
+  width: auto;
+  padding: 10px 20px;
+  font-size: 12px;
+  background-color: #FDC616;
+  color: #FFF;
+  border: 1px solid white;
+  border-radius: 20px;
+  /* Adjust the border-radius to control the roundness */
+  font-weight: normal;
+  cursor: pointer;
+}
+
+.custom-gray-btn {
+  width: auto;
+  padding: 10px 20px;
+  font-size: 12px;
+  background-color: #636363;
+  color: #FFF;
+  border: 1px solid white;
+  border-radius: 20px;
+  /* Adjust the border-radius to control the roundness */
+  font-weight: normal;
+  cursor: pointer;
+}
+
+.scroll-container {
+  overflow-x: auto;
+  /* Habilita el scroll horizontal */
+  white-space: nowrap;
+  /* Evita que los elementos se envuelvan al siguiente renglón */
+}
+
+.scroll-content {
+  display: inline-flex;
+  /* Dispone los elementos en una línea horizontal */
+}

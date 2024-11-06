@@ -1,0 +1,252 @@
+<ion-content>
+  <div class="background m-0 p-0 h-100">
+
+    <div class="col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4 col-xxl-3 offset-xxl-auto mr-auto mb-4">
+
+      <ion-card>
+        <div class="mx-4 ">
+
+          <div class="row">
+            <div class="col">
+              <button class="btn custom-white-btn mt-4" (click)="onGoingBack()">
+                <i class="fa-solid fa-circle-arrow-left" style="font-size: 35px;"></i>
+              </button>
+            </div>
+            <div class="col text-end">
+              <button id="gc1" class="btn custom-white-btn mt-4">
+                <i class="fa-solid fa-ellipsis-vertical" style="font-size: 24px;"></i>
+              </button>
+
+              <ion-popover trigger="gc1" [dismissOnSelect]="true" triggerAction="click">
+                <ng-template>
+                  <ion-content>
+                    <ion-list lines="none">
+                      <ion-item button (click)="downloadPdf()">
+                        <ion-label>Descargar PDF</ion-label>
+                      </ion-item>
+                      <ion-item button (click)="downloadCsv()">
+                        <ion-label>Descargar CSV</ion-label>
+                      </ion-item>
+                    </ion-list>
+                  </ion-content>
+                </ng-template>
+              </ion-popover>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="mx-4 mb-3">
+
+        <div class="row mt-3 bg-white ">
+          <div class="col">
+            <!-- <div class=" mb-0 title-text-size">{{ title }}</div> -->
+            <div class=" mb-0 title-text-size">{{ auditoryTitle }}</div>
+
+            <p class="text text-mini coolor mt-0">{{ auditoryDate }} {{ auditoryTime }}</p>
+            <p class="text text-mini coolor mt-0">{{ auditoryDescription }}</p>
+          </div>
+        </div>
+
+
+        <div class="text">
+          Ubicación:
+          <app-map></app-map>
+        </div>
+
+        <div *ngIf="auditoyrEvidences.length > 0" class="text mt-2">
+          Fotografías del entorno:
+          <img width="100%" *ngFor="let url of auditoyrEvidences" class="mb-2" [src]="url">
+        </div>
+
+        <div class="mx-2 mt-4">
+
+
+          <div  *ngIf="counts[0]" class="mt-3">
+            <div class="text mt-2">
+              ({{ counts[0].count1 }}/{{total}}) {{counts[0].score1}}% {{ names[0] }}
+            </div>
+
+            <div class="text mt-2">
+              ({{ counts[0].count2 }}/{{total}}) {{counts[0].score2}}% {{ names[1] }}
+            </div>
+
+            <div class="text mt-2">
+              ({{ counts[0].count3 }}/{{total}}) {{counts[0].score3}}% {{ names[2] }}
+            </div>
+
+            <div class="text mt-2">
+              ({{ counts[0].count4 }}/{{total}}) {{counts[0].score4}}% {{ names[3] }}
+            </div>
+
+            <div class="text mt-2">
+              ({{ counts[0].count5 }}/{{total}}) {{counts[0].score5}}% {{ names[4] }}
+            </div>
+
+            <div class="text mt-2">
+              ({{ counts[0].count6 }}/{{total}}) {{counts[0].score6}}% {{ names[5] }}
+            </div>
+
+            <div class="text mt-2">
+              ({{ counts[0].count7 }}/{{total}}) {{counts[0].score7}}% {{ names[6] }}
+            </div>
+
+            <div class="text mt-2">
+              ({{ counts[0].count8 }}/{{total}}) {{counts[0].score8}}% {{ names[7] }}
+            </div>
+
+            <div class="text mt-2">
+              ({{ counts[0].count9 }}/{{total}}) {{counts[0].score9}}% {{ names[8] }}
+            </div>
+
+            <div class="text mt-2">
+              ({{ counts[0].count10 }}/{{total}}) {{counts[0].score10}}% {{ names[9] }}
+            </div>
+
+            <div class="text mt-2">
+              ({{ counts[0].count11 }}/{{total}}) {{counts[0].score11}}% {{ names[10] }}
+            </div>
+
+            <div class="text mt-2">
+              ({{ counts[0].count12 }}/{{total}}) {{counts[0].score12}}% {{ names[11] }}
+            </div>
+
+          </div>
+        </div>
+
+
+      </div>
+      </ion-card>
+
+    </div>
+
+  </div>
+</ion-content>
+
+<!-- <ion-content>
+
+  <div class="row mt-2 mx-0">
+    <div class="col">
+      <ion-button size="small" (click)="onGoingBack()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </div>
+    <div class="col text-end">
+      <ion-button id="c1" size="small">
+        <ion-icon slot="icon-only" name="cloud-download"></ion-icon>
+      </ion-button>
+      <ion-popover trigger="c1" [dismissOnSelect]="true" triggerAction="click">
+        <ng-template>
+          <ion-content>
+            <ion-list lines="none">
+              <ion-item button (click)="downloadPdf()">
+                <ion-label>Descargar PDF</ion-label>
+              </ion-item>
+              <ion-item button (click)="downloadCsv()">
+                <ion-label>Descargar CSV</ion-label>
+              </ion-item>
+            </ion-list>
+          </ion-content>
+        </ng-template>
+      </ion-popover>
+    </div>
+  </div>
+
+  <div class="mx-2 mt-4">
+    <h1>{{ auditoryTitle }}</h1>
+
+    <p class="mt-4" *ngIf="auditoryDate"><strong>Fecha:</strong> {{ auditoryDate }} {{ auditoryTime }}</p>
+    <p *ngIf="auditoryDescription"><strong>Descripción:</strong> {{ auditoryDescription }}</p>
+
+    <p>
+      <strong>Ubicación:</strong>
+      <app-map></app-map>
+    </p>
+
+    <p *ngIf="auditoyrEvidences.length > 0">
+      <strong class="mt-2">Fotografías del entorno:</strong>
+      <img width="100%" *ngFor="let url of auditoyrEvidences" class="mb-2" [src]="url">
+    </p>
+
+    <div class="row" *ngIf="counts[0]">
+      <div class="col-12 p-4">
+
+      <ion-item class="mt-2 txtInput ion-no-padding ion-no-margin">
+        <ion-label>
+          <h2 class="text-start ps-2">{{ names[0] }}: {{ counts[0].count1 }} </h2>
+        </ion-label>
+      </ion-item>
+
+      <ion-item class="mt-2 txtInput ion-no-padding ion-no-margin">
+        <ion-label>
+          <h2 class="text-start ps-2">{{ names[1] }}: {{ counts[0].count2 }} </h2>
+        </ion-label>
+      </ion-item>
+
+      <ion-item class="mt-2 txtInput ion-no-padding ion-no-margin">
+        <ion-label>
+          <h2 class="text-start ps-2">{{ names[2] }}: {{ counts[0].count3 }} </h2>
+        </ion-label>
+      </ion-item>
+
+      <ion-item class="mt-2 txtInput ion-no-padding ion-no-margin">
+        <ion-label>
+          <h2 class="text-start ps-2">{{ names[3] }}: {{ counts[0].count4 }} </h2>
+        </ion-label>
+      </ion-item>
+
+      <ion-item class="mt-2 txtInput ion-no-padding ion-no-margin">
+        <ion-label>
+          <h2 class="text-start ps-2">{{ names[4] }}: {{ counts[0].count5 }} </h2>
+        </ion-label>
+      </ion-item>
+
+      <ion-item class="mt-2 txtInput ion-no-padding ion-no-margin">
+        <ion-label>
+          <h2 class="text-start ps-2">{{ names[5] }}: {{ counts[0].count6 }} </h2>
+        </ion-label>
+      </ion-item>
+
+      <ion-item class="mt-2 txtInput ion-no-padding ion-no-margin">
+        <ion-label>
+          <h2 class="text-start ps-2">{{ names[6] }}: {{ counts[0].count7 }} </h2>
+        </ion-label>
+      </ion-item>
+
+      <ion-item class="mt-2 txtInput ion-no-padding ion-no-margin">
+        <ion-label>
+          <h2 class="text-start ps-2">{{ names[7] }}: {{ counts[0].count8 }} </h2>
+        </ion-label>
+      </ion-item>
+
+      <ion-item class="mt-2 txtInput ion-no-padding ion-no-margin">
+        <ion-label>
+          <h2 class="text-start ps-2">{{ names[8] }}: {{ counts[0].count9 }} </h2>
+        </ion-label>
+      </ion-item>
+
+      <ion-item class="mt-2 txtInput ion-no-padding ion-no-margin">
+        <ion-label>
+          <h2 class="text-start ps-2">{{ names[9] }}: {{ counts[0].count10 }} </h2>
+        </ion-label>
+      </ion-item>
+
+      <ion-item class="mt-2 txtInput ion-no-padding ion-no-margin">
+        <ion-label>
+          <h2 class="text-start ps-2">{{ names[10] }}: {{ counts[0].count11 }} </h2>
+        </ion-label>
+      </ion-item>
+
+      <ion-item class="mt-2 txtInput ion-no-padding ion-no-margin">
+        <ion-label>
+          <h2 class="text-start ps-2">{{ names[11] }}: {{ counts[0].count12 }} </h2>
+        </ion-label>
+      </ion-item>
+
+    </div>
+  </div>
+
+
+  </div>
+
+</ion-content> -->

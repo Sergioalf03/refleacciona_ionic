@@ -1,0 +1,1 @@
+export const DATABASE_WAITING_MESSAGE = 'W';

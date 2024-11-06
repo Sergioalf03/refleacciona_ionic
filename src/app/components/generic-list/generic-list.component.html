@@ -1,0 +1,98 @@
+
+
+  <div class="background m-0 p-0 pt-2">
+
+    <div class="col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4 col-xxl-3 offset-xxl-auto mr-auto mb-4">
+
+      <ion-card class="mt-0 pt-0">
+
+        <div class="mx-5">
+
+          <!-- <app-profile-header *ngIf="showProfileHeader"></app-profile-header> -->
+
+          <div class="row mt-5">
+            <div class="col">
+              <div class=" mb-0 title-text-size">{{ title }}</div>
+
+              <p class="text text-mini coolor mt-0">{{ descrciption }}</p>
+            </div>
+          </div>
+
+          <button
+            (click)="create()"
+            class="btn"
+            [ngClass]="{
+              'custom-red-btn': type === 0,
+              'custom-yellow-btn': type === 1,
+              'custom-blue-btn': type === 2,
+              'custom-gray-btn': type === 3
+            }"
+          >
+            + Nuevo {{ title }}
+          </button>
+        </div>
+
+        <div class="mx-4">
+
+          <div
+            *ngFor="let element of list"
+            [ngClass]="{
+              'card-red': type === 0,
+              'card-yellow': type === 1,
+              'card-blue': type === 2,
+              'card-gray': type === 3
+            }"
+            class="card rounded-4 border-0 mt-3">
+            <div class="card-body">
+
+              <div class="row mt-0">
+                <div class="col-10">
+                  <h5 class="text text-start text-white mb-0 pb-0">{{element.title}}</h5>
+
+                  <p class="text text-mini text-white coolor mt-0 mb-0 pb-0">{{ element.date }}</p>
+                </div>
+
+                <div class="col-2 text-end px-0">
+                  <button
+                    *ngIf="sendedList"
+                    class="btn px-3 mt-1 me-2"
+                    [ngClass]="{
+                      'custom-red-btn': type === 0,
+                      'custom-yellow-btn': type === 1,
+                      'custom-blue-btn': type === 2,
+                      'custom-gray-btn': type === 3
+                    }"
+                    (click)="detail(element.id)"
+                  >
+                    <i class="fa-solid fa-arrow-right"></i>
+                  </button>
+
+                  <button
+                    *ngIf="!sendedList"
+                    class="btn px-3 mt-1 me-2"
+                    [ngClass]="{
+                      'custom-red-btn': type === 0,
+                      'custom-yellow-btn': type === 1,
+                      'custom-blue-btn': type === 2,
+                      'custom-gray-btn': type === 3
+                    }"
+                    (click)="presentActionSheetOptions(element)"
+                  >
+                    <i class="fa-solid fa-ellipsis"></i>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <div class="my-5"></div>
+
+      </ion-card>
+
+    </div>
+
+  </div>
+

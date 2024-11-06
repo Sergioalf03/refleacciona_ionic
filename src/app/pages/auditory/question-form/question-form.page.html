@@ -1,0 +1,133 @@
+<ion-content>
+  <div class="background m-0 p-0 h-100">
+
+    <div class="col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4 col-xxl-3 offset-xxl-auto mr-auto mb-4">
+
+      <div class="mx-5">
+        <button class="btn custom-white-btn mt-4" (click)="onCancel()">
+          <i class="fa-solid fa-circle-arrow-left" style="font-size: 35px;"></i>
+        </button>
+
+      </div>
+
+      <ion-card>
+        <div class="mx-4 mb-3">
+
+          <div class="row mt-3 ">
+            <div class="col">
+              <!-- <div class=" mb-0 title-text-size">{{ title }}</div> -->
+              <div class=" mb-0 title-text-size">{{ sectionName }}</div>
+
+              <p class="text text-mini coolor mt-0">{{ subsectionName }}</p>
+            </div>
+          </div>
+
+          <cdk-virtual-scroll-viewport #viewport itemSize="300" class="bg-white ">      </cdk-virtual-scroll-viewport>
+
+          <div *ngFor="let question of questions; let questionIndex = index">
+            <div *ngIf="!hideQuestion[questionIndex]" class="mt-3 mb-3">
+
+              <!-- <div [class]="question.popup || question.has_evidence ? 'col-10' : 'col' + ' ion-text-justify'"> -->
+              <div class="text-justified">
+                {{ question.uid + '.- ' + question.sentence}}
+              </div>
+
+              <div class="input">
+
+                <div *ngIf="question.answers === 'FREETEXT'">
+                  <input
+                    type="text"
+                    placeholder="Indique su respuesta"
+                    class="form-control py-3 px-4"
+                    [(value)]="question.answer"
+                    (change)="setValue(question, $event); onAnswerChange(question, questionIndex)"
+                    required
+                  >
+                </div>
+
+                <div *ngIf="question.answers === 'ONEDIGIT'">
+                  <input
+                    type="tel"
+                    placeholder="Indique su respuesta"
+                    class="form-control py-3 px-4"
+                    required
+                    pattern="[0-9]$"
+                    [(value)]="question.answer"
+                    maxlength="1"
+                      (change)="setValue(question, $event); onAnswerChange(question, questionIndex)"
+                  >
+
+                </div>
+
+                <div *ngIf="question.answers !== 'FREETEXT' && question.answers !== 'ONEDIGIT'">
+                  <input
+                    type="text"
+                    placeholder="Seleccione su respuesta"
+                    class="form-control py-3 px-4"
+                    required
+                    [value]="question.answerText"
+                    (click)="setActionSheetButtons(questionIndex); sheet.present()"
+                    (change)="onAnswerChange(question, questionIndex)"
+                  >
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </ion-card>
+    </div>
+  </div>
+
+  <ion-action-sheet
+    #sheet
+    mode="ios"
+    trigger="open-action-sheet"
+    header="Opciones"
+    [buttons]="actionSheetButtons"
+    (didDismiss)="logResult($event)"
+  ></ion-action-sheet>
+</ion-content>
+
+<ion-footer class="bg-white">
+  <ion-row *ngIf="questions" class="mt-2">
+    <ion-col>
+      <p class="text-center"><strong>Sección {{sectionIndex + 1}}/{{sectionIds.length}}</strong></p>
+    </ion-col>
+    <ion-col>
+      <p class="text-center"><strong>{{answerCount}}/{{showedQuestions}} Respuestas</strong></p>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col >
+                <div *ngIf="sectionIndex !== 0" class="text-center d-grid gap-2">
+            <button
+              class="btn custom-red-btn"
+              (click)="onPrevious()"
+            >Anterior</button>
+
+    </div>
+    </ion-col>
+    <ion-col >
+
+          <div  *ngIf="sectionIndex !== sectionIds.length - 1" class="text-center d-grid gap-2">
+
+                <button
+                  [disabled]="!canNext"
+                  class="btn custom-red-btn"
+                  (click)="onNext()"
+                >Siguiente</button>
+              </div>
+          <div *ngIf="sectionIndex === sectionIds.length - 1" class="text-center d-grid gap-2">
+
+                <button
+                  [disabled]="!canNext"
+                  class="btn custom-red-btn"
+                  (click)="onFinish()"
+                >Finalizar</button>
+              </div>
+      </ion-col>
+
+        </ion-row>
+</ion-footer>

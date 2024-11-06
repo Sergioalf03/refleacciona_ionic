@@ -1,0 +1,102 @@
+.background {
+  background: url('../../../assets/background/background2.PNG') center center fixed;
+  background-size: cover;
+  width: 100%;
+  /* Set the width of the div */
+  height: 100vh;
+
+}
+
+input {
+  border-radius: 15px;
+}
+
+.custom-white-btn {
+  width: auto;
+  background-color: #636363;
+  color: white;
+  border: 1px solid #636363;
+  border-radius: 30px;
+  cursor: pointer;
+}
+
+.custom-white-btn-no-border {
+  width: auto;
+  background-color: #636363;
+  color: white;
+  border: 1px solid #636363;
+  border-radius: 30px;
+  cursor: pointer;
+}
+
+.text-mini {
+  font-size: 13px;
+}
+
+.custom-red-btn {
+  width: auto;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #EC6A5C;
+  color: #FFF;
+  border: 1px solid white;
+  border-radius: 20px;
+  /* Adjust the border-radius to control the roundness */
+  font-weight: normal;
+  cursor: pointer;
+}
+
+.custom-yellow-btn {
+  width: auto;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #2CAFC0;
+  color: #FFF;
+  border: 1px solid white;
+  border-radius: 20px;
+  /* Adjust the border-radius to control the roundness */
+  font-weight: normal;
+  cursor: pointer;
+}
+
+.custom-blue-btn {
+  width: auto;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #FDC616;
+  color: #FFF;
+  border: 1px solid white;
+  border-radius: 20px;
+  /* Adjust the border-radius to control the roundness */
+  font-weight: normal;
+  cursor: pointer;
+}
+
+.custom-gray-btn {
+  width: auto;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #636363;
+  color: #FFF;
+  border: 1px solid white;
+  border-radius: 20px;
+  /* Adjust the border-radius to control the roundness */
+  font-weight: normal;
+  cursor: pointer;
+}
+
+.custom-white-bg {
+  background-color: #FFF;
+}
+.custom-red-bg {
+  background-color: #EC6A5C;
+}
+.custom-yellow-bg {
+  background-color: #FDC616;
+}
+.custom-blue-bg {
+  background-color: #2CAFC0;
+}
+.custom-gray-bg {
+  background-color: #636363;
+}

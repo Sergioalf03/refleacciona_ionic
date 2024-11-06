@@ -1,0 +1,66 @@
+<ion-content>
+  <div class="background col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4 col-xxl-3 offset-xxl-auto mr-auto mb-4">
+
+    <div class="mx-5">
+
+      <button class="btn custom-white-btn mt-4" (click)="onGoingHome()">
+        <i class="fa-solid fa-arrow-left" style="font-size: 15spx;"></i>
+      </button>
+
+    </div>
+
+    <div class="my-5">
+
+    </div>
+    <div class="my-5">
+
+    </div>
+    <div class="my-5">
+
+    </div>
+
+    <ion-card>
+
+      <div class="mx-4 mb-3">
+        <div class="row mt-4">
+           <div class="col">
+             <div class=" mb-0 title-text-size">Recuperar cuenta</div>
+
+             <p class="text text-mini coolor mt-0">introduce tu correo para enviarte un código</p>
+           </div>
+         </div>
+
+         <form *ngIf="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+         <div class="input-with-icon mt-4">
+
+           <input
+             name="email"
+             formControlName="email"
+             type="email"
+             placeholder="*Correo electrónico"
+             class="form-control py-3 px-4"
+             [ngClass]="{ 'border-danger': formSubmited && form.controls['email'].invalid }"
+           >
+             <i class="fa-regular fa-envelope"></i>
+         </div>
+
+         <span
+           *ngIf="formSubmited && form.controls['email'].invalid"
+           class="text-danger text-mini"
+         >Correo requerido</span>
+
+         <ion-row class="mt-3">
+           <ion-col>
+             <button class="btn custom-btn text-white" type="submit">
+               Enviar
+             </button>
+           </ion-col>
+         </ion-row>
+       </form>
+      </div>
+</ion-card>
+
+
+  </div>
+</ion-content>
+

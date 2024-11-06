@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Calles Más Seguras</string>
+    <string name="title_activity_main">Calles Más Seguras</string>
+    <string name="package_name">com.refleacciona.callesmassegura</string>
+    <string name="custom_url_scheme">com.refleacciona.callesmassegura</string>
+</resources>

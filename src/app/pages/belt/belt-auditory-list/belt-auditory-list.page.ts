@@ -1,0 +1,307 @@
+import { Component } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ActionSheetController, Platform } from '@ionic/angular';
+import { BehaviorSubject } from 'rxjs';
+import { DATABASE_WAITING_MESSAGE } from 'src/app/core/constants/message-code';
+import { URI_BELT_COUNT_FORM, URI_BELT_DETAIL, URI_BELT_FORM, URI_HOME } from 'src/app/core/constants/uris';
+import { ConfirmDialogService } from 'src/app/core/controllers/confirm-dialog.service';
+import { HttpResponseService } from 'src/app/core/controllers/http-response.service';
+import { LoadingService } from 'src/app/core/controllers/loading.service';
+import { PhotoService } from 'src/app/core/controllers/photo.service';
+import { BeltAuditoryEvidenceService } from 'src/app/services/belt-auditory-evidence.service';
+import { BeltAuditoryService } from 'src/app/services/belt-auditory.service';
+import { BeltCollectionService } from 'src/app/services/belt-collection.service';
+
+@Component({
+  selector: 'app-belt-auditory-list',
+  templateUrl: './belt-auditory-list.page.html',
+  styleUrls: ['./belt-auditory-list.page.scss']
+})
+export class BeltAuditoryListPage {
+
+  listObservable = new BehaviorSubject<{ list: any[], type: number }>({ list: [], type: 0 });
+  sendedList = false;
+
+  backUri = URI_HOME();
+  formUri = URI_BELT_FORM('00');
+
+  constructor(
+    private auditoryService: BeltAuditoryService,
+    private auditoryEvidenceService: BeltAuditoryEvidenceService,
+    private helmetCollectionService: BeltCollectionService,
+    private photoService: PhotoService,
+    private responseService: HttpResponseService,
+    private loadingService: LoadingService,
+    private router: Router,
+    private confirmDialogService: ConfirmDialogService,
+    private route: ActivatedRoute,
+    private platform: Platform,
+  ) {
+    this.platform
+      .backButton
+      .subscribeWithPriority(9999, () => {
+        this.router.navigateByUrl(this.backUri);
+        return;
+        // processNextHandler();
+      });
+  }
+
+  async ionViewWillEnter() {
+    this.route
+    .paramMap
+    .subscribe({
+      next: paramMap => {
+        if (!paramMap.has('origin')) {
+          this.router.navigateByUrl(this.backUri)
+          return;
+        }
+
+        if (paramMap.get('origin') === 'remote') {
+          this.fetchRemoteList();
+        } else {
+          this.fetchLocalList();
+        }
+      }
+    }).unsubscribe();
+  }
+
+  onEdit = (id: string) => {
+    this.router.navigateByUrl(URI_BELT_FORM(id));
+  }
+
+  onNewAuditory = () => {
+    this.router.navigateByUrl(URI_BELT_FORM('00'));
+  }
+
+  onUpload = (id: string) => {
+    this.confirmDialogService
+      .presentAlert('Una vez enviado el registro no se podrá modificar. ¿Desea continuar?', () => {
+        this.loadingService.showLoading();
+
+        this.auditoryService
+          .getUpdateData(id)
+          .subscribe({
+            next: auditory => {
+              if (auditory !== DATABASE_WAITING_MESSAGE) {
+
+                setTimeout(() => {
+                  this.helmetCollectionService
+                    .getList(id)
+                    .subscribe({
+                      next: counts => {
+                        if (counts !== DATABASE_WAITING_MESSAGE) {
+
+                          const formattedAuditory = {
+                            title: auditory.values[0].title,
+                            description: auditory.values[0].description,
+                            close_note: auditory.values[0].close_note,
+                            date: auditory.values[0].date,
+                            time: auditory.values[0].time,
+                            lat: auditory.values[0].lat,
+                            lng: auditory.values[0].lng,
+                            status: auditory.values[0].status,
+                            creation_date: auditory.values[0].creation_date,
+                            update_date: auditory.values[0].update_date,
+                            external_id: auditory.values[0].id,
+                            user_id: auditory.values[0].user_id,
+                          }
+
+                          const formattedCounts = counts.values.map((c: any) => {
+                            return {
+                              adults_count: c.adults_count,
+                              belt_auditory_id: c.belt_auditory_id,
+                              belts_count: c.belts_count,
+                              chairs_count: c.chairs_count,
+                              child_count: c.child_count,
+                              coopilot: c.coopilot,
+                              creation_date: c.creation_date,
+                              destination: c.destination,
+                              origin: c.origin,
+                              vehicle_type: 1,
+                              overuse_count: c.overuse_count,
+                            }
+                          });
+
+                          const data = {
+                            auditory: formattedAuditory,
+                            counts: formattedCounts,
+                          }
+
+                          this.auditoryService
+                            .upload(data)
+                            .subscribe({
+                              next: res => {
+                                const externalId = res.data.id;
+                                this.auditoryService
+                                  .updateExternalId(id, externalId)
+                                  .subscribe({
+                                    next: updated => {
+                                      if (updated !== DATABASE_WAITING_MESSAGE) {
+                                        setTimeout(() => {
+                                          this.uploadAuditoryPhotos(id, externalId);
+                                        }, 20);
+                                      }
+                                    }
+                                  })
+                              },
+                              error: err => this.responseService.onError(err, 'No se pudo subir la auditoría'),
+                            })
+                        }
+                      }
+                    })
+                }, 20)
+
+              }
+            }
+          })
+      });
+  }
+
+  private uploadAuditoryPhotos(localId: string, extenalId: string) {
+    this.auditoryEvidenceService
+      .getEvidencesByAuditory(localId)
+      .subscribe({
+        next: async evidences => {
+          if (evidences !== DATABASE_WAITING_MESSAGE) {
+            this.uploadAuditoryEvidence(evidences.values, 0, extenalId)
+              .then(result => {
+                this.auditoryService
+                  .finalDelete(localId)
+                  .subscribe({
+                    next: auditoryDelete => {
+                      if (auditoryDelete !== DATABASE_WAITING_MESSAGE) {
+                        this.responseService.onSuccess('Auditoría enviada exitósamente');
+                        setTimeout(() => {
+                          this.fetchLocalList();
+                        }, 100)
+                      }
+                    },
+                  });
+              })
+              .catch((e: any) => console.log(e));
+          }
+        }
+      });
+  }
+
+  private async uploadAuditoryEvidence(arr: any, index: number, externalId: string) {
+    const resultPromise = new Promise(async (res, rej) => {
+      if (index === arr.length) {
+        return res(true);
+      }
+
+      const ImageSrc = await this.photoService
+        .getLocalEvidence(arr[index].dir)!
+        .then((photo: any) => photo)
+        .catch((e: any) => {
+          console.log(e);
+          return e
+        });
+
+      // const blob = await fetch(Capacitor.convertFileSrc(ImageSrc)).then(r => r.blob());
+
+      this.auditoryEvidenceService
+        .uploadImage((ImageSrc.data as string), externalId, arr[index].creation_date, arr[index].dir)
+        .subscribe({
+          next: () => {
+            this.photoService
+              .removeLocalEvidence(arr[index].dir)
+              .then(() => {
+                this.auditoryEvidenceService
+                  .localRemove(arr[index].dir)
+                  .subscribe({
+                    next: dlt => {
+                      if (dlt !== DATABASE_WAITING_MESSAGE) {
+                        this.uploadAuditoryEvidence(arr, index + 1, externalId)
+                          .then(r => res(r))
+                          .catch((e: any) => console.log(e));
+                      }
+                    }
+                  });
+              })
+              .catch((e: any) => console.log(e));
+          },
+          error: err => this.responseService.onError(err, 'No se pudo subir la imagen'),
+        });
+    })
+
+    return resultPromise;
+  }
+
+  onDelete = (id: string) => {
+    this.confirmDialogService.presentAlert('¿Desea eliminar el registro?', () => {
+      this.loadingService.showLoading();
+      this.auditoryService
+        .deleteLocal(id)
+        .subscribe({
+          next: (rm) => {
+            if (rm !== DATABASE_WAITING_MESSAGE) {
+              this.responseService.onSuccess('registro eliminado');
+              setTimeout(() => {
+                this.fetchLocalList();
+              }, 100)
+            }
+          },
+          error: err => {
+            this.responseService.onError(err, 'No se pudo eliminar el registro');
+          }
+        })
+    });
+  }
+
+  onDetail = (id: string) => {
+    this.router.navigateByUrl(URI_BELT_COUNT_FORM(id));
+  }
+
+  onRemoteDetail = (id: string) => {
+    this.router.navigateByUrl(URI_BELT_DETAIL(id));
+  }
+
+  fetchLocalList() {
+    this.sendedList = false;
+
+    this.auditoryService
+      .getLocalList()
+      .subscribe({
+        next: res => {
+          if (res !== DATABASE_WAITING_MESSAGE) {
+            this.listObservable.next({
+              list: res.map((a: any) => ({
+                ...a,
+                statusWord: a.status === 1 ? 'En progreso' : 'Terminada',
+              })),
+              type: 1,
+            });
+          }
+        },
+        error: err => {
+          this.responseService.onError(err, 'No se pudieron recuperar las auditorías');
+        }
+      })
+  }
+
+  fetchRemoteList() {
+    this.sendedList = true;
+    this.loadingService.showLoading();
+
+    this.auditoryService
+      .getRemoteList()
+      .subscribe({
+        next: res => {
+          this.listObservable.next({
+            list: res.data.map((a: any) => ({
+              ...a,
+              statusWord: 'Enviado',
+            })),
+            type: 2,
+          });
+          this.loadingService.dismissLoading();
+        },
+        error: err => {
+          this.responseService.onError(err, 'No se pudieron recuperar las auditorías');
+          this.fetchLocalList();
+        },
+      })
+  }
+
+}

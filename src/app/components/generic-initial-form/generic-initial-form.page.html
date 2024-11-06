@@ -1,0 +1,188 @@
+
+<div  class="background m-0 p-0">
+
+
+
+  <div class="col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4 col-xxl-3 offset-xxl-auto mr-auto mb-4">
+
+    <div class="mx-5">
+      <button class="btn custom-white-btn mt-4" (click)="onCancel()">
+        <i class="fa-solid fa-arrow-left" style="font-size: 15spx;"></i>
+      </button>
+
+    </div>
+
+    <ion-card>
+
+      <div class="mx-4 mb-3">
+
+      <div class="row mt-5">
+        <div class="col">
+          <!-- <div class=" mb-0 title-text-size">{{ title }}</div> -->
+          <div class=" mb-0 title-text-size">Nuevo {{fromType}}</div>
+
+          <p class="text text-mini coolor mt-0">Indique la información para identificar su {{fromType}}</p>
+        </div>
+      </div>
+
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="input-with-icon mt-4">
+
+          <input
+            name="title"
+            formControlName="title"
+            type="text"
+            placeholder="*Título"
+            class="form-control py-3 px-4"
+            [ngClass]="{ 'border-danger': formSubmited && form.controls['title'].invalid }"
+          >
+
+            <i class="fa-regular fa-message"></i>
+        </div>
+
+        <span
+          *ngIf="formSubmited && form.controls['title'].invalid"
+          class="text-danger text-mini"
+        >Título requerido</span>
+
+        <div class="input-with-icon mt-3">
+
+          <input
+            name="date"
+            formControlName="date"
+            type="date"
+            placeholder="*Fecha"
+            class="form-control py-3 px-4"
+          >
+
+            <i class="fa-regular fa-calendar"></i>
+
+        </div>
+
+        <span
+          *ngIf="formSubmited && form.controls['date'].invalid"
+          class="text-danger text-mini"
+        >Fecha requerida</span>
+
+        <div class="input-with-icon mt-3">
+
+          <input
+            name="time"
+            formControlName="time"
+            type="time"
+            placeholder="*Hora"
+            class="form-control py-3 px-4"
+          >
+
+            <i class="fa-regular fa-clock"></i>
+        </div>
+
+        <span
+          *ngIf="formSubmited && form.controls['time'].invalid"
+          class="text-danger text-mini"
+        >Hora requerida</span>
+
+        <div class="input-with-icon mt-3">
+
+          <input
+            name="location"
+            formControlName="location"
+            type="text"
+            placeholder="*Ubicación"
+            class="form-control py-3 px-4"
+            (click)="modal.present()"
+          >
+
+            <i class="fa-solid fa-location-dot"></i>
+        </div>
+
+        <span
+          *ngIf="formSubmited && !coordsAccepted"
+          class="text-danger text-mini"
+        >Ubicación requerida</span>
+
+        <div class="input-with-icon mt-3">
+
+          <input
+            name="description"
+            formControlName="description"
+            type="text"
+            placeholder="Descripción"
+            class="form-control py-3 px-4"
+            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+
+            <i class="fa-regular fa-pen-to-square"></i>
+        </div>
+
+        <ion-input
+          formControlName="lat"
+          type="hidden"
+          hidden
+        ></ion-input>
+
+        <ion-input
+          formControlName="lng"
+          type="hidden"
+          hidden
+        ></ion-input>
+
+        <div class="text-end">
+          <button type="submit" class="btn custom-white-btn-no-border mt-4">
+            Siguiente
+            <i class="fa-solid fa-chevron-right" style="font-size: 15spx;"></i>
+          </button>
+        </div>
+
+      </form>
+
+
+    </div>
+    </ion-card>
+  </div>
+</div>
+
+ <ion-modal
+    #modal
+    [initialBreakpoint]="0.5"
+    [mode]="'ios'"
+  >
+    <ng-template>
+      <div class="p-3">
+        <!-- <div class="pt-5"> -->
+          <div class="text-center h5">
+            Indique la ubicación de la auditoría
+          </div>
+          <app-map (centerEvent)="onSetCoords($event)"></app-map>
+
+          <div class="text-center mt-2 d-grid gap-2">
+            <button
+              class="btn"
+              [ngClass]="{
+                'custom-red-btn': type === 0,
+                'custom-yellow-btn': type === 1,
+                'custom-blue-btn': type === 2,
+                'custom-gray-btn': type === 3
+              }"
+              (click)="onAddLocation()"
+            >Ubicación Actual</button>
+          </div>
+          <div class="text-center mt-2 d-grid gap-2">
+            <button
+              class="btn"
+              [ngClass]="{
+                'custom-red-btn': type === 0,
+                'custom-yellow-btn': type === 1,
+                'custom-blue-btn': type === 2,
+                'custom-gray-btn': type === 3
+              }"
+              (click)="
+                onLocationSelected();
+                modal.dismiss();
+              "
+            >Aceptar</button>
+          </div>
+        <!-- </div> -->
+      </div>
+    </ng-template>
+  </ion-modal>

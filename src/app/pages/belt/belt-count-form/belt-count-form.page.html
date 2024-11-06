@@ -1,0 +1,104 @@
+<ion-content>
+  <div class="background m-0 p-0 h-100">
+
+    <div class="col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4 col-xxl-3 offset-xxl-auto mr-auto mb-4">
+
+      <div class="mx-5 ">
+        <button class="btn custom-white-btn mt-4" (click)="onCancel()">
+          <i class="fa-solid fa-circle-arrow-left" style="font-size: 35px;"></i>
+        </button>
+
+      </div>
+
+      <ion-card>
+        <div class="mx-4 mb-3">
+
+          <div class="row mt-3 ">
+            <div class="col">
+              <!-- <div class=" mb-0 title-text-size">{{ title }}</div> -->
+              <div class=" mb-0 title-text-size">Conteo de cinturón</div>
+
+              <p class="text text-mini coolor mt-0">Ubicado en un cruce específico, indique la cantidad de personas con y sin cinturón y silla de retención.</p>
+            </div>
+          </div>
+
+          <p class="text text-center mt-3">Con cinturón</p>
+
+          <div class="row  m-0 p-0">
+            <div class="col text-center m-0 p-0">
+                <button (click)="decreaseBelts()" [disabled]="disableBeltDecrease" class="btn custom-white-btn">
+                    <i class="fa-solid fa-circle-minus" style="font-size: 50px;"></i>
+                  </button>
+            </div>
+            <div class="col text-center title-text-size pt-3">
+              {{ beltCount }}
+            </div>
+            <div class="col text-center  m-0 p-0">
+                <button (click)="increaseBelts()" class="btn custom-white-btn">
+                    <i class="fa-solid fa-circle-plus" style="font-size: 50px;"></i>
+                  </button>
+            </div>
+          </div>
+
+          <p class="text text-center mt-5">Sin Cinturón</p>
+
+          <div class="row  m-0 p-0 ">
+            <div class="col text-center m-0 p-0">
+                <button (click)="decreaseBeltUsers()" [disabled]="disableBeltUserDecrease" class="btn custom-white-btn">
+                    <i class="fa-solid fa-circle-minus" style="font-size: 50px;"></i>
+                  </button>
+            </div>
+            <div class="col text-center title-text-size pt-3">
+              {{ beltlessCount }}
+            </div>
+            <div class="col text-center  m-0 p-0">
+                <button (click)="increaseBeltUsers()" class="btn custom-white-btn">
+                    <i class="fa-solid fa-circle-plus" style="font-size: 50px;"></i>
+                  </button>
+            </div>
+          </div>
+
+          <p class="text text-center mt-5">Con silla infantil</p>
+
+          <div class="row  m-0 p-0 mb-5 pb-5">
+            <div class="col text-center m-0 p-0">
+                <button (click)="decreaseChairs()" [disabled]="disableChairDecrease" class="btn custom-white-btn">
+                    <i class="fa-solid fa-circle-minus" style="font-size: 50px;"></i>
+                  </button>
+            </div>
+            <div class="col text-center title-text-size pt-3">
+              {{ chairCount }}
+            </div>
+            <div class="col text-center  m-0 p-0">
+                <button (click)="increaseChairs()" class="btn custom-white-btn">
+                    <i class="fa-solid fa-circle-plus" style="font-size: 50px;"></i>
+                  </button>
+            </div>
+          </div>
+
+          <div class="my-5"></div>
+
+          <ion-row class="mt-5">
+            <ion-col>
+
+              <div class="text-center d-grid gap-2">
+
+                <button
+                  class="btn custom-blue-btn"
+                  (click)="onSubmit()"
+                >Guardar</button>
+              </div>
+
+            </ion-col>
+          </ion-row>
+
+        </div>
+
+      </ion-card>
+
+
+    </div>
+  </div>
+
+
+</ion-content>

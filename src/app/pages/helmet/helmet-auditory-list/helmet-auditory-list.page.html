@@ -1,0 +1,26 @@
+<ion-content class="m-0 p-0">
+  <app-generic-list
+    [title]="'Uso de casco'"
+    [descrciption]="'Realiza un conteo de los motociclistas con y sin casco que pasan por una calle'"
+    [type]="1"
+    [listObservable]="listObservable"
+    [create]="onNewAuditory"
+    [editGeneral]="onEdit"
+    [editValues]="onDetail"
+    [delete]="onDelete"
+    [detail]="onRemoteDetail"
+    [upload]="onUpload"
+  ></app-generic-list>
+</ion-content>
+
+<ion-footer class="bg-white">
+  <ion-row>
+    <ion-col >
+      <button class="btn custom-black-btn" [disabled]="!sendedList" (click)="fetchLocalList()">Sin Enviar</button>
+    </ion-col>
+
+    <ion-col>
+      <button class="btn custom-black-btn" [disabled]="sendedList" (click)="fetchRemoteList()">Enviadas</button>
+    </ion-col>
+  </ion-row>
+</ion-footer>

@@ -1,0 +1,37 @@
+input {
+  border-radius: 15px;
+}
+
+.custom-btn {
+  display: block;
+  width: 100%;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #EC6A5C;
+  color: #000;
+  border: none;
+  border-radius: 15px;
+  /* Adjust the border-radius to control the roundness */
+  font-weight: bold;
+  cursor: pointer;
+}
+
+
+.custom-white-btn {
+  width: auto;
+  background-color: #636363;
+  color: white;
+  border: 1px solid #636363;
+  border-radius: 30px;
+  cursor: pointer;
+}
+
+.background {
+  background: url('../../../../assets/background/background2.PNG') center center fixed;
+  background-size: cover;
+  width: 100%;
+  /* Set the width of the div */
+  height: 100vh;
+
+}
+

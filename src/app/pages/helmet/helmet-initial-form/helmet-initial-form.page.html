@@ -1,0 +1,9 @@
+<ion-content class="m-0 p-0 bg-white">
+  <app-generic-initial-form
+    *ngIf="showForm"
+    [functions]="functions"
+    [setValueObservable]="setFormObs.asObservable()"
+    [fromType]="'conteo de cascos'"
+  ></app-generic-initial-form>
+</ion-content>
+

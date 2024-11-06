@@ -1,3 +1,37 @@
-<ion-app>
-  <ion-router-outlet></ion-router-outlet>
+<style>
+  .white-bg {
+    background-color: #FFF;
+  }
+</style>
+
+<ion-app class="white-bg">
+
+  <jeep-sqlite></jeep-sqlite>
+
+  <ion-router-outlet class="white-bg">
+  </ion-router-outlet>
+
+  <ion-tabs *ngIf="logged">
+    <ion-tab-bar slot="bottom">
+      <ion-tab-button tab="home">
+        <i class="fa-solid fa-house fs-3"></i>
+      </ion-tab-button>
+      <ion-tab-button tab="auditory" (click)="onAuditoryList()">
+        <!-- <i class="fa-solid fa-circle-check fs-3"></i> -->
+        <img width="28px" src="../assets/img/Icono-Calle-C.png">
+      </ion-tab-button>
+      <ion-tab-button tab="helmet" (click)="onHelmetList()">
+        <!-- <i class="fa-solid fa-helmet-safety fs-3"></i> -->
+        <img width="28px" src="../assets/img/Icono-Casc-C.png">
+      </ion-tab-button>
+      <ion-tab-button tab="belt" (click)="onBeltList()">
+        <img width="28px" src="../assets/img/Icono-Cinturon-C.png">
+        <!-- <i class="fa-solid fa-user-slash fs-3"></i> -->
+      </ion-tab-button>
+      <ion-tab-button tab="general" (click)="onGeneralCountList()">
+        <!-- <img width="28px" src="../assets/img/Icono"> -->
+        <i class="fa-solid fa-plus-minus fs-3"></i>
+      </ion-tab-button>
+    </ion-tab-bar>
+  </ion-tabs>
 </ion-app>

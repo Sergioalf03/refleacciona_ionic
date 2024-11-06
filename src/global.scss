@@ -1,3 +1,7 @@
+ion-input {
+  --border-radius: 50%;
+}
+
 /*
  * App Global CSS
  * ----------------------------------------------------------------------------
@@ -10,28 +14,167 @@
  */
 
 /* Core CSS required for Ionic components to work properly */
-@import "@ionic/angular/css/core.css";
+@import "~@ionic/angular/css/core.css";
 
 /* Basic CSS for apps built with Ionic */
-@import "@ionic/angular/css/normalize.css";
-@import "@ionic/angular/css/structure.css";
-@import "@ionic/angular/css/typography.css";
-@import "@ionic/angular/css/display.css";
+@import "~@ionic/angular/css/normalize.css";
+@import "~@ionic/angular/css/structure.css";
+@import "~@ionic/angular/css/typography.css";
+@import '~@ionic/angular/css/display.css';
 
 /* Optional CSS utils that can be commented out */
-@import "@ionic/angular/css/padding.css";
-@import "@ionic/angular/css/float-elements.css";
-@import "@ionic/angular/css/text-alignment.css";
-@import "@ionic/angular/css/text-transformation.css";
-@import "@ionic/angular/css/flex-utils.css";
+@import "~@ionic/angular/css/padding.css";
+@import "~@ionic/angular/css/float-elements.css";
+@import "~@ionic/angular/css/text-alignment.css";
+@import "~@ionic/angular/css/text-transformation.css";
+@import "~@ionic/angular/css/flex-utils.css";
 
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
- */
 
-/* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import "@ionic/angular/css/palettes/dark.system.css";
+ion-title,h1,h2 {text-align: center;}
+.txtInput {
+    --border-color: transparent!important;
+    border: 1px solid #dedede;
+    border-radius: 8px;
+    // height: px;
+    &.item-has-focus {
+
+    // cuando presiono la caja , muestra el color
+    border: 1px solid var(--ion-color-primary);
+    }
+    .txtInput>ion-label {
+        color: #807e7e!important;
+        font-size: 1rem!important;
+    }
+}
+
+.principal {
+    margin-top: 8%;
+}
+
+ion-card {
+  background-color: #ffff;
+}
+
+ion-content {
+  --ion-background-color: white;
+  background-color: white;
+}
+
+.btn-right {
+  float: right;
+}
+
+.icon-color {
+  color: #000000;
+}
+
+input {
+  border-radius: 15px;
+}
+
+ion-input.custom-input {
+  --border-radius: 15px;
+  --padding-start: 10px;
+  --padding-end: 10px;
+}
+
+.input-with-icon {
+  position: relative;
+}
+
+.input-with-icon input {
+  padding-right: 30px;
+  border: 1px solid #636363;
+  color: #000;
+}
+
+.input-with-icon input::placeholder {
+  color: #a1a1a1;
+  font-size: 13px;
+  /* Set the placeholder text color to light gray */
+}
+
+.input-with-icon i {
+  position: absolute;
+  right: 20px;
+  /* Adjust the right position of the icon */
+  top: 50%;
+  font-size: 24px;
+  transform: translateY(-50%);
+  color: #636363
+}
+
+.coolor {
+  color: #636363
+}
+
+.forgot-password-color {
+  color: #a1a1a1;
+}
+
+button:disabled {
+  border: none;
+}
+
+.custom-btn {
+  display: block;
+  width: 100%;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #EC6A5C;
+  color: #000;
+  border: none;
+  border-radius: 15px;
+  /* Adjust the border-radius to control the roundness */
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.icon-container {
+  position: relative;
+  width: 100%;
+  /* You can adjust this based on your layout needs */
+  height: 10vh;
+  /* You can adjust this based on your layout needs */
+}
+
+.circular-shadow {
+  font-size: 50px;
+  // box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  color: #EC6A5C;
+}
+
+.custom-background {
+  // background: url('../../../../assets/background/partial.png') center center fixed;
+  background-size: cover;
+  width: 100%;
+  /* Set the width of the div */
+  height: 100vh;
+
+}
+
+.text {
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 600;
+}
+
+.text-mini {
+  font-size: 14px;
+}
+
+.title-text-size {
+  font-size: 34px;
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 36px;
+}
+
+.white-bg {
+  background-color: #F4F4F4;
+}
+
+ion-content::part(background) {
+  background: #F4F4F4;
+}

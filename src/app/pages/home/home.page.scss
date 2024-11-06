@@ -1,0 +1,109 @@
+ion-button {
+        text-transform: capitalize;
+}
+.btn-right {
+    float: right;
+}
+
+ion-card {
+  border-radius: 8% 0% 9% 0%;
+  margin: 15px;
+}
+
+
+
+.card-red {
+  background-color: #EC6A5C;
+}
+
+.card-yellow {
+  background-color: #FDC616;
+}
+.card-blue {
+  background-color: #2CAFC0;
+}
+.card-gray {
+  background-color: #636363;
+}
+
+.custom-red-btn {
+  width: auto;
+  padding: 10px 20px;
+  font-size: 12px;
+  background-color: #EC6A5C;
+  color: #FFF;
+  border: 1px solid white;
+  border-radius: 20px;
+  /* Adjust the border-radius to control the roundness */
+  font-weight: normal;
+  cursor: pointer;
+}
+
+.custom-yellow-btn {
+  width: auto;
+  padding: 10px 20px;
+  font-size: 12px;
+  background-color: #FDC616;
+  color: #FFF;
+  border: 1px solid white;
+  border-radius: 20px;
+  /* Adjust the border-radius to control the roundness */
+  font-weight: normal;
+  cursor: pointer;
+}
+
+.custom-blue-btn {
+  width: auto;
+  padding: 10px 20px;
+  font-size: 12px;
+  background-color: #2CAFC0;
+  color: #FFF;
+  border: 1px solid white;
+  border-radius: 20px;
+  /* Adjust the border-radius to control the roundness */
+  font-weight: normal;
+  cursor: pointer;
+}
+
+.custom-gray-btn {
+  width: auto;
+  padding: 10px 20px;
+  font-size: 12px;
+  background-color: #636363;
+  color: #FFF;
+  border: 1px solid white;
+  border-radius: 20px;
+  /* Adjust the border-radius to control the roundness */
+  font-weight: normal;
+  cursor: pointer;
+}
+
+.translucid-background {
+  background-color: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+ion-footer {
+  background-color: #fff; /* This sets a green background specific to the home page */
+}
+
+
+.white-bg {
+  background-color: #FFF;
+}
+
+.background {
+  background: url('../../../assets/background/background2.PNG') center center fixed;
+  background-size: cover;
+  width: 100%;
+  /* Set the width of the div */
+  height: 100vh;
+
+}
+
+.scroll-content {
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}

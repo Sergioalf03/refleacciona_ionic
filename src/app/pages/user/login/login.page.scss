@@ -1,0 +1,56 @@
+.custom-background {
+  background: url('../../../../assets/background/partial.png') center center fixed;
+  background-size: cover;
+  width: 100%;
+  /* Set the width of the div */
+  height: 100vh;
+
+}
+
+img {
+    align-items: center;
+    align-content: center;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
+.principal {
+    margin-top: 8%;
+}
+
+.txt-pwd:hover {
+    cursor: pointer;
+    text-decoration-line: underline;
+}
+.txt-pwd:active {
+    color: chocolate;
+}
+
+input {
+  border-radius: 15px;
+}
+
+.custom-btn {
+    display: block;
+    width: 100%;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #EC6A5C;
+    color: #FFF;
+    border: none;
+    border-radius: 15px;
+    /* Adjust the border-radius to control the roundness */
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.white-bg {
+  background-color: #FFF !important;
+}
+
+.scroll-content {
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
