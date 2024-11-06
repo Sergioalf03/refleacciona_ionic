@@ -1,7 +1,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.refleacciona.callesmasseguras',
+  appId: 'com.refleacciona.callesmassegura',
   appName: 'Calles Más Seguras',
   webDir: 'www',
   bundledWebRuntime: false,
