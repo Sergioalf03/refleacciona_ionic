@@ -4,6 +4,9 @@ const config: CapacitorConfig = {
   appId: 'com.refleacciona.callesmassegura',
   appName: 'Calles Más Seguras',
   webDir: 'www',
+  server: {
+    androidScheme: 'https'
+  },
   bundledWebRuntime: false,
   plugins: {
     CapacitorSQLite: {
@@ -20,7 +23,7 @@ const config: CapacitorConfig = {
         biometricTitle: "Biometric login for capacitor sqlite",
         biometricSubTitle: "Log in using your biometric"
       },
-      electronIsEncryption: false,
+      electronIsEncryption: true,
       electronWindowsLocation: "C:\\ProgramData\\CapacitorDatabases",
       electronMacLocation: "/Volumes/Development_Lacie/Development/Databases",
       electronLinuxLocation: "Databases"
