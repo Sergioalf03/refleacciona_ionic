@@ -155,6 +155,25 @@ export class SessionService {
       )
   }
 
+  deleteAccount() {
+    return this.httpService
+      .delete('/delete-account')
+      .pipe(
+        map((data) => {
+          this.clearStorage();
+          this.clearVariables();
+          this.router.navigateByUrl(URI_LOGIN());
+          this.loggedObs.next(false);
+          return true;
+        }),
+        catchError(error => {
+          this.clearStorage();
+          this.clearVariables();
+          return of(false);
+        })
+      )
+  }
+
   clearStorage() {
     this.storageService.remove(STORAGE_KEY_TOKEN);
     this.storageService.remove(STORAGE_KEY_USER_EMAIL);

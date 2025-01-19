@@ -33,7 +33,7 @@
 
               <p class="text text-mini coolor mt-0">Actualiza tus datos</p>
             </div>
-            <div class="col">
+            <div class="col text-end">
               <button class="btn custom-btn-1 mt-2 text-white" (click)="onLogout()" type="button">
                 Cerrar Sesión
               </button>
@@ -115,10 +115,13 @@
             </ion-col> -->
 
             <ion-col class="white-bg">
-              <button (click)="modal.present()" class="btn custom-btn text-white" type="button">
+
+              <button (click)="modal.present()" class="btn custom-btn text-white mb-5" type="button">
                 Instrucciones
               </button>
-
+              <button (click)="onDeleteAccount()" class="btn custom-btn text-white mt-5" type="button">
+                Eliminar mi cuenta
+              </button>
 
             </ion-col>
           </ion-row>

@@ -183,4 +183,25 @@ export class ProfilePage {
       })
   }
 
+  onDeleteAccount() {
+    this.confirmDialogService
+      .presentAlert('¿Desea Eliminar su cuenta?', async () => {
+        this.confirmDialogService
+          .presentAlert('No podrá recuperar sus datos ¿Desea continuar con la eliminación?', async () => {
+            this.loadingService.showLoading();
+            return await this.sessionService
+            .deleteAccount()
+            .subscribe({
+              next: () => {
+                  this.loadingService.dismissLoading();
+                  this.router.navigateByUrl(URI_LOGIN())
+                },
+                error: err => {
+                  this.httpResponseService.onError(err, 'Error al eliminar la cuenta');
+                },
+              });
+          });
+    });
+  }
+
 }
