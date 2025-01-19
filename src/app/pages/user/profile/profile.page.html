@@ -1,128 +1,132 @@
 <ion-content>
-  <div class="background col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4 col-xxl-3 offset-xxl-auto mr-auto mb-4">
 
-    <div class="mx-5">
+  <div class="background">
+    <div class="col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4 col-xxl-4 offset-xxl-auto mr-auto mb-4">
 
-      <div class="row">
-        <div class="col">
+      <div class="mx-5">
 
-          <button class="btn custom-white-btn mt-4" (click)="onGoingHome()">
-            <i class="fa-solid fa-arrow-left" style="font-size: 15spx;"></i>
-          </button>
+        <div class="row">
+          <div class="col">
 
+            <button class="btn custom-white-btn mt-4" (click)="onGoingHome()">
+              <i class="fa-solid fa-arrow-left" style="font-size: 15spx;"></i>
+            </button>
+
+          </div>
+          <div class="col">
+
+
+
+          </div>
         </div>
-        <div class="col">
 
 
 
-        </div>
       </div>
 
+      <ion-card>
 
+        <div class="mx-4 mb-3">
+         <div class="row mt-4">
+            <div class="col">
+              <div class=" mb-0 title-text-size">Perfil</div>
 
-    </div>
-
-    <ion-card>
-
-      <div class="mx-4 mb-3">
-       <div class="row mt-4">
-          <div class="col">
-            <div class=" mb-0 title-text-size">Perfil</div>
-
-            <p class="text text-mini coolor mt-0">Actualiza tus datos</p>
-          </div>
-          <div class="col">
-            <button class="btn custom-btn-1 mt-2 text-white" (click)="onLogout()" type="button">
-              Cerrar Sesión
-            </button>
-          </div>
-        </div>
-
-        <form *ngIf="form" [formGroup]="form" (ngSubmit)="onSubmit()">
-          <div class="input-with-icon mt-4">
-
-            <input
-              name="name"
-              formControlName="name"
-              type="text"
-              placeholder="*Nombre Completo"
-              class="form-control py-3 px-4"
-              [ngClass]="{ 'border-danger': formSubmited && form.controls['name'].invalid }"
-              (keyup)="showSaveButton = true"
-            >
-              <i class="fa-regular fa-user"></i>
+              <p class="text text-mini coolor mt-0">Actualiza tus datos</p>
+            </div>
+            <div class="col">
+              <button class="btn custom-btn-1 mt-2 text-white" (click)="onLogout()" type="button">
+                Cerrar Sesión
+              </button>
+            </div>
           </div>
 
-          <span
-            *ngIf="formSubmited && form.controls['name'].invalid"
-            class="text-danger text-mini"
-          >Nombre requerido</span>
+          <form *ngIf="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div class="input-with-icon mt-4">
 
-          <div class="input-with-icon mt-3">
+              <input
+                name="name"
+                formControlName="name"
+                type="text"
+                placeholder="*Nombre Completo"
+                class="form-control py-3 px-4"
+                [ngClass]="{ 'border-danger': formSubmited && form.controls['name'].invalid }"
+                (keyup)="showSaveButton = true"
+              >
+                <i class="fa-regular fa-user"></i>
+            </div>
 
-            <input
-              name="phoneNumber"
-              formControlName="phoneNumber"
-              type="tel"
-              placeholder="*Teléfono"
-              class="form-control py-3 px-4"
-              (keyup)="showSaveButton = true"
-            >
-              <i class="fa-solid fa-phone"></i>
-          </div>
+            <span
+              *ngIf="formSubmited && form.controls['name'].invalid"
+              class="text-danger text-mini"
+            >Nombre requerido</span>
 
-          <span
-            *ngIf="formSubmited && form.controls['phoneNumber'].invalid"
-            class="text-danger text-mini"
-          >Teléfono requerido</span>
+            <div class="input-with-icon mt-3">
 
-          <ion-row *ngIf="ImageSafeSrc" class="mt-3">
-            <ion-col>
-              <img width="100%"  [src]="ImageSafeSrc">
-            </ion-col>
-          </ion-row>
+              <input
+                name="phoneNumber"
+                formControlName="phoneNumber"
+                type="tel"
+                placeholder="*Teléfono"
+                class="form-control py-3 px-4"
+                (keyup)="showSaveButton = true"
+              >
+                <i class="fa-solid fa-phone"></i>
+            </div>
+
+            <span
+              *ngIf="formSubmited && form.controls['phoneNumber'].invalid"
+              class="text-danger text-mini"
+            >Teléfono requerido</span>
+
+            <ion-row *ngIf="ImageSafeSrc" class="mt-3">
+              <ion-col>
+                <img width="100%"  [src]="ImageSafeSrc">
+              </ion-col>
+            </ion-row>
+
+            <ion-row class="mt-3">
+              <ion-col>
+                <button (click)="onSelectPhoto()" class="btn custom-btn text-white" type="button">
+                  {{!ImageSafeSrc ? 'Seleccionar logo' : 'Cambiar logo'}}
+                </button>
+              </ion-col>
+            </ion-row>
+
+            <ion-row *ngIf="showSaveButton" class="mt-3">
+              <ion-col>
+                <button class="btn custom-btn text-white" type="submit">
+                  Guardar
+                </button>
+              </ion-col>
+            </ion-row>
+          </form>
+
 
           <ion-row class="mt-3">
-            <ion-col>
-              <button (click)="onSelectPhoto()" class="btn custom-btn text-white" type="button">
-                {{!ImageSafeSrc ? 'Seleccionar logo' : 'Cambiar logo'}}
-              </button>
+            <ion-col class="px-3">
+              <p class="forgot-password-color text text-mini ion-text-justify">Esta es una app gratuita desarrollada por Refleacciona con Responsabilidad A.C. en conjunto con el Global Road Safety Partnership (GRSP).</p>
+              <p class="forgot-password-color text text-mini ion-text-justify">Consulta nuestro Aviso de Privacidad <a href="https://www.refleacciona.org/mx/privacidad/">Aquí</a></p>
             </ion-col>
           </ion-row>
 
-          <ion-row *ngIf="showSaveButton" class="mt-3">
-            <ion-col>
-              <button class="btn custom-btn text-white" type="submit">
-                Guardar
+          <ion-row class="mt-0">
+            <!-- <ion-col>
+              <button class="btn btn-primary custom-btn" (click)="onRegistrar()">REGISTRARME</button>
+            </ion-col> -->
+
+            <ion-col class="white-bg">
+              <button (click)="modal.present()" class="btn custom-btn text-white" type="button">
+                Instrucciones
               </button>
+
+
             </ion-col>
           </ion-row>
-        </form>
-
-
-        <ion-row class="mt-3">
-          <ion-col class="px-3">
-            <p class="forgot-password-color text text-mini ion-text-justify">Esta es una app gratuita desarrollada por Refleacciona con Responsabilidad A.C. en conjunto con el Global Road Safety Partnership (GRSP).</p>
-            <p class="forgot-password-color text text-mini ion-text-justify">Consulta nuestro Aviso de Privacidad <a href="https://www.refleacciona.org/mx/privacidad/">Aquí</a></p>
-          </ion-col>
-        </ion-row>
-
-        <ion-row class="mt-0">
-          <!-- <ion-col>
-            <button class="btn btn-primary custom-btn" (click)="onRegistrar()">REGISTRARME</button>
-          </ion-col> -->
-
-          <ion-col class="white-bg">
-            <button (click)="modal.present()" class="btn custom-btn text-white" type="button">
-              Instrucciones
-            </button>
-
-
-          </ion-col>
-        </ion-row>
-      </div>
-    </ion-card>
+        </div>
+      </ion-card>
+    </div>
   </div>
+
 </ion-content>
 
 

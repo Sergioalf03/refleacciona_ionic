@@ -1,7 +1,7 @@
 <ion-content>
   <div class="background m-0 p-0 h-100">
 
-    <div class="col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4 col-xxl-3 offset-xxl-auto mr-auto mb-4">
+    <div class="col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4 col-xxl-4 offset-xxl-auto mr-auto mb-4">
 
       <div class="mx-5">
         <button class="btn custom-white-btn mt-4" (click)="onCancel()">
@@ -42,8 +42,8 @@
         </div>
 
 
-         <ul class="list-group p-0 m-0 bg-white text text-mini  "  style="transform: rotate(270deg);  width: auto">
-          <li *ngFor="let name of names; let i = index" (click)="onSelectIndex(i)"  class="list-group-item text text-mini border-0 m-0 p-0  my-1" [ngClass]="{'h5': i === count}" >{{ counts[i] }} {{ name }}</li>
+        <ul class="list-group p-0 m-0 bg-white text text-mini mt-5 pt-5"  style="transform: rotate(270deg); max-width: 300px !important">
+          <li *ngFor="let name of names; let i = index" (click)="onSelectIndex(i)" [ngClass]="{'mt-5': i === 1, 'pt-5 ': i === 1}" class="list-group-item text text-mini border-0 m-0 p-0  my-1" [ngClass]="{'h5': i === count}" >{{ counts[i] }} {{ name }}</li>
         </ul>
 
         <div class="row bg-white mt-2">
